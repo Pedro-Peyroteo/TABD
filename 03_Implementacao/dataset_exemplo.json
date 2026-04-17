@@ -1,0 +1,57 @@
+[
+  {
+    "review_id": "R001",
+    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
+    "customer": { "customer_id": "C501", "name": "João Silva", "location": "Luanda", "membership": "Gold" },
+    "rating": 5,
+    "comment": "Excelente bateria e câmara incrível!",
+    "sentiment": "Positive",
+    "keywords": ["bateria", "câmara"],
+    "timestamp": "2026-01-15T10:00:00Z",
+    "verified_purchase": true
+  },
+  {
+    "review_id": "R002",
+    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
+    "customer": { "customer_id": "C502", "name": "Maria Santos", "location": "Benguela", "membership": "Silver" },
+    "rating": 2,
+    "comment": "A bateria descarrega muito rápido, decepcionante.",
+    "sentiment": "Negative",
+    "keywords": ["bateria", "dececionante"],
+    "timestamp": "2026-02-10T14:30:00Z",
+    "verified_purchase": true
+  },
+  {
+    "review_id": "R003",
+    "product": { "product_id": "P202", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
+    "customer": { "customer_id": "C503", "name": "Pedro Lima", "location": "Huambo", "membership": "Bronze" },
+    "rating": 4,
+    "comment": "Muito confortáveis, mas a entrega demorou.",
+    "sentiment": "Positive",
+    "keywords": ["conforto", "entrega"],
+    "timestamp": "2026-03-05T09:15:00Z",
+    "verified_purchase": true
+  },
+  {
+    "review_id": "R004",
+    "product": { "product_id": "P202", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
+    "customer": { "customer_id": "C504", "name": "Ana Costa", "location": "Luanda", "membership": "Gold" },
+    "rating": 1,
+    "comment": "O tamanho é errado, a sola descolou em dois dias!",
+    "sentiment": "Negative",
+    "keywords": ["tamanho", "qualidade", "sola"],
+    "timestamp": "2026-03-12T18:00:00Z",
+    "verified_purchase": true
+  },
+  {
+    "review_id": "R005",
+    "product": { "product_id": "P303", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
+    "customer": { "customer_id": "C505", "name": "Carlos Ruas", "location": "Lubango", "membership": "Silver" },
+    "rating": 3,
+    "comment": "Faz um bom café, mas é muito barulhenta.",
+    "sentiment": "Neutral",
+    "keywords": ["café", "ruído"],
+    "timestamp": "2026-04-01T07:00:00Z",
+    "verified_purchase": true
+  }
+]
