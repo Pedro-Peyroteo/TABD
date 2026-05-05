@@ -19,26 +19,35 @@ st.markdown("""
 
 @st.cache_data
 def load_data():
-    data_path = Path(__file__).resolve().parent / "03_implementacao" / "dataset_exemplo.json"
+    data_path = Path(__file__).resolve().parent / "03_Implementacao" / "dataset_exemplo.json"
     with open(data_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     rows = []
     for item in data:
+        loc = item["customer"]["location"]
+        coords = loc["coordinates"]["coordinates"]
         rows.append({
             "review_id": item["review_id"],
             "product_name": item["product"]["name"],
             "category": item["product"]["category"],
             "brand": item["product"]["brand"],
-            "customer_location": item["customer"]["location"],
+            "customer_location": loc["city"],
+            "country": loc["country"],
+            "lon": coords[0],
+            "lat": coords[1],
             "membership": item["customer"]["membership"],
-            "rating": item["rating"],
-            "sentiment": item["sentiment"],
-            "keywords": item["keywords"],
-            "timestamp": pd.to_datetime(item["timestamp"]),
-            "verified_purchase": item.get("verified_purchase", True),
+            "rating": item["metrics"]["rating"],
+            "sentiment": item["metrics"]["sentiment"],
+            "verified_purchase": item["metrics"]["verified_purchase"],
+            "keywords": item["content"]["keywords"],
+            "comment": item["content"]["comment"],
+            "language": item["content"].get("language", "pt"),
+            "timestamp": pd.to_datetime(item["metadata"]["timestamp"]),
+            "device": item["metadata"].get("device", "Web"),
         })
     df = pd.DataFrame(rows)
     df["month"] = df["timestamp"].dt.to_period("M").astype(str)
+    df["week"] = df["timestamp"].dt.to_period("W").astype(str)
     return df
 
 
@@ -69,11 +78,16 @@ filtered_df = df[
 
 # --- HEADER ---
 st.title("🛒 GlobalShop: Sentiment Intelligence Dashboard")
-st.caption("Sistema de Suporte à Decisão (DSS) v2.0  |  Powered by MongoDB + Streamlit")
+st.caption("Sistema de Suporte à Decisão (DSS) v3.0  |  Powered by MongoDB (NoSQL + Geospatial) + Streamlit")
 st.markdown("---")
 
 # --- TABS ---
-tab1, tab2, tab3 = st.tabs(["📊 Visão Executiva", "🏷️ Análise Tática", "🔍 Análise Operacional"])
+tab1, tab2, tab3, tab4 = st.tabs([
+    "📊 Visão Executiva",
+    "🏷️ Análise Tática",
+    "🔍 Análise Operacional",
+    "🗺️ Análise Geoespacial",
+])
 
 # =============================================================
 # TAB 1 — VISÃO EXECUTIVA
@@ -89,9 +103,17 @@ with tab1:
     avg_rating = filtered_df["rating"].mean() if n > 0 else 0
     verified_pct = filtered_df["verified_purchase"].sum() / n * 100 if n > 0 else 0
 
-    col1, col2, col3, col4 = st.columns(4)
+    # Quality Decay Rate: últimos 30 dias vs. histórico anterior
+    cutoff = filtered_df["timestamp"].max() - pd.Timedelta(days=30)
+    recent = filtered_df[filtered_df["timestamp"] >= cutoff]
+    historical = filtered_df[filtered_df["timestamp"] < cutoff]
+    recent_avg = recent["rating"].mean() if len(recent) > 0 else avg_rating
+    hist_avg = historical["rating"].mean() if len(historical) > 0 else avg_rating
+    decay_rate = ((recent_avg - hist_avg) / hist_avg * 100) if hist_avg > 0 else 0
+
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric(
-        "Net Sentiment Score (NSS)",
+        "Net Sentiment Score",
         f"{nss:.1f}%",
         delta="Saudável ✔" if nss >= 0 else "Alerta ✘",
         delta_color="normal" if nss >= 0 else "inverse",
@@ -99,6 +121,13 @@ with tab1:
     col2.metric("Total de Reviews", n)
     col3.metric("Nota Média Global", f"{avg_rating:.2f} ⭐")
     col4.metric("Compras Verificadas", f"{verified_pct:.0f}%")
+    col5.metric(
+        "Quality Decay Rate",
+        f"{decay_rate:+.1f}%",
+        delta="Estável" if decay_rate > -10 else "Alerta de Queda",
+        delta_color="normal" if decay_rate > -10 else "inverse",
+        help="Variação da nota média nos últimos 30 dias vs. histórico anterior.",
+    )
 
     st.markdown("---")
 
@@ -149,7 +178,7 @@ with tab2:
     col_t1, col_t2 = st.columns(2)
 
     with col_t1:
-        st.subheader("⚠️ Top 10 Produtos Críticos (Rating Baixo)")
+        st.subheader("⚠️ Top Produtos Críticos (Rating Baixo)")
         prod_ranking = (
             filtered_df.groupby("product_name")["rating"]
             .mean()
@@ -195,27 +224,13 @@ with tab2:
 with tab3:
     col_op1, col_op2 = st.columns(2)
 
+    neg_df = filtered_df[filtered_df["sentiment"] == "Negative"]
+    all_neg_kw = []
+    for kw_list in neg_df["keywords"]:
+        all_neg_kw.extend(kw_list)
+
     with col_op1:
-        st.subheader("📍 Nota Média por Localização")
-        loc_stats = (
-            filtered_df.groupby("customer_location")["rating"]
-            .mean()
-            .sort_values(ascending=False)
-            .reset_index()
-        )
-        loc_stats.columns = ["Localização", "Nota Média"]
-        fig_loc = px.bar(
-            loc_stats, x="Nota Média", y="Localização", orientation="h",
-            color="Nota Média", color_continuous_scale="RdYlGn", range_x=[0, 5],
-        )
-        st.plotly_chart(fig_loc, use_container_width=True)
-
-    with col_op2:
         st.subheader("☁️ Causa Raiz — Keywords Negativas")
-        all_neg_kw = []
-        for kw_list in filtered_df[filtered_df["sentiment"] == "Negative"]["keywords"]:
-            all_neg_kw.extend(kw_list)
-
         if all_neg_kw:
             text = " ".join(all_neg_kw)
             wc = WordCloud(
@@ -229,17 +244,150 @@ with tab3:
         else:
             st.info("Nenhuma keyword negativa para os filtros selecionados.")
 
-    st.markdown("---")
-    st.subheader("📋 Frequência de Problemas Identificados (Top Keywords Negativas)")
+    with col_op2:
+        st.subheader("📋 Frequência de Keywords Negativas (Top 10)")
+        if all_neg_kw:
+            kw_freq = Counter(all_neg_kw).most_common(10)
+            kw_df = pd.DataFrame(kw_freq, columns=["Keyword", "Frequência"])
+            fig_kw = px.bar(
+                kw_df, x="Frequência", y="Keyword", orientation="h",
+                color="Frequência", color_continuous_scale="Reds",
+            )
+            st.plotly_chart(fig_kw, use_container_width=True)
 
-    if all_neg_kw:
-        kw_freq = Counter(all_neg_kw).most_common(10)
-        kw_df = pd.DataFrame(kw_freq, columns=["Keyword", "Frequência"])
-        fig_kw = px.bar(
-            kw_df, x="Frequência", y="Keyword", orientation="h",
-            color="Frequência", color_continuous_scale="Reds",
+    st.markdown("---")
+    st.subheader("🚨 Anomaly Detection — Quality Decay Rate por Produto")
+    st.caption("Produtos com maior queda de nota entre o penúltimo e o último mês com dados.")
+
+    monthly_avg = (
+        filtered_df.groupby(["product_name", "month"])["rating"]
+        .mean()
+        .reset_index()
+        .sort_values(["product_name", "month"])
+    )
+
+    anomaly_rows = []
+    for prod, grp in monthly_avg.groupby("product_name"):
+        if len(grp) >= 2:
+            last = grp.iloc[-1]
+            prev = grp.iloc[-2]
+            drop = prev["rating"] - last["rating"]
+            drop_pct = (drop / prev["rating"] * 100) if prev["rating"] > 0 else 0
+            anomaly_rows.append({
+                "Produto": prod,
+                "Mês Anterior": prev["month"],
+                "Nota Anterior": round(prev["rating"], 2),
+                "Último Mês": last["month"],
+                "Nota Atual": round(last["rating"], 2),
+                "Queda (pts)": round(drop, 2),
+                "Queda (%)": round(drop_pct, 1),
+                "Alerta": "🔴 Crítico" if drop_pct >= 30 else ("🟡 Atenção" if drop_pct >= 10 else "🟢 Estável"),
+            })
+
+    if anomaly_rows:
+        anomaly_df = pd.DataFrame(anomaly_rows).sort_values("Queda (%)", ascending=False)
+        st.dataframe(anomaly_df, use_container_width=True, hide_index=True)
+    else:
+        st.info("Dados insuficientes para cálculo de anomalias com os filtros atuais.")
+
+# =============================================================
+# TAB 4 — ANÁLISE GEOESPACIAL
+# =============================================================
+with tab4:
+    st.subheader("🗺️ Mapa de Satisfação por Cidade (Geographic Sentiment Index)")
+    st.caption(
+        "Powered by MongoDB Geospatial (índice 2dsphere + GeoJSON). "
+        "Tamanho da bolha = volume de reviews  |  Cor = Net Sentiment Score (NSS)"
+    )
+
+    city_stats = (
+        filtered_df.groupby("customer_location")
+        .agg(
+            lat=("lat", "first"),
+            lon=("lon", "first"),
+            total=("review_id", "count"),
+            nota_media=("rating", "mean"),
+            positivos=("sentiment", lambda x: (x == "Positive").sum()),
+            negativos=("sentiment", lambda x: (x == "Negative").sum()),
         )
-        st.plotly_chart(fig_kw, use_container_width=True)
+        .reset_index()
+    )
+    city_stats["nss"] = (
+        (city_stats["positivos"] - city_stats["negativos"]) / city_stats["total"] * 100
+    ).round(1)
+    city_stats["nota_media"] = city_stats["nota_media"].round(2)
+    city_stats["label"] = city_stats.apply(
+        lambda r: f"{r['customer_location']}<br>Reviews: {r['total']}<br>NSS: {r['nss']:.0f}%<br>Nota: {r['nota_media']:.2f}⭐",
+        axis=1,
+    )
+
+    if not city_stats.empty:
+        fig_map = px.scatter_mapbox(
+            city_stats,
+            lat="lat",
+            lon="lon",
+            size="total",
+            color="nss",
+            color_continuous_scale="RdYlGn",
+            range_color=[-100, 100],
+            hover_name="customer_location",
+            hover_data={"lat": False, "lon": False, "total": True, "nota_media": True, "nss": True},
+            size_max=40,
+            zoom=4.5,
+            center={"lat": -11.0, "lon": 14.0},
+            mapbox_style="open-street-map",
+            labels={"nss": "NSS (%)", "total": "Reviews", "nota_media": "Nota Média"},
+        )
+        fig_map.update_layout(margin=dict(t=10, b=10, l=0, r=0), height=480)
+        st.plotly_chart(fig_map, use_container_width=True)
+    else:
+        st.warning("Sem dados para exibir no mapa com os filtros selecionados.")
+
+    st.markdown("---")
+    col_geo1, col_geo2 = st.columns(2)
+
+    with col_geo1:
+        st.subheader("📍 NSS por Cidade")
+        city_sorted = city_stats.sort_values("nss", ascending=True)
+        fig_nss_city = px.bar(
+            city_sorted, x="nss", y="customer_location", orientation="h",
+            color="nss", color_continuous_scale="RdYlGn", range_color=[-100, 100],
+            labels={"nss": "NSS (%)", "customer_location": "Cidade"},
+        )
+        fig_nss_city.add_vline(x=0, line_dash="dash", line_color="#95a5a6")
+        st.plotly_chart(fig_nss_city, use_container_width=True)
+
+    with col_geo2:
+        st.subheader("📊 Volume e Nota Média por Cidade")
+        fig_vol = px.bar(
+            city_stats.sort_values("nota_media", ascending=False),
+            x="customer_location", y="nota_media",
+            color="nota_media", color_continuous_scale="RdYlGn", range_color=[1, 5],
+            text=city_stats.sort_values("nota_media", ascending=False)["total"].apply(
+                lambda x: f"{x} rev."
+            ),
+            labels={"customer_location": "Cidade", "nota_media": "Nota Média"},
+        )
+        fig_vol.update_traces(textposition="outside")
+        fig_vol.update_layout(yaxis_range=[0, 5.5])
+        st.plotly_chart(fig_vol, use_container_width=True)
+
+    st.markdown("---")
+    st.subheader("📋 Resumo Regional")
+    display_cols = {
+        "customer_location": "Cidade",
+        "total": "Total Reviews",
+        "nota_media": "Nota Média",
+        "nss": "NSS (%)",
+        "positivos": "Positivos",
+        "negativos": "Negativos",
+    }
+    st.dataframe(
+        city_stats[list(display_cols.keys())].rename(columns=display_cols)
+        .sort_values("NSS (%)", ascending=False),
+        use_container_width=True,
+        hide_index=True,
+    )
 
 st.markdown("---")
-st.caption("GlobalShop DSS — Sistema de Suporte à Decisão v2.0  |  Powered by MongoDB & Streamlit")
+st.caption("GlobalShop DSS v3.0  |  NoSQL (MongoDB) + Spatial (2dsphere GeoJSON) + Streamlit")

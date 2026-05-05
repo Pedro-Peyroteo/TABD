@@ -1,64 +1,112 @@
-# 🛒 GlobalShop: Sistema Avançado de Análise de Sentimentos e Inteligência de Negócio
+# GlobalShop: Sistema Avançado de Análise de Sentimentos e Inteligência de Negócio
 
-Este projeto consiste no design, implementação e análise de uma infraestrutura de dados NoSQL integrada com Business Intelligence (BI) para a empresa fictícia **GlobalShop**, um marketplace de e-commerce de escala global. 
+Este projeto consiste no design, implementação e análise de uma infraestrutura de dados **NoSQL** com suporte a **dados espaciais**, integrada com Business Intelligence (BI) para a empresa fictícia **GlobalShop**, um marketplace de e-commerce com foco nos mercados africanos de língua portuguesa.
 
-O objetivo central é a resolução do problema de "silos de dados não estruturados", transformando milhões de feedbacks de clientes em ativos estratégicos para a gestão de qualidade e experiência do utilizador (UX).
-
----
-
-## 📌 Visão Geral do Ecossistema
-O sistema foi concebido para operar num cenário de **Big Data**, onde a velocidade de ingestão e a variedade dos dados tornam os sistemas relacionais tradicionais ineficientes. A solução utiliza o paradigma de documentos para permitir a evolução orgânica do esquema de dados sem a necessidade de interrupções para migrações (Zero Downtime Schema Evolution).
-
-## 📁 Estrutura Detalhada do Repositório
-O projeto está organizado seguindo a metodologia de ciclo de vida de desenvolvimento de software (SDLC), garantindo rastreabilidade total desde a definição do problema até a entrega final:
-
-### 📂 [01_Definicao](./01_Definicao)
-Contém a fundação estratégica do projeto.
-- **Definição do Problema:** Análise detalhada dos gargalos operacionais da GlobalShop.
-- **Justificativa Tecnológica:** Comparativo técnico entre SQL vs NoSQL para este cenário específico.
-
-### 📂 [02_Modelagem](./02_Modelagem)
-Documentação da arquitetura de dados.
-- **Design de Esquema:** Definição de coleções e estruturas de documentos.
-- **Estratégia de Performance:** Explicação técnica sobre a escolha de *Embedding* vs *Referencing* para otimização de leitura em BI.
-
-### 📂 [03_Implementacao](./03_Implementacao)
-A camada técnica e operacional.
-- **Dataset Sintético:** Conjunto de dados em JSON simulando cenários reais de mercado (incluindo regionalismos e variabilidade de notas).
-- **Engine de Agregação:** Scripts de processamento utilizando o *Aggregation Framework* do MongoDB para a extração de KPIs.
-
-### 📂 [04_BI_Analysis](./04_BI_Analysis)
-A camada de tradução de dados em decisões.
-- **Mapeamento de KPIs:** Definição de métricas como *Net Sentiment Score* e *Churn Predictor*.
-- **Design de Dashboards:** Especificações visuais para a implementação em ferramentas de BI (Power BI/Tableau).
-
-### 📂 [05_Entrega](./05_Entrega)
-O resultado final consolidado.
-- **Relatório Técnico Formal:** Documento académico-profissional com todas as conclusões, metodologias e validações do projeto.
+O objetivo central é a resolução do problema de "silos de dados não estruturados", transformando centenas de milhares de feedbacks de clientes em ativos estratégicos para a gestão de qualidade, experiência do utilizador e **inteligência geográfica de satisfação**.
 
 ---
 
-## 🛠️ Guia de Implementação Técnica
+## Visão Geral do Ecossistema
 
-### 📋 Pré-requisitos do Ambiente
-Para reproduzir este projeto, é necessário instalar:
-1. **MongoDB Community Server (v5.0+):** O motor de base de dados.
-2. **MongoDB Compass:** A interface de gestão visual para a execução das pipelines de agregação.
-3. **Ferramenta de BI (Opcional):** Power BI Desktop ou Tableau Public para a visualização dos resultados.
+O sistema foi concebido para operar num cenário de **Big Data**, combinando duas tecnologias de base de dados numa única solução:
 
-### 🚀 Fluxo de Execução Passo a Passo
-1. **Provisionamento:** Iniciar o serviço do MongoDB e conectar via Compass.
-2. **Criação do Namespace:** Criar a Database `GlobalShop` e a Collection `reviews`.
-3. **Ingestão de Dados:** 
-   - Aceder a `Add Data` $\rightarrow$ `Import JSON`.
-   - Carregar o ficheiro `03_Implementacao/dataset_exemplo.json`.
-4. **Execução de Analytics:** 
-   - Abrir a aba `Aggregations`.
-   - Implementar sequencialmente as pipelines descritas em `03_Implementacao/Queries_BI.md`.
-5. **Visualização:** Exportar os resultados das queries para CSV e importar no Power BI para gerar os dashboards previstos em `04_BI_Analysis`.
+1. **MongoDB (NoSQL):** Base de dados orientada a documentos com esquema dinâmico, ideal para reviews com atributos variados por categoria.
+2. **MongoDB Geospatial (Espacial):** O índice `2dsphere` sobre campos GeoJSON transforma o MongoDB numa base de dados espacial nativa, habilitando operadores como `$geoNear`, `$geoWithin` e `$near` para análise geográfica da satisfação de clientes por cidade e região.
 
-## 📈 KPIs e Valor Agregado
-O sistema não se limita a contar estrelas; ele implementa:
-- **Detecção de Anomalias:** Identificação automática de produtos cuja nota média caiu mais de 20% numa semana.
-- **Análise de Causa Raiz:** Cruzamento de palavras-chave negativas com categorias de produto para isolar falhas logísticas de falhas de fabrico.
-- **Segmentação de Cliente:** Análise de sentimento diferenciada para clientes *Gold* vs *Bronze*.
+---
+
+## Estrutura do Repositório
+
+```
+TABD/
+├── app_bi.py                      # Dashboard Streamlit — 4 abas interativas
+├── requirements.txt               # Dependências Python
+├── .gitignore
+├── INSTALL.md                     # Guia completo de instalação e execução
+├── 01_Definicao/
+│   └── Definicao_Projeto.md       # Cenário de negócio, problema, justificativa NoSQL + Espacial
+├── 02_Modelagem/
+│   └── Modelagem_Dados.md         # Schema GeoJSON, estratégia de embedding, índices
+├── 03_Implementacao/
+│   ├── dataset_exemplo.json       # 25 reviews com coordenadas GeoJSON (cidades de Angola)
+│   └── Queries_BI.md              # Pipelines de agregação MongoDB (analíticas + geoespaciais)
+├── 04_BI_Analysis/
+│   └── Planeamento_BI.md          # KPIs, especificações do dashboard, arquitetura de dados
+└── 05_Entrega/
+    └── Relatorio_Final.md         # Relatório técnico final consolidado
+```
+
+---
+
+## Pré-requisitos e Instalação Rápida
+
+```bash
+# Instalar dependências
+pip install -r requirements.txt
+
+# Lançar o dashboard
+streamlit run app_bi.py
+```
+
+Para configuração completa do MongoDB e criação dos índices espaciais, consulte `INSTALL.md`.
+
+---
+
+## Dashboard BI — 4 Abas Interativas
+
+| Aba | Público-Alvo | Conteúdo |
+| :--- | :--- | :--- |
+| 📊 **Visão Executiva** | CEOs / Diretores | NSS Global, Quality Decay Rate, tendência mensal, distribuição de sentimento |
+| 🏷️ **Análise Tática** | Gestores de Categoria | Sentimento por categoria, top produtos críticos, performance por marca |
+| 🔍 **Análise Operacional** | Analistas de Qualidade | Word Cloud de keywords negativas, anomaly detection (quedas abruptas de rating) |
+| 🗺️ **Análise Geoespacial** | Diretores de Logística | Mapa interativo de NSS por cidade, Geographic Sentiment Index, resumo regional |
+
+---
+
+## KPIs Implementados
+
+- **Net Sentiment Score (NSS):** $(\% \text{Positive}) - (\% \text{Negative})$ — mede polaridade emocional global e por cidade.
+- **Quality Decay Rate:** Variação da nota média dos últimos 30 dias vs. histórico — deteta lotes defeituosos.
+- **Anomaly Detection:** Identifica produtos com queda de rating ≥ 30% entre meses consecutivos.
+- **Keyword Correlation Index (KCI):** Correlação entre keywords negativas e notas baixas — isola causas raiz.
+- **Geographic Sentiment Index (GSI):** NSS calculado por cidade e visualizado em mapa interativo.
+
+---
+
+## Tecnologias Utilizadas
+
+| Componente | Tecnologia | Papel |
+| :--- | :--- | :--- |
+| Base de Dados NoSQL | MongoDB | Armazenamento de documentos flexíveis |
+| Base de Dados Espacial | MongoDB + índice `2dsphere` | Queries geoespaciais sobre GeoJSON |
+| Formato de Dados | GeoJSON (RFC 7946) | Representação de localizações geográficas |
+| Dashboard | Streamlit | Interface interativa de BI |
+| Visualizações | Plotly + Matplotlib | Gráficos e mapa interativo (scatter_mapbox) |
+| NLP Básico | WordCloud | Visualização de keywords negativas |
+| Processamento | Pandas | Transformação e agregação de dados |
+
+---
+
+## Exemplo de Query Geoespacial (MongoDB)
+
+```javascript
+// Reviews num raio de 200 km de Luanda
+db.reviews.find({
+  "customer.location.coordinates": {
+    $nearSphere: {
+      $geometry: { type: "Point", coordinates: [13.2343, -8.8368] },
+      $maxDistance: 200000
+    }
+  }
+})
+```
+
+---
+
+## Valor Estratégico
+
+O sistema permite à GlobalShop:
+- Detetar **problemas de qualidade em horas**, não dias.
+- Identificar se um problema é **nacional ou logístico regional** (via mapa de sentimento).
+- Priorizar **ações corretivas baseadas em evidências geográficas** (ex: auditar transportadora em Malanje se NSS < -30%).
+- Monitorizar **decaimento de qualidade por lote** antes que se torne viral.
