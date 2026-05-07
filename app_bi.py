@@ -333,8 +333,8 @@ with tab4:
             hover_name="customer_location",
             hover_data={"lat": False, "lon": False, "total": True, "nota_media": True, "nss": True},
             size_max=40,
-            zoom=4.5,
-            center={"lat": -11.0, "lon": 14.0},
+            zoom=6.0,
+            center={"lat": 39.5, "lon": -8.0},
             mapbox_style="open-street-map",
             labels={"nss": "NSS (%)", "total": "Reviews", "nota_media": "Nota Média"},
         )
@@ -390,4 +390,4 @@ with tab4:
     )
 
 st.markdown("---")
-st.caption("GlobalShop DSS v3.0  |  NoSQL (MongoDB) + Spatial (2dsphere GeoJSON) + Streamlit")
+st.caption("GlobalShop DSS v3.0  |  NoSQL (MongoDB) + Spatial (2dsphere GeoJSON) + Streamlit  |  

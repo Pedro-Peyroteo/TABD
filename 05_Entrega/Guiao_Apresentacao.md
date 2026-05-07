@@ -1,32 +1,35 @@
 # Guião de Apresentação
 ## GlobalShop: Sistema NoSQL + Espacial de Business Intelligence
 
-> **Como usar este guião:** Cada secção corresponde a um momento da apresentação.  
-> Tempo estimado total: **15–20 minutos**  
-> Antes de começar: executar `streamlit run app_bi.py` e manter o browser aberto.
+**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD)
+**Ano Letivo:** 2025/2026
+
+> **Como usar este guião:** Cada secção corresponde a um momento da apresentação.
+> Tempo estimado total: **15–20 minutos**
+> Antes de começar: executar `streamlit run app_bi.py` e manter o browser aberto em `http://localhost:8501`.
 
 ---
 
 ## SLIDE 1 — Título (30 seg)
 
-**Dizer:**  
-> "O nosso projeto chama-se GlobalShop Sentiment Intelligence. O objetivo é simples: transformar avaliações de clientes em decisões de negócio — e fazê-lo em minutos, não em dias. Para isso, combinámos duas tecnologias de base de dados: MongoDB como base de dados NoSQL, e o mesmo MongoDB como base de dados espacial, através do seu índice 2dsphere."
+**Dizer:**
+> "O nosso projeto chama-se GlobalShop Sentiment Intelligence. O objetivo é transformar avaliações de clientes em decisões de negócio — em minutos, não em dias. Para isso, combinamos duas tecnologias de base de dados: o MongoDB como base de dados NoSQL orientada a documentos, e o mesmo MongoDB como base de dados espacial, através do índice `2dsphere` e do padrão GeoJSON. O caso de uso é o mercado português, com cobertura de Lisboa, Porto, Coimbra, Braga, Faro e Setúbal."
 
 ---
 
 ## SLIDE 2 — Problema de Negócio (1–2 min)
 
-**Contexto:**  
-A GlobalShop é um marketplace que opera em Angola (Luanda, Benguela, Huambo, Lubango, Malanje, Cabinda). Recebe milhares de avaliações diárias, mas tem três problemas críticos:
+**Contexto:**
+A GlobalShop é um marketplace que opera em Portugal Continental. Recebe centenas de avaliações diárias, mas enfrenta três problemas operacionais críticos:
 
 | Problema | Consequência |
 | :--- | :--- |
-| Deteta defeitos de produto com dias de atraso | Aumento de devoluções |
-| Não sabe em que cidade a insatisfação é maior | Decisões logísticas cegas |
-| Não consegue isolar causa raiz (produto vs. entrega) | Ações corretivas erradas |
+| Deteta defeitos de produto com dias de atraso | Aumento de devoluções e perda de reputação |
+| Não sabe em que região do país a insatisfação é maior | Decisões logísticas sem suporte geográfico |
+| Não consegue isolar causa raiz (produto vs. entrega) | Ações corretivas direcionadas ao departamento errado |
 
-**Dizer:**  
-> "Imaginem que um lote defeituoso de smartphones chega ao mercado. Sem o nosso sistema, a empresa demora dias a perceber que algo está errado. Com o nosso DSS, em minutos conseguimos ver que a nota do Smartphone X1 caiu 50% em Abril, que a causa raiz é 'sobreaquecimento' e 'defeito', e que o problema está concentrado em Lubango e Malanje — o que aponta para um problema de transporte ou armazenamento específico a essa rota."
+**Dizer:**
+> "Imaginem que um lote defeituoso de smartphones chega ao mercado. Sem o nosso sistema, a empresa demora dias a perceber que algo está errado. Com o DSS que implementámos, em minutos conseguimos ver: que o Smartphone X1 caiu 50% de rating em Abril; que a causa raiz é 'sobreaquecimento' e 'defeito' de hardware, não de logística; e que o problema está geograficamente concentrado em Braga e Faro. Isto permite uma ação corretiva precisa e imediata."
 
 ---
 
@@ -34,21 +37,24 @@ A GlobalShop é um marketplace que opera em Angola (Luanda, Benguela, Huambo, Lu
 
 ### Por que MongoDB (NoSQL)?
 
-| Critério | SQL | MongoDB |
+| Critério | SQL | MongoDB (NoSQL) |
 | :--- | :--- | :--- |
-| Esquema | Rígido | Flexível (ideal para reviews variadas por categoria) |
-| Escalabilidade | Vertical | Horizontal (Big Data) |
-| Agregação | JOINs pesados | Documentos auto-contidos — O(1) |
+| Esquema | Rígido — migrações dispendiosas | Dinâmico — novos atributos sem alteração |
+| Escalabilidade | Vertical (hardware mais caro) | Horizontal — sharding nativo |
+| Agregação | JOINs pesados entre tabelas normalizadas | Documentos auto-contidos — O(1) |
 
-### Por que MongoDB Geospatial (BD Espacial)?
+> "Cada review de eletrónicos tem atributos técnicos; cada review de moda fala de tamanho e tecido. Num modelo relacional, precisaríamos de dezenas de colunas nulas. No MongoDB, cada documento tem o schema que precisa."
 
-> "Em vez de usar um sistema separado como o PostGIS, o MongoDB tem suporte nativo a GeoJSON através do índice `2dsphere`. Isso significa que podemos fazer, na mesma pipeline, uma query como: 'qual é a satisfação média das reviews originadas num raio de 200 km de Luanda?' — sem infraestrutura extra."
+### Por que MongoDB Geospatial (Base de Dados Espacial)?
 
-**Mostrar** o campo de localização no `dataset_exemplo.json`:
+> "Em vez de adicionar o PostGIS ao PostgreSQL — o que implicaria gerir um segundo sistema — o MongoDB suporta GeoJSON nativamente através do índice `2dsphere`. Isso significa que podemos fazer, na mesma pipeline de agregação, uma query como: 'qual é o NSS das reviews originadas num raio de 100 km de Lisboa?'. Uma única infraestrutura, zero configuração adicional."
+
+**Mostrar o campo de localização no `dataset_exemplo.json`:**
 ```json
 "location": {
-  "city": "Lubango",
-  "coordinates": { "type": "Point", "coordinates": [13.4920, -14.9177] }
+  "city": "Braga",
+  "country": "Portugal",
+  "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] }
 }
 ```
 
@@ -57,13 +63,13 @@ A GlobalShop é um marketplace que opera em Angola (Luanda, Benguela, Huambo, Lu
 ## SLIDE 4 — Arquitetura da Solução (1 min)
 
 ```
-Reviews (GeoJSON) → MongoDB (NoSQL + 2dsphere) → Aggregation Pipelines → Streamlit Dashboard
+Reviews (GeoJSON Portugal) → MongoDB (NoSQL + 2dsphere) → Aggregation Pipelines → Streamlit Dashboard
 ```
 
-Três camadas:
-1. **Bronze:** Ingestão bruta no MongoDB com índice espacial ativo.
-2. **Silver:** Transformação via Aggregation Framework (NSS, QDR, KCI, spatial).
-3. **Gold:** Visualização no dashboard com mapa interativo.
+**Três camadas:**
+- **Bronze:** Ingestão bruta no MongoDB com índice espacial `2dsphere` ativo.
+- **Silver:** Transformação via Aggregation Framework — NSS, QDR, KCI, queries espaciais.
+- **Gold:** Visualização no dashboard com mapa interativo de Portugal.
 
 ---
 
@@ -73,25 +79,25 @@ Três camadas:
 
 ### Aba 1 — Visão Executiva
 **Mostrar e comentar:**
-- **NSS (Net Sentiment Score):** "Mede a polaridade emocional. Um NSS positivo significa que a empresa está saudável emocionalmente."
-- **Quality Decay Rate:** "Compara os últimos 30 dias com o histórico anterior. Um valor negativo é sinal de alerta."
-- **Gráfico de linha mensal:** "Conseguimos ver a tendência de satisfação ao longo do tempo."
+- **NSS Global:** "Mede a polaridade emocional. NSS positivo significa que a plataforma tem mais promotores do que detratores."
+- **Quality Decay Rate:** "Compara os últimos 30 dias com o histórico. O valor negativo aqui é o primeiro sinal de alerta — algo deteriorou-se recentemente."
+- **Gráfico de linha mensal:** "Vemos a nota a descer consistentemente a partir de Março — padrão claro de deterioração."
 
 ### Aba 2 — Análise Tática
 **Mostrar e comentar:**
-- "Aqui os gestores de categoria veem quais departamentos têm mais sentimentos negativos."
-- Apontar o **Smartphone X1** no gráfico de produtos críticos: "Este produto está em alerta. Nota média abaixo do limite crítico de 3.0."
+- "Aqui os gestores de categoria veem quais departamentos têm mais sentimentos negativos — Eletrónicos destaca-se."
+- Apontar o **Smartphone X1** no gráfico de produtos críticos: "Este produto está em zona crítica. Nota média abaixo de 2.0, o que é extremamente preocupante."
 
 ### Aba 3 — Análise Operacional
 **Mostrar e comentar:**
-- **Word Cloud:** "As palavras maiores são as mais frequentes em reviews negativas. Vemos claramente 'sobreaquecimento', 'defeito', 'bateria'."
-- **Tabela de Anomaly Detection:** "O Smartphone X1 tem uma queda de 50% — marcado a 🔴 Crítico. Isto é o que dispara o alerta automático para o gestor de qualidade."
+- **Word Cloud:** "As palavras maiores são as mais frequentes nas reviews negativas. 'Sobreaquecimento', 'defeito' e 'bateria' dominam — apontam inequivocamente para um problema de hardware."
+- **Tabela de Anomaly Detection:** "O Smartphone X1 tem uma queda de 50% — classificado como 🔴 Crítico. Este é o gatilho automático para o gestor de qualidade."
 
 ### Aba 4 — Análise Geoespacial ⭐ (ponto diferenciador)
 **Mostrar e comentar:**
-- **Mapa de bolhas:** "Cada bolha é uma cidade. O tamanho representa o volume de reviews, a cor representa o NSS — verde é satisfação, vermelho é insatisfação. Isto é a BD Espacial em ação."
-- **Barras de NSS por cidade:** "Conseguimos ver instantaneamente quais cidades têm clientes mais insatisfeitos."
-- **Resumo regional:** "Um diretor de logística pode usar esta tabela para priorizar auditorias regionais."
+- **Mapa de bolhas:** "Cada bolha é uma cidade portuguesa. O tamanho representa o volume de reviews, a cor representa o NSS — verde é satisfação, vermelho é insatisfação. Braga e Faro aparecem a vermelho — é aqui que o lote defeituoso está concentrado."
+- **NSS por cidade:** "Conseguimos ver instantaneamente quais regiões de Portugal têm clientes mais insatisfeitos."
+- **Resumo regional:** "Um diretor de logística usa esta tabela para decidir se deve auditar o parceiro de entrega regional do Algarve ou se o problema é nacional."
 
 ---
 
@@ -99,14 +105,14 @@ Três camadas:
 
 **Mostrar o código de `Queries_BI.md` e dizer:**
 
-> "Estas queries só são possíveis porque temos o índice `2dsphere` ativo. Por exemplo, esta query encontra todas as reviews originadas num raio de 200 km de Luanda — algo impossível num sistema SQL sem extensão geoespacial."
+> "Estas queries só são possíveis porque criámos o índice `2dsphere`. Por exemplo, esta query recupera todas as reviews de clientes num raio de 100 km de Lisboa — usando geometria esférica real, em haversine."
 
 ```javascript
 db.reviews.find({
   "customer.location.coordinates": {
     $nearSphere: {
-      $geometry: { type: "Point", coordinates: [13.2343, -8.8368] },
-      $maxDistance: 200000
+      $geometry: { type: "Point", coordinates: [-9.1393, 38.7223] },
+      $maxDistance: 100000
     }
   }
 })
@@ -116,39 +122,30 @@ db.reviews.find({
 
 ## SLIDE 7 — KPIs Implementados (30 seg)
 
-| KPI | Fórmula | Onde |
+| KPI | Fórmula | Onde no Dashboard |
 | :--- | :--- | :--- |
 | NSS | (% Positive) − (% Negative) | Tab 1 + Tab 4 |
 | Quality Decay Rate | (média 30d − média hist.) / hist. × 100% | Tab 1 |
-| Anomaly Detection | Queda ≥ 30% entre meses | Tab 3 |
+| Anomaly Detection | Queda ≥ 30% entre meses consecutivos | Tab 3 |
 | Keyword Correlation Index | % ocorrências negativas por keyword | Tab 3 + Queries_BI.md |
-| Geographic Sentiment Index | NSS por cidade no mapa | Tab 4 |
+| Geographic Sentiment Index | NSS calculado por cidade — visualizado no mapa | Tab 4 |
 
 ---
 
 ## SLIDE 8 — Conclusões (1 min)
 
 **Dizer:**
-> "O projeto demonstra que o MongoDB pode servir simultaneamente como base de dados NoSQL para dados não estruturados e como base de dados espacial para análise geográfica — sem infraestrutura adicional. O resultado é um DSS que reduz o tempo de deteção de problemas de dias para minutos, e que acrescenta a dimensão geográfica à análise de satisfação."
+> "O projeto demonstra que o MongoDB pode servir simultaneamente como base de dados NoSQL para dados não estruturados e como base de dados espacial para análise geográfica — sem infraestrutura adicional, usando GeoJSON como standard aberto. O resultado é um DSS que reduz o tempo de deteção de problemas de dias para minutos, e que acrescenta a dimensão geográfica à análise de satisfação — algo que um SQL clássico não consegue sem extensões complexas."
 
-**Resultados concretos:**
-- ✅ Lote defeituoso detetado automaticamente (Smartphone X1, Abril 2026).
-- ✅ Causa raiz identificada: `sobreaquecimento` + `defeito` (hardware, não logística).
-- ✅ Dimensão geográfica: mapa de NSS por cidade de Angola.
-- ✅ 9 pipelines MongoDB documentadas (5 analíticas + 4 espaciais).
+**Resultados concretos do projeto:**
+- ✅ Lote defeituoso detetado automaticamente — Smartphone X1, Abril 2026, queda de 50%.
+- ✅ Causa raiz identificada via KCI: `sobreaquecimento` + `defeito` (hardware, não logística).
+- ✅ Dimensão geográfica: mapa de NSS por cidade de Portugal Continental.
+- ✅ 9 pipelines MongoDB documentadas (5 analíticas + 4 geoespaciais).
+- ✅ Dashboard com 4 visões orientadas a CEO, gestores de categoria, analistas de qualidade e diretores de logística.
 
 ---
 
 ## Possíveis Perguntas e Respostas
 
-**P: Por que não usaram PostGIS em vez do MongoDB Geospatial?**  
-R: "O MongoDB Geospatial elimina a necessidade de um sistema separado. As queries espaciais e analíticas coexistem na mesma pipeline de agregação, usando GeoJSON que é um padrão aberto (RFC 7946). Para o nosso caso de uso — análise de reviews com dimensão geográfica — é a solução mais simples e eficiente."
-
-**P: O sistema funciona com dados reais do MongoDB ou só com JSON?**  
-R: "O dashboard foi desenvolvido para leitura direta do JSON (dataset demo). Para produção, bastaria substituir a função `load_data()` por uma query pymongo — a estrutura de dados é idêntica. O guia em `INSTALL.md` documenta os passos de importação e indexação no MongoDB."
-
-**P: Como escala para milhões de reviews?**  
-R: "Os índices que criámos garantem complexidade O(log n) nas queries mais pesadas. Para escala horizontal, o MongoDB suporta sharding nativo. A opção `allowDiskUse: true` nas aggregations permite processar volumes que excedem a RAM disponível."
-
-**P: O que significa o Quality Decay Rate negativo?**  
-R: "Um QDR de -30% significa que a nota média dos últimos 30 dias caiu 30% face ao histórico anterior. É o trigger para emissão de alerta vermelho e bloqueio preventivo do lote."
+**P: Por que não usaram PostGIS em vez do MongoDB Geos

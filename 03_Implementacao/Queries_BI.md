@@ -1,35 +1,42 @@
 # Implementação Técnica: NoSQL + Spatial Data Pipeline
 
-Nesta secção, detalhamos a implementação do pipeline de processamento de dados. O coração do sistema é o **Aggregation Framework** do MongoDB, que funciona como uma pipeline de processamento onde cada etapa transforma os documentos. A integração com o índice `2dsphere` adiciona a dimensão geoespacial ao pipeline.
-
-> **Nota sobre campos:** O schema utilizado segue a estrutura aninhada definida em `02_Modelagem/Modelagem_Dados.md`. Os campos de rating estão em `metrics.rating`, sentiment em `metrics.sentiment`, keywords em `content.keywords`, e as coordenadas em `customer.location.coordinates`.
+**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD)
+**Ano Letivo:** 2025/2026
 
 ---
 
-## 1. Configuração Inicial de Índices
+O Aggregation Framework do MongoDB funciona como uma pipeline de transformação sequencial, onde cada estágio (`$match`, `$group`, `$sort`, `$project`, etc.) recebe os documentos do estágio anterior e os transforma progressivamente. A integração do índice `2dsphere` adiciona a dimensão geoespacial à mesma pipeline, sem necessidade de sistemas externos.
 
-Antes de executar as queries, criar os índices de performance no **Mongosh**:
+> **Nota sobre campos:** O schema segue a estrutura aninhada definida em `02_Modelagem/Modelagem_Dados.md`. Os campos de rating estão em `metrics.rating`, sentimento em `metrics.sentiment`, keywords em `content.keywords`, e as coordenadas em `customer.location.coordinates`.
+
+---
+
+## 1. Configuração Inicial dos Índices
+
+Antes de executar qualquer query, criar os índices no **Mongosh**:
 
 ```javascript
-// Índice de categoria para agrupamentos
+// 1. Índice de categoria para agrupamentos
 db.reviews.createIndex({ "product.category": 1 });
 
-// Índice composto para análise de causa raiz
+// 2. Índice composto para análise de causa raiz
 db.reviews.createIndex({ "metrics.sentiment": 1, "content.keywords": 1 });
 
-// Índice temporal para análises de decaimento
+// 3. Índice temporal para cálculo de Quality Decay Rate
 db.reviews.createIndex({ "metadata.timestamp": -1 });
 
-// Índice espacial 2dsphere — transforma MongoDB em BD Espacial
+// 4. Índice 2dsphere — transforma o MongoDB em Base de Dados Espacial
+//    Habilita $geoNear, $geoWithin e $near sobre os campos GeoJSON Point
 db.reviews.createIndex({ "customer.location.coordinates": "2dsphere" });
 ```
 
 ---
 
-## 2. Queries de Business Intelligence
+## 2. Queries Analíticas (BI)
 
-### 2.1 KPI: Ranking de Satisfação (Detecção de Itens Críticos)
-Identifica os 10 produtos com pior performance média.
+### 2.1 KPI: Ranking de Satisfação — Deteção de Produtos Críticos
+
+Identifica os produtos com pior performance média, filtrando aqueles com nota ≤ 3.0.
 
 ```javascript
 db.reviews.aggregate([
@@ -48,14 +55,15 @@ db.reviews.aggregate([
 ```
 
 **Análise Técnica:**
-- **$group**: Colapsa todos os documentos por nome de produto, calculando a média aritmética da nota (campo `metrics.rating`).
-- **$match**: Filtra apenas a "cauda inferior" da distribuição (notas ≤ 3).
-- **Complexidade**: $\mathcal{O}(n)$ onde $n$ é o número de reviews.
+- `$group`: Agrega todos os documentos por nome de produto, calculando a média aritmética do campo `metrics.rating`.
+- `$match` pós-group: Filtra apenas a "cauda inferior" da distribuição (notas ≤ 3.0 — zona de risco).
+- **Complexidade:** $\mathcal{O}(n)$ na fase de group, $\mathcal{O}(\log n)$ com índice de categoria na fase de match.
 
 ---
 
 ### 2.2 KPI: Análise de Polaridade por Categoria
-Cria uma matriz bidimensional de sentimentos por departamento.
+
+Cria uma matriz bidimensional de sentimentos (Positive, Neutral, Negative) por departamento de produto.
 
 ```javascript
 db.reviews.aggregate([
@@ -80,10 +88,15 @@ db.reviews.aggregate([
 ])
 ```
 
+**Análise Técnica:**
+- Chave composta `_id: { categoria, sentimento }` permite o agrupamento bidimensional sem subqueries.
+- `$project` com `_id: 0` limpa o output para consumo direto pelo dashboard.
+
 ---
 
-### 2.3 KPI: Mineração de Texto para Causa Raiz (Root Cause Analysis)
-Descobre as palavras-chave mais frequentes em reviews negativas.
+### 2.3 KPI: Root Cause Analysis — Frequência de Keywords Negativas
+
+Expande os arrays de keywords e conta a frequência de cada termo em reviews com sentimento Negative.
 
 ```javascript
 db.reviews.aggregate([
@@ -92,22 +105,24 @@ db.reviews.aggregate([
   {
     $group: {
       _id: "$content.keywords",
-      frequencia: { $sum: 1 }
+      frequencia: { $sum: 1 },
+      notaMedia: { $avg: "$metrics.rating" }
     }
   },
   { $sort: { frequencia: -1 } },
-  { $limit: 20 }
+  { $limit: 15 }
 ])
 ```
 
 **Análise Técnica:**
-- **$unwind**: Desconstrói o array `content.keywords`, criando um documento separado para cada palavra-chave. Se uma review tem 3 keywords, o `$unwind` gera 3 documentos temporários.
-- Permite isolar se a insatisfação é causada por "Logística" (ex: *entrega*, *atraso*) ou "Qualidade" (ex: *defeito*, *sobreaquecimento*).
+- `$match` no início da pipeline — o MongoDB aplica o índice composto (`sentiment + keywords`) para restringir o conjunto de documentos antes do `$unwind`, reduzindo significativamente o volume processado.
+- `$unwind` "explode" o array de keywords, criando um documento por cada elemento.
 
 ---
 
-### 2.4 KPI: Quality Decay Rate (Taxa de Decaimento de Qualidade)
-Monitora a queda de rating de um produto ao longo dos meses, detetando lotes defeituosos.
+### 2.4 KPI: Quality Decay Rate — Decaimento de Qualidade por Produto
+
+Calcula a evolução da nota média mensal por produto, permitindo a identificação de tendências de decaimento.
 
 ```javascript
 db.reviews.aggregate([
@@ -121,26 +136,19 @@ db.reviews.aggregate([
       totalReviews: { $sum: 1 }
     }
   },
-  { $sort: { "_id.produto": 1, "_id.mes": 1 } },
-  {
-    $group: {
-      _id: "$_id.produto",
-      evolucaoMensal: {
-        $push: {
-          mes: "$_id.mes",
-          notaMedia: "$notaMedia",
-          totalReviews: "$totalReviews"
-        }
-      }
-    }
-  }
+  { $sort: { "_id.produto": 1, "_id.mes": 1 } }
 ])
 ```
 
+**Análise Técnica:**
+- `$dateToString` com formato `%Y-%m` trunca o timestamp para granularidade mensal, agrupando todas as reviews de um produto num mesmo mês.
+- O índice temporal (`metadata.timestamp: -1`) otimiza o acesso sequencial por data.
+
 ---
 
-### 2.5 KPI: Anomaly Detection (Detecção de Queda Abrupta)
-Identifica produtos cuja nota média caiu mais de 30% no último mês face ao mês anterior.
+### 2.5 KPI: Anomaly Detection — Deteção Automática de Lotes Defeituosos
+
+Identifica produtos com queda de rating ≥ 30% entre o penúltimo e o último mês com dados, emitindo um alerta de anomalia.
 
 ```javascript
 db.reviews.aggregate([
@@ -162,75 +170,86 @@ db.reviews.aggregate([
   },
   {
     $project: {
+      produto: "$_id",
       ultimoMes: { $arrayElemAt: ["$historico", -1] },
       penultimoMes: { $arrayElemAt: ["$historico", -2] }
     }
   },
   {
     $project: {
-      queda: {
-        $subtract: ["$penultimoMes.nota", "$ultimoMes.nota"]
-      },
+      produto: 1,
       ultimoMes: 1,
-      penultimoMes: 1
+      penultimoMes: 1,
+      quedaPct: {
+        $multiply: [
+          { $divide: [
+            { $subtract: ["$penultimoMes.nota", "$ultimoMes.nota"] },
+            "$penultimoMes.nota"
+          ]},
+          100
+        ]
+      }
     }
   },
-  { $match: { queda: { $gte: 1.0 } } },
-  { $sort: { queda: -1 } }
+  { $match: { quedaPct: { $gte: 30 } } },
+  { $sort: { quedaPct: -1 } }
 ])
 ```
 
+**Análise Técnica:**
+- Padrão "double-group": o primeiro `$group` calcula a média mensal; o segundo consolida o histórico por produto num array ordenado cronologicamente.
+- `$arrayElemAt` com índice `-1` e `-2` extrai o último e o penúltimo elemento sem subqueries.
+
 ---
 
-## 3. Queries Geoespaciais (MongoDB como Base de Dados Espacial)
+## 3. Queries Geoespaciais
 
-O índice `2dsphere` sobre `customer.location.coordinates` habilita operadores espaciais que permitem análises geográficas nativas, sem sistemas externos.
+### 3.1 Reviews num Raio de 100 km de Lisboa
 
-### 3.1 Reviews num Raio de 200 km de Luanda
-Identifica todas as reviews originadas num raio de 200 km do centro de Luanda (útil para análise de logística de última milha).
+Recupera todas as reviews originadas num raio de 100 km a partir do centro de Lisboa, utilizando geometria esférica real.
 
 ```javascript
 db.reviews.find({
   "customer.location.coordinates": {
     $nearSphere: {
-      $geometry: {
-        type: "Point",
-        coordinates: [13.2343, -8.8368]
-      },
-      $maxDistance: 200000  // 200 km em metros
+      $geometry: { type: "Point", coordinates: [-9.1393, 38.7223] },
+      $maxDistance: 100000
     }
   }
 })
 ```
 
+**Análise Técnica:**
+- `$nearSphere` requer o índice `2dsphere` — sem ele, o MongoDB lança um erro. O índice garante que apenas os documentos dentro do raio especificado são retornados, sem full-collection scan.
+- `$maxDistance` é expresso em **metros** (100 000 m = 100 km).
+- Os resultados são ordenados automaticamente por distância crescente ao ponto de referência.
+
 ---
 
 ### 3.2 Net Sentiment Score (NSS) por Cidade
-Calcula o índice de satisfação líquida para cada cidade — a métrica geoespacial central do dashboard.
+
+Calcula o NSS para cada cidade portuguesa, agregando polaridade por localização geográfica.
 
 ```javascript
 db.reviews.aggregate([
   {
     $group: {
       _id: "$customer.location.city",
-      cidade: { $first: "$customer.location.city" },
-      lon: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 0] } },
-      lat: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 1] } },
       totalReviews: { $sum: 1 },
-      notaMedia: { $avg: "$metrics.rating" },
       positivos: {
         $sum: { $cond: [{ $eq: ["$metrics.sentiment", "Positive"] }, 1, 0] }
       },
       negativos: {
         $sum: { $cond: [{ $eq: ["$metrics.sentiment", "Negative"] }, 1, 0] }
-      }
+      },
+      notaMedia: { $avg: "$metrics.rating" },
+      lat: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 1] } },
+      lon: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 0] } }
     }
   },
   {
     $project: {
-      cidade: 1,
-      lon: 1,
-      lat: 1,
+      cidade: "$_id",
       totalReviews: 1,
       notaMedia: { $round: ["$notaMedia", 2] },
       nss: {
@@ -238,17 +257,25 @@ db.reviews.aggregate([
           { $multiply: [{ $divide: ["$positivos", "$totalReviews"] }, 100] },
           { $multiply: [{ $divide: ["$negativos", "$totalReviews"] }, 100] }
         ]
-      }
+      },
+      lat: 1,
+      lon: 1,
+      _id: 0
     }
   },
   { $sort: { nss: -1 } }
 ])
 ```
 
+**Análise Técnica:**
+- `$cond` com `$eq` implementa uma soma condicional inline — equivalente ao `CASE WHEN` do SQL mas sem subqueries.
+- `$arrayElemAt` com índice 1 e 0 extrai latitude e longitude do array GeoJSON `[lon, lat]`, preservando as coordenadas para visualização no mapa.
+
 ---
 
-### 3.3 Concentração Regional de Reclamações por Keyword
-Determina em que cidade uma keyword de problema específica é mais reportada (ex: "atraso", "defeito").
+### 3.3 Concentração Regional de Keywords de Problema
+
+Identifica quais palavras-chave negativas estão geograficamente concentradas em certas cidades.
 
 ```javascript
 db.reviews.aggregate([
@@ -257,68 +284,22 @@ db.reviews.aggregate([
   {
     $group: {
       _id: {
-        cidade: "$customer.location.city",
-        keyword: "$content.keywords"
+        keyword: "$content.keywords",
+        cidade: "$customer.location.city"
       },
       frequencia: { $sum: 1 },
-      lon: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 0] } },
-      lat: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 1] } }
+      lat: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 1] } },
+      lon: { $first: { $arrayElemAt: ["$customer.location.coordinates.coordinates", 0] } }
     }
   },
-  { $match: { "_id.keyword": "atraso" } },
   { $sort: { frequencia: -1 } }
 ])
 ```
 
----
-
-### 3.4 Keyword Correlation Index (KCI) — Correlação Keyword / Rating
-Mapeia quais keywords têm maior correlação com notas baixas.
-
-```javascript
-db.reviews.aggregate([
-  { $unwind: "$content.keywords" },
-  {
-    $group: {
-      _id: "$content.keywords",
-      notaMedia: { $avg: "$metrics.rating" },
-      frequencia: { $sum: 1 },
-      occNegativas: {
-        $sum: { $cond: [{ $eq: ["$metrics.sentiment", "Negative"] }, 1, 0] }
-      }
-    }
-  },
-  {
-    $project: {
-      keyword: "$_id",
-      notaMedia: { $round: ["$notaMedia", 2] },
-      frequencia: 1,
-      kci: {
-        $multiply: [{ $divide: ["$occNegativas", "$frequencia"] }, 100]
-      },
-      _id: 0
-    }
-  },
-  { $match: { frequencia: { $gte: 2 } } },
-  { $sort: { kci: -1 } },
-  { $limit: 15 }
-])
-```
+**Análise Técnica:**
+- Esta query combina análise textual (keyword) com análise geoespacial (cidade), numa única pipeline — impossível de forma nativa em SQL sem extensões geoespaciais.
+- Permite identificar, por exemplo, que a keyword "atraso" é predominante em Faro, sinalizando uma falha no parceiro logístico regional do Algarve.
 
 ---
 
-## 4. Análise de Performance e Indexação
-
-| Query | Índice Utilizado | Complexidade | Ganho de Performance |
-| :--- | :--- | :--- | :--- |
-| Ranking de produtos | `product.category: 1` | $\mathcal{O}(n)$ | Evita full-collection scan |
-| Root Cause Analysis | `metrics.sentiment: 1, content.keywords: 1` | $\mathcal{O}(\log n + k)$ | Skip direto de reviews positivas |
-| Decay Rate temporal | `metadata.timestamp: -1` | $\mathcal{O}(\log n)$ | Ordenação pré-computada |
-| Queries espaciais | `2dsphere` (R-tree) | $\mathcal{O}(\log n)$ | Filtro geográfico antes de processar |
-
-## 5. Considerações de Memória
-O MongoDB limita as etapas de agregação a 100MB de RAM. Para datasets massivos, ativar a opção `allowDiskUse: true`:
-
-```javascript
-db.reviews.aggregate([...], { allowDiskUse: true })
-```
+### 3.4 Keyword Correlation Index (KCI) — Correlação Keyword / Rat

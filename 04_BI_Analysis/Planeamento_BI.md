@@ -1,117 +1,155 @@
 # Planeamento Estratégico de Business Intelligence (BI)
 
-Esta secção detalha a camada de tradução de dados em inteligência. O objetivo não é apenas a visualização de dados, mas a criação de um **Decision Support System (DSS)** que permita à gestão da GlobalShop tomar decisões baseadas em evidências, incluindo a **dimensão geoespacial** da satisfação dos clientes.
-
-## 1. Definição de Métricas e KPIs (Key Performance Indicators)
-
-Para medir o sucesso da operação, definimos cinco métricas principais:
-
-### 1.1. Net Sentiment Score (NSS)
-Diferente da nota média, o NSS mede a polaridade emocional.
-- **Fórmula:** $\text{NSS} = (\% \text{Positive}) - (\% \text{Negative})$
-- **Interpretação:** Um NSS positivo indica que a marca é amada; um NSS negativo indica risco de churn (perda de clientes).
-- **Aplicação Espacial:** Calculado por cidade, permite identificar regiões geograficamente insatisfeitas.
-
-### 1.2. Quality Decay Rate (Taxa de Decaimento de Qualidade)
-Monitora a queda de notas de produtos ao longo do tempo.
-- **Métrica:** Diferença entre a nota média dos últimos 30 dias vs. a nota histórica.
-- **Fórmula:** $\text{QDR} = \frac{\bar{r}_{30d} - \bar{r}_{hist}}{\bar{r}_{hist}} \times 100\%$
-- **Objetivo:** Detetar lotes de produtos defeituosos antes que se tornem virais. Um QDR de -30% indica anomalia crítica.
-
-### 1.3. Keyword Correlation Index (KCI)
-Mapeia a correlação entre palavras-chave negativas e a nota final.
-- **Fórmula:** $\text{KCI}(k) = \frac{\text{ocorrências de } k \text{ em reviews negativas}}{\text{ocorrências totais de } k} \times 100\%$
-- **Exemplo:** Se a keyword "sobreaquecimento" aparece em 95% das reviews de nota 1-2, a falha é de hardware e não logística.
-
-### 1.4. Geographic Sentiment Index (GSI)
-Índice de satisfação agregado por cidade, visualizado em mapa.
-- **Métrica:** NSS calculado por cidade, representado como bolha no mapa (tamanho = volume, cor = NSS).
-- **Objetivo:** Identificar se um problema é nacional (todas as cidades afetadas) ou regional (concentrado numa área logística).
-
-### 1.5. Anomaly Score (Detecção de Lote Defeituoso)
-Pontuação automática de urgência para cada produto.
-- **Trigger:** Queda de rating ≥ 30% em relação ao mês anterior.
-- **Ação:** Emissão de alerta para o gestor de qualidade e bloqueio preventivo do lote.
+**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD)
+**Ano Letivo:** 2025/2026
 
 ---
 
-## 2. Especificações Técnicas do Dashboard
-
-O Dashboard está dividido em **quatro visões** complementares, desenhadas para diferentes níveis de gestão.
-
-### Visão A: Executive Summary (Para CEOs/Diretores)
-**Objetivo:** Visão macro da saúde da empresa.
-- **KPI Cards:** NSS Global, Total de Reviews, Nota Média Global, Compras Verificadas.
-- **Quality Decay Rate:** Métrica de tendência — comparação nota média dos últimos 30 dias vs. histórico, com indicador colorido (verde/amarelo/vermelho).
-- **Gráfico de Rosca:** Distribuição de sentimentos (Positive/Neutral/Negative).
-- **Gráfico de Linha:** Evolução da nota média mensal com linha de limite crítico (3.0).
-
-### Visão B: Category Manager View (Para Gestores de Departamento)
-**Objetivo:** Gestão tática de categorias e marcas.
-- **Stacked Bar Chart:** Distribuição de sentimentos por categoria de produto.
-- **Bar Chart:** Top 10 produtos com menor nota média (itens críticos).
-- **Bar Chart:** Performance por marca com NSS como escala de cor.
-
-### Visão C: Operational Root Cause (Para Analistas de Qualidade)
-**Objetivo:** Resolução de problemas específicos e deteção de anomalias.
-- **Word Cloud:** Frequência de palavras-chave em reviews negativas.
-- **Bar Chart Horizontal:** Top 10 keywords negativas com frequência.
-- **Tabela de Anomalias:** Produtos com maior queda de rating mês a mês (Quality Decay Rate por produto).
-
-### Visão D: Análise Geoespacial (Para Diretores de Logística e Expansão)
-**Objetivo:** Identificação de padrões geográficos de satisfação e problemas logísticos.
-- **Mapa de Bolhas (Scatter Mapbox):** Cada cidade representada por uma bolha; tamanho = volume de reviews; cor = NSS (verde = satisfeito, vermelho = insatisfeito).
-- **Bar Chart Horizontal:** NSS por cidade, ordenado do mais satisfeito ao mais insatisfeito.
-- **Tabela de Resumo Regional:** Volume de reviews, nota média e NSS por cidade.
+O objetivo desta camada não é apenas a visualização de dados, mas a criação de um **Sistema de Suporte à Decisão (DSS)** que permita à gestão da GlobalShop Portugal tomar decisões baseadas em evidências, integrando a dimensão geoespacial da satisfação dos clientes numa visão operacional acionável.
 
 ---
 
-## 3. Fluxo de Dados (Data Pipeline)
-A arquitetura segue o modelo ELT (Extract, Load, Transform):
-1. **Extract:** Coleta de reviews via API/Logs com geolocalização (GeoJSON Point).
-2. **Load:** Ingestão bruta no MongoDB com índice `2dsphere` ativo (Camada *Bronze*).
-3. **Transform:** Aplicação das pipelines de agregação para gerar métricas de sentimento, decay e KCI (Camada *Silver*).
-4. **Visualize:** Consumo dos dados processados pelo dashboard Streamlit com mapa interativo (Camada *Gold*).
+## 1. Definição de Métricas e KPIs
 
----
+Foram definidas cinco métricas principais, cobrindo as dimensões de sentimento, qualidade, causa raiz e geografia.
 
-## 4. Plano de Ação Baseado em Dados
+### 1.1 Net Sentiment Score (NSS)
 
-O sistema implementa a seguinte lógica de resposta automática:
+Mede a polaridade emocional agregada, diferenciando-se da nota média por capturar a distribuição de sentimentos extremos.
 
-| Condição | Alerta | Ação |
+$$\text{NSS} = (\% \text{Positive}) - (\% \text{Negative})$$
+
+**Interpretação:** Um NSS positivo indica que a marca gera mais promotores do que detratores. Um NSS negativo assinala risco de churn e deterioração da reputação. Calculado globalmente e por cidade portuguesa para a componente geoespacial.
+
+### 1.2 Quality Decay Rate (QDR)
+
+Monitoriza a deterioração da perceção de qualidade ao longo do tempo.
+
+$$\text{QDR} = \frac{\bar{r}_{30d} - \bar{r}_{hist}}{\bar{r}_{hist}} \times 100\%$$
+
+Onde $\bar{r}_{30d}$ é a nota média dos últimos 30 dias e $\bar{r}_{hist}$ é a nota média do período anterior. Um QDR de -30% ou inferior constitui um alerta crítico que pode indicar um lote defeituoso em circulação.
+
+### 1.3 Keyword Correlation Index (KCI)
+
+Correlaciona palavras-chave com sentimento negativo, permitindo isolar a causa raiz de um problema.
+
+$$\text{KCI}(k) = \frac{\text{ocorrências de } k \text{ em reviews Negative}}{\text{total de ocorrências de } k} \times 100\%$$
+
+**Exemplo aplicado:** Se a keyword "sobreaquecimento" apresenta KCI = 95%, o problema é de hardware — não de logística ou entrega. Esta distinção é crítica para direcionar a ação corretiva ao departamento certo.
+
+### 1.4 Geographic Sentiment Index (GSI)
+
+Extensão geoespacial do NSS: o índice de sentimento é calculado por cidade e representado visualmente num mapa interativo.
+
+**Lógica de decisão:**
+- Cidades com GSI positivo → satisfação com produto e entrega na região.
+- Cidades com GSI negativo → potencial falha logística regional ou concentração de lote defeituoso.
+- GSI negativo numa única cidade + keyword "atraso" → auditar parceiro de entrega regional.
+- GSI negativo em múltiplas cidades + keyword "defeito" → problema de produto de âmbito nacional.
+
+### 1.5 Anomaly Score — Deteção Automática de Lotes Defeituosos
+
+Identifica automaticamente produtos com queda de rating superior a 30% entre dois meses consecutivos.
+
+**Regras de classificação:**
+
+| Queda de Rating | Classificação | Ação Recomendada |
 | :--- | :--- | :--- |
-| NSS de um produto ≤ -20% | 🔴 Vermelho | Notificar Gestor de Qualidade → Bloquear lote |
-| Keyword "defeito" aumentar 20% | 🟠 Laranja | Escalar para Engenharia de Produto |
-| Keyword "atraso" aumentar 15% numa cidade | 🟡 Amarelo | Notificar Logística → Auditar transportadora regional |
-| GSI de uma cidade ≤ -30% | 🔴 Vermelho | Revisão do parceiro logístico na região |
-| Quality Decay Rate ≤ -30% | 🔴 Vermelho | Suspensão preventiva do lote + investigação |
+| ≥ 30% | 🔴 Crítico | Alerta imediato ao gestor de qualidade; análise de lote |
+| 10–29% | 🟡 Atenção | Monitorização aumentada; revisão de fornecedor |
+| < 10% | 🟢 Estável | Sem ação necessária |
 
 ---
 
-## 5. Arquitetura Tecnológica
+## 2. Arquitetura do Dashboard
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   CAMADA DE DADOS                       │
-│  MongoDB (NoSQL + 2dsphere Geospatial Index)            │
-│  Coleção: reviews  |  Dataset: 25+ documentos GeoJSON   │
-└────────────────────────┬────────────────────────────────┘
-                         │ Aggregation Framework
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│                CAMADA DE PROCESSAMENTO                  │
-│  • Sentiment KPIs (NSS, KCI)                            │
-│  • Quality Decay Rate                                   │
-│  • Anomaly Detection                                    │
-│  • Spatial Aggregation ($geoNear, $geoWithin)           │
-└────────────────────────┬────────────────────────────────┘
-                         │ JSON/pymongo
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│               CAMADA DE VISUALIZAÇÃO                    │
-│  Streamlit Dashboard (Python)                           │
-│  • Plotly (charts + scatter_mapbox)                     │
-│  • WordCloud  |  Pandas  |  Matplotlib                  │
-└─────────────────────────────────────────────────────────┘
-```
+O dashboard está organizado em quatro visões complementares, cada uma orientada a um perfil de utilizador distinto.
+
+### Visão A — Executiva (Diretores / CEO)
+
+**Objetivo:** Panorama macro da saúde da plataforma em Portugal.
+
+Componentes:
+- **5 KPI Cards:** NSS Global, Total de Reviews, Nota Média Global, Compras Verificadas (%), Quality Decay Rate com indicador colorido.
+- **Gráfico de Rosca (Donut):** Distribuição percentual de sentimentos (Positive / Neutral / Negative).
+- **Gráfico de Linha Temporal:** Evolução da nota média mensal com linha de limite crítico (3.0).
+
+**Pergunta respondida:** "A plataforma está a melhorar ou a deteriorar-se? Há sinais de alerta este mês?"
+
+---
+
+### Visão B — Tática (Gestores de Categoria / Merchandising)
+
+**Objetivo:** Gestão de desempenho por produto, categoria e marca.
+
+Componentes:
+- **Histograma Agrupado:** Distribuição de sentimentos por categoria de produto.
+- **Ranking de Produtos Críticos:** Top 10 produtos com nota média mais baixa, com escala de cor RdYlGn.
+- **Performance por Marca:** Nota média por marca com NSS como escala de cor.
+
+**Pergunta respondida:** "Qual categoria tem mais insatisfação? Qual produto específico está em alerta?"
+
+---
+
+### Visão C — Operacional (Analistas de Qualidade / Suporte)
+
+**Objetivo:** Resolução de problemas específicos e deteção de anomalias de lote.
+
+Componentes:
+- **Word Cloud:** Frequência visual das palavras-chave em reviews negativas (colormap Reds).
+- **Top 10 Keywords Negativas:** Gráfico de barras horizontal com frequência de ocorrência.
+- **Tabela de Anomaly Detection:** Produtos com maior queda de rating mês a mês, com alerta 🔴/🟡/🟢.
+
+**Pergunta respondida:** "Qual é a causa raiz da insatisfação? Há lotes defeituosos em circulação?"
+
+---
+
+### Visão D — Geoespacial (Diretores de Logística / Operações Regionais)
+
+**Objetivo:** Análise territorial da satisfação e deteção de falhas logísticas regionais em Portugal.
+
+Componentes:
+- **Mapa de Bolhas Interativo (scatter_mapbox):** Cada bolha representa uma cidade portuguesa; o tamanho indica o volume de reviews e a cor indica o NSS (verde = satisfeito, vermelho = insatisfeito). Powered by MongoDB Geospatial (índice `2dsphere`).
+- **NSS por Cidade:** Gráfico de barras horizontal ordenado por NSS, com linha de referência zero.
+- **Volume e Nota Média por Cidade:** Barras verticais com número de reviews e nota média por cidade.
+- **Tabela de Resumo Regional:** NSS, nota média, total de reviews e distribuição de sentimentos por cidade.
+
+**Pergunta respondida:** "Em que região de Portugal está a insatisfação concentrada? O problema é nacional ou logístico regional?"
+
+---
+
+## 3. Filtros Dinâmicos (Sidebar)
+
+O dashboard implementa três filtros de cross-filtragem aplicados globalmente a todas as abas:
+
+| Filtro | Campo MongoDB | Valores Possíveis |
+| :--- | :--- | :--- |
+| Categoria | `product.category` | Eletrónicos, Moda, Casa, Livros |
+| Membership | `customer.membership` | Gold, Silver, Bronze |
+| Localização | `customer.location.city` | Lisboa, Porto, Coimbra, Braga, Faro, Setúbal |
+
+---
+
+## 4. Stack Tecnológico
+
+| Componente | Tecnologia | Versão Mínima | Papel |
+| :--- | :--- | :--- | :--- |
+| Base de Dados NoSQL | MongoDB | 6.0+ | Armazenamento de documentos com schema dinâmico |
+| Índice Espacial | MongoDB `2dsphere` | 6.0+ | Queries geoespaciais sobre GeoJSON |
+| Formato Espacial | GeoJSON (RFC 7946) | — | Representação padronizada de localizações |
+| Interface BI | Streamlit | 1.32+ | Dashboard interativo web |
+| Visualizações | Plotly Express | 5.20+ | Gráficos interativos e mapa scatter_mapbox |
+| Word Cloud | WordCloud + Matplotlib | 1.9.3+ | Visualização de keywords negativas |
+| Processamento | Pandas | 2.2+ | Transformação e agregação de dados em memória |
+| Driver Python | pymongo | 4.6+ | Conexão ao MongoDB (modo produção) |
+
+---
+
+## 5. Cenário de Uso: Deteção de Lote Defeituoso
+
+O seguinte fluxo operacional ilustra o valor do DSS no contexto da GlobalShop Portugal:
+
+1. **Aba 1 (Executiva):** O Quality Decay Rate aparece a -33% → sinal de alerta nacional.
+2. **Aba 3 (Operacional):** A tabela de anomalias identifica o Smartphone X1 com queda de 33% em Abril. O Word Cloud mostra "sobreaquecimento", "defeito" e "bateria" como termos dominantes.
+3. **Aba 3 (KCI):** O KCI de "sobreaquecimento" = 95% → confirma falha de hardware, não de entrega.
+4. **Aba 4 (Geoespacial

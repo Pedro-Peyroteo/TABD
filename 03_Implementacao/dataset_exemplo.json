@@ -4,7 +4,7 @@
     "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C501", "name": "João Silva",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -16,7 +16,7 @@
     "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C502", "name": "Maria Santos",
-      "location": { "city": "Benguela", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4066, -12.5763] } },
+      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -28,7 +28,7 @@
     "product": { "product_id": "P201", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
     "customer": {
       "customer_id": "C503", "name": "Pedro Lima",
-      "location": { "city": "Huambo", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [15.7386, -12.7760] } },
+      "location": { "city": "Coimbra", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4291, 40.2033] } },
       "membership": "Bronze"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
@@ -40,7 +40,7 @@
     "product": { "product_id": "P301", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
     "customer": {
       "customer_id": "C504", "name": "Ana Costa",
-      "location": { "city": "Lubango", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4920, -14.9177] } },
+      "location": { "city": "Braga", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
@@ -52,7 +52,7 @@
     "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
     "customer": {
       "customer_id": "C505", "name": "Carlos Ruas",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -64,7 +64,7 @@
     "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C506", "name": "Luísa Figueira",
-      "location": { "city": "Benguela", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4066, -12.5763] } },
+      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
@@ -76,11 +76,11 @@
     "product": { "product_id": "P302", "name": "Robot de Cozinha", "category": "Casa", "brand": "HomeEasy" },
     "customer": {
       "customer_id": "C507", "name": "Tomás Neto",
-      "location": { "city": "Malanje", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [16.3416, -9.5404] } },
+      "location": { "city": "Faro", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-7.9304, 37.0194] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Muito potente e durável. Vale cada kwanza.", "keywords": ["potência", "durabilidade"], "language": "pt" },
+    "content": { "comment": "Muito potente e durável. Vale cada euro gasto.", "keywords": ["potência", "durabilidade"], "language": "pt" },
     "metadata": { "timestamp": "2026-02-08T15:00:00Z", "device": "Web" }
   },
   {
@@ -88,7 +88,7 @@
     "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C508", "name": "Beatriz Pinto",
-      "location": { "city": "Cabinda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [12.1938, -5.5500] } },
+      "location": { "city": "Setúbal", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.8951, 38.5244] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 2, "sentiment": "Negative", "verified_purchase": true },
@@ -100,7 +100,7 @@
     "product": { "product_id": "P201", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
     "customer": {
       "customer_id": "C509", "name": "Ricardo Alves",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
@@ -112,7 +112,7 @@
     "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
     "customer": {
       "customer_id": "C510", "name": "Sofia Mendes",
-      "location": { "city": "Benguela", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4066, -12.5763] } },
+      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
       "membership": "Bronze"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -124,7 +124,7 @@
     "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C511", "name": "Filipe Carmo",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
@@ -136,7 +136,7 @@
     "product": { "product_id": "P301", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
     "customer": {
       "customer_id": "C512", "name": "Catarina Sousa",
-      "location": { "city": "Benguela", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4066, -12.5763] } },
+      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
       "membership": "Bronze"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
@@ -148,7 +148,7 @@
     "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
     "customer": {
       "customer_id": "C513", "name": "Glória Tavares",
-      "location": { "city": "Huambo", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [15.7386, -12.7760] } },
+      "location": { "city": "Coimbra", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4291, 40.2033] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": false },
@@ -160,7 +160,7 @@
     "product": { "product_id": "P302", "name": "Robot de Cozinha", "category": "Casa", "brand": "HomeEasy" },
     "customer": {
       "customer_id": "C514", "name": "Henrique Dias",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -172,7 +172,7 @@
     "product": { "product_id": "P401", "name": "Livro Python Dev", "category": "Livros", "brand": "EduPress" },
     "customer": {
       "customer_id": "C515", "name": "Inês Rodrigues",
-      "location": { "city": "Cabinda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [12.1938, -5.5500] } },
+      "location": { "city": "Setúbal", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.8951, 38.5244] } },
       "membership": "Bronze"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -184,7 +184,7 @@
     "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C516", "name": "Nuno Ferreira",
-      "location": { "city": "Lubango", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4920, -14.9177] } },
+      "location": { "city": "Braga", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 2, "sentiment": "Negative", "verified_purchase": true },
@@ -196,7 +196,7 @@
     "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C517", "name": "Olívia Marques",
-      "location": { "city": "Malanje", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [16.3416, -9.5404] } },
+      "location": { "city": "Faro", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-7.9304, 37.0194] } },
       "membership": "Bronze"
     },
     "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
@@ -208,7 +208,7 @@
     "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C518", "name": "Paulo Bento",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
@@ -220,7 +220,7 @@
     "product": { "product_id": "P201", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
     "customer": {
       "customer_id": "C519", "name": "Quintino Lopes",
-      "location": { "city": "Benguela", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4066, -12.5763] } },
+      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
@@ -232,7 +232,7 @@
     "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
     "customer": {
       "customer_id": "C520", "name": "Rosa Cunha",
-      "location": { "city": "Huambo", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [15.7386, -12.7760] } },
+      "location": { "city": "Coimbra", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4291, 40.2033] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 2, "sentiment": "Negative", "verified_purchase": true },
@@ -244,7 +244,7 @@
     "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C521", "name": "Sérgio Matos",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
@@ -256,7 +256,7 @@
     "product": { "product_id": "P301", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
     "customer": {
       "customer_id": "C522", "name": "Teresa Vaz",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
@@ -268,7 +268,7 @@
     "product": { "product_id": "P302", "name": "Robot de Cozinha", "category": "Casa", "brand": "HomeEasy" },
     "customer": {
       "customer_id": "C523", "name": "Ulisses Barros",
-      "location": { "city": "Benguela", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4066, -12.5763] } },
+      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
       "membership": "Gold"
     },
     "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
@@ -280,7 +280,7 @@
     "product": { "product_id": "P401", "name": "Livro Python Dev", "category": "Livros", "brand": "EduPress" },
     "customer": {
       "customer_id": "C524", "name": "Vera Nascimento",
-      "location": { "city": "Luanda", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.2343, -8.8368] } },
+      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
       "membership": "Silver"
     },
     "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
@@ -292,7 +292,7 @@
     "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
     "customer": {
       "customer_id": "C525", "name": "Xavier Gomes",
-      "location": { "city": "Lubango", "country": "Angola", "coordinates": { "type": "Point", "coordinates": [13.4920, -14.9177] } },
+      "location": { "city": "Braga", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] } },
       "membership": "Bronze"
     },
     "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },

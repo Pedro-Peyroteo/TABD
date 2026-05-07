@@ -1,37 +1,50 @@
 # Arquitetura e Modelagem de Dados NoSQL + Espacial
 
-Nesta secção, detalhamos a engenharia de dados por trás do sistema GlobalShop. A modelagem em NoSQL difere fundamentalmente da modelagem relacional; enquanto no SQL modelamos para evitar a redundância, no NoSQL modelamos para **otimizar a consulta**. A dimensão espacial é incorporada diretamente no documento através do padrão **GeoJSON**, transformando o MongoDB também numa base de dados espacial.
+**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD)
+**Ano Letivo:** 2025/2026
+
+---
 
 ## 1. Análise de Entidades e Relacionamentos
-Identificamos três entidades principais no ecossistema:
-1. **Review:** A entidade central, contendo a nota, o comentário e o timestamp.
-2. **Product:** Informações sobre o item avaliado (nome, categoria, marca).
-3. **Customer:** Perfil do utilizador que avaliou (localização geoespacial, nível de membro).
 
-No modelo relacional, teríamos 3 tabelas e 2 JOINs para cada consulta de BI. No nosso modelo NoSQL, consolidamos estas entidades num único documento, incluindo as **coordenadas geográficas** do cliente.
+O ecossistema de dados da GlobalShop Portugal centra-se em três entidades principais:
+
+1. **Review** — entidade central, contendo a nota numérica, o comentário em linguagem natural e o timestamp da avaliação.
+2. **Produto** — informação sobre o artigo avaliado: nome, categoria, marca e especificações técnicas variáveis.
+3. **Cliente** — perfil do utilizador que avaliou, incluindo o nível de membership e, de forma crítica, a **localização geográfica** em formato GeoJSON.
+
+Num modelo relacional clássico, estas três entidades corresponderiam a três tabelas distintas, exigindo dois JOINs em cada query de BI. No modelo NoSQL adotado, as entidades são consolidadas num único documento, eliminando os JOINs e habilitando a análise geoespacial nativa.
+
+---
 
 ## 2. Estratégia de Modelagem: Embedding (Incorporação)
-Optámos pela estratégia de **Embedding**, onde as informações de `Produto` e `Cliente` são incorporadas diretamente dentro do documento de `Review`.
 
-### Justificativa Técnica da Estratégia:
-- **Atomicidade de Leitura:** O BI necessita de saber o nome do produto, a localização do cliente e a nota simultaneamente. Com Embedding, recuperamos tudo numa única operação de disco (Single Disk Seek).
-- **Imutabilidade Histórica:** Se um cliente mudar de morada hoje, a review que ele fez há um ano deve manter a localização de onde ele estava na altura. O embedding preserva o contexto histórico da transação.
-- **Consultas Espaciais Integradas:** Ao incluir as coordenadas GeoJSON diretamente no documento, é possível combinar filtros de sentimento com filtros geoespaciais numa única pipeline de agregação, sem necessidade de JOINs ou sistemas externos.
+Optou-se pela estratégia de **Embedding**, em que os dados de Produto e Cliente são incorporados diretamente dentro do documento de Review, formando um objeto auto-contido.
 
-## 3. Especificação Técnica do Documento (Schema)
+### Justificativa Técnica
 
-O documento segue a especificação JSON/BSON com suporte a **GeoJSON (RFC 7946)**:
+**Atomicidade de Leitura:** O dashboard de BI necessita simultaneamente do nome do produto, da localização do cliente e da nota. Com Embedding, todos estes dados são recuperados numa única operação de disco (*single disk seek*), sem custo de JOIN.
+
+**Imutabilidade Histórica:** Se um cliente mudar de cidade, as reviews anteriores devem preservar a localização do momento da compra. O Embedding garante o congelamento do contexto histórico por design.
+
+**Consultas Espaciais Integradas:** A presença das coordenadas GeoJSON diretamente no documento permite combinar, na mesma pipeline de agregação, filtros analíticos (sentimento, categoria) com filtros geoespaciais (raio de Lisboa, NSS por cidade). Esta combinação é inviável num modelo normalizado sem extensões como o PostGIS.
+
+---
+
+## 3. Especificação Técnica do Schema (JSON/BSON + GeoJSON)
+
+O documento segue o padrão JSON/BSON com suporte a **GeoJSON RFC 7946**:
 
 ```json
 {
   "_id": "ObjectId",
-  "review_id": "UUID",
+  "review_id": "String (UUID)",
   "product": {
     "product_id": "String",
     "name": "String",
     "category": "String",
     "brand": "String",
-    "specifications": { "dynamic_field": "Value" }
+    "specifications": { "<campo_dinâmico>": "<valor>" }
   },
   "customer": {
     "customer_id": "String",
@@ -44,30 +57,31 @@ O documento segue a especificação JSON/BSON com suporte a **GeoJSON (RFC 7946)
         "coordinates": ["Longitude (Number)", "Latitude (Number)"]
       }
     },
-    "membership": "String (Gold|Silver|Bronze)"
+    "membership": "String (Gold | Silver | Bronze)"
   },
   "metrics": {
-    "rating": "Number (1-5)",
-    "sentiment": "String (Positive|Neutral|Negative)",
+    "rating": "Number (1–5)",
+    "sentiment": "String (Positive | Neutral | Negative)",
     "verified_purchase": "Boolean"
   },
   "content": {
-    "comment": "String",
-    "keywords": ["Array of Strings"],
-    "language": "String (pt|en|fr)"
+    "comment": "String (texto livre)",
+    "keywords": ["Array de Strings"],
+    "language": "String (pt | en)"
   },
   "metadata": {
     "timestamp": "ISODate",
-    "device": "String (Mobile|Web|App)"
+    "device": "String (Mobile | Web | App)"
   }
 }
 ```
 
-### Exemplo de Documento Real:
+### Exemplo de Documento Real — Lisboa
+
 ```json
 {
   "_id": "ObjectId('...')",
-  "review_id": "R016",
+  "review_id": "R021",
   "product": {
     "product_id": "P101",
     "name": "Smartphone X1",
@@ -75,50 +89,68 @@ O documento segue a especificação JSON/BSON com suporte a **GeoJSON (RFC 7946)
     "brand": "TechCorp"
   },
   "customer": {
-    "customer_id": "C516",
-    "name": "Nuno Ferreira",
+    "customer_id": "C521",
+    "name": "Sérgio Matos",
     "location": {
-      "city": "Lubango",
-      "country": "Angola",
-      "coordinates": {
-        "type": "Point",
-        "coordinates": [13.4920, -14.9177]
-      }
+      "city": "Lisboa",
+      "country": "Portugal",
+      "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] }
     },
-    "membership": "Silver"
+    "membership": "Gold"
   },
-  "metrics": {
-    "rating": 2,
-    "sentiment": "Negative",
-    "verified_purchase": true
-  },
+  "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
   "content": {
-    "comment": "A bateria começa a sobreaquecer. Parece defeito de lote!",
-    "keywords": ["bateria", "sobreaquecimento", "defeito"],
+    "comment": "O telemóvel avariou completamente. Defeito grave, sobreaquecimento e bateria expandida.",
+    "keywords": ["defeito", "sobreaquecimento", "bateria", "avaria"],
     "language": "pt"
   },
-  "metadata": {
-    "timestamp": "2026-04-02T10:00:00Z",
-    "device": "Mobile"
-  }
+  "metadata": { "timestamp": "2026-05-01T08:00:00Z", "device": "Mobile" }
 }
 ```
 
-## 4. Estratégia de Indexação
+---
 
-Para garantir performance em escala de Big Data, são criados os seguintes índices:
+## 4. Coordenadas GeoJSON das Cidades Portuguesas
 
-| Índice | Tipo | Campo | Objetivo |
+O dataset utiliza coordenadas reais das seis cidades portuguesas cobertas pelo sistema:
+
+| Cidade | Longitude | Latitude | Região |
 | :--- | :--- | :--- | :--- |
-| `idx_category` | Simples | `product.category: 1` | Acelera agrupamentos por categoria |
-| `idx_sentiment_keywords` | Composto | `metrics.sentiment: 1, content.keywords: 1` | Otimiza análise de causa raiz |
-| `idx_timestamp` | Simples | `metadata.timestamp: -1` | Suporta análises temporais (decay rate) |
-| `idx_geo` | **2dsphere** | `customer.location.coordinates` | Habilita consultas espaciais (raio, polígono) |
+| Lisboa | -9.1393 | 38.7223 | Área Metropolitana de Lisboa |
+| Porto | -8.6291 | 41.1579 | Área Metropolitana do Porto |
+| Coimbra | -8.4291 | 40.2033 | Centro |
+| Braga | -8.4261 | 41.5454 | Norte (Minho) |
+| Faro | -7.9304 | 37.0194 | Algarve |
+| Setúbal | -8.8951 | 38.5244 | Península de Setúbal |
 
-O índice `2dsphere` é o que transforma o MongoDB numa **base de dados espacial**, permitindo consultas como "todas as reviews num raio de 100 km de Luanda" ou "comparação de satisfação entre províncias".
+> As coordenadas seguem o padrão GeoJSON: `[longitude, latitude]` (atenção à ordem — inversa ao par lat/lon convencional).
 
-## 5. Análise de Complexidade
-- **Complexidade de Escrita:** $\mathcal{O}(1)$. A inserção de uma review é uma operação simples de escrita de documento.
-- **Complexidade de Leitura para BI:** $\mathcal{O}(1)$ por documento. Não existem JOINs, o que torna a agregação de milhões de registos significativamente mais rápida do que num sistema normalizado.
-- **Complexidade de Consulta Espacial:** $\mathcal{O}(\log n)$ com índice `2dsphere`. A estrutura de árvore R-tree subjacente permite localizar documentos geográficos em tempo logarítmico.
-- **Espaço em Disco:** Há uma redundância de dados (o nome do produto repete-se em cada review), mas em sistemas de Big Data, o custo do armazenamento é inferior ao custo da latência de processamento (Trade-off Espaço vs Tempo).
+---
+
+## 5. Estratégia de Indexação
+
+A performance das queries analíticas e espaciais é garantida por quatro índices complementares:
+
+### 5.1 Índice Simples — Categoria
+
+```javascript
+db.reviews.createIndex({ "product.category": 1 });
+```
+
+Otimiza os agrupamentos por categoria de produto (Tab 2 do dashboard). Complexidade: $\mathcal{O}(\log n)$ vs. $\mathcal{O}(n)$ sem índice.
+
+### 5.2 Índice Composto — Causa Raiz
+
+```javascript
+db.reviews.createIndex({ "metrics.sentiment": 1, "content.keywords": 1 });
+```
+
+Permite o skip direto de documentos com sentimento Positive/Neutral nas queries de análise de causa raiz, reduzindo o conjunto de documentos a processar.
+
+### 5.3 Índice Temporal — Quality Decay Rate
+
+```javascript
+db.reviews.createIndex({ "metadata.timestamp": -1 });
+```
+
+Suporta a separação eficiente entre o período recente (últimos 30 dias) e o histórico anterior, necessária para o cálculo do Q

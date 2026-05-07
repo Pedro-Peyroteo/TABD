@@ -1,26 +1,28 @@
-# Guia de Implementação Técnica: GlobalShop BI
+# Guia de Instalação e Execução: GlobalShop BI
 
-Este guia contém todos os passos necessários para executar o ecossistema de dados da GlobalShop, composto por uma base de dados **NoSQL** (MongoDB) com suporte a **dados espaciais** (GeoJSON + índice `2dsphere`) e um dashboard interativo Streamlit.
+**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD) | **Ano Letivo:** 2025/2026
+
+Este guia detalha todos os passos necessários para executar o ecossistema de dados da GlobalShop Portugal, composto por uma base de dados **NoSQL** (MongoDB) com suporte a **dados espaciais** (GeoJSON + índice `2dsphere`) e um dashboard interativo Streamlit.
 
 ---
 
 ## Pré-requisitos
 
-- **Python 3.10+** instalado.
-- **MongoDB Community Server (v6.0+)** instalado e em execução (opcional — o dashboard pode correr em modo JSON).
-- **MongoDB Compass** (interface visual) instalado (opcional).
+- **Python 3.10+** instalado e no PATH do sistema.
+- **MongoDB Community Server 6.0+** instalado e em execução na porta padrão `27017` (opcional — o dashboard funciona em modo JSON sem MongoDB).
+- **MongoDB Compass** (interface visual opcional, recomendada para executar as queries de `Queries_BI.md`).
 
 ---
 
 ## 1. Instalação das Dependências Python
 
-Na raiz do repositório (`TABD/`), execute:
+Na raiz do repositório (`TABD/`), executar:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-O ficheiro `requirements.txt` instala: `streamlit`, `pandas`, `plotly`, `wordcloud`, `matplotlib`, `pymongo`.
+O ficheiro `requirements.txt` instala: `streamlit`, `pandas`, `plotly`, `wordcloud`, `matplotlib` e `pymongo`.
 
 ---
 
@@ -32,7 +34,7 @@ Na raiz do repositório:
 streamlit run app_bi.py
 ```
 
-O browser abrirá automaticamente em `http://localhost:8501` com o dashboard interativo de 4 abas.
+O browser abrirá automaticamente em `http://localhost:8501` com o dashboard interativo de 4 abas. O dashboard carrega os dados diretamente de `03_Implementacao/dataset_exemplo.json` — **não requer MongoDB** para demonstração.
 
 ---
 
@@ -40,62 +42,68 @@ O browser abrirá automaticamente em `http://localhost:8501` com o dashboard int
 
 ### 3.1 Criar a Base de Dados e Coleção
 
-1. Abra o **MongoDB Compass** e conecte-se a `mongodb://localhost:27017`.
-2. Clique em **"Create Database"**:
+1. Abrir o **MongoDB Compass** e conectar a `mongodb://localhost:27017`.
+2. Clicar em **"Create Database"**:
    - Database Name: `GlobalShop`
    - Collection Name: `reviews`
 
 ### 3.2 Importar o Dataset
 
-1. Com a coleção `reviews` aberta, clique em **"Add Data"** → **"Import JSON or CSV File"**.
-2. Selecione o ficheiro: `03_Implementacao/dataset_exemplo.json`
-3. Clique em **Import**.
+1. Com a coleção `reviews` aberta, clicar em **"Add Data"** → **"Import JSON or CSV File"**.
+2. Selecionar o ficheiro: `03_Implementacao/dataset_exemplo.json`
+3. Clicar em **Import**.
+
+O dataset contém 25 documentos com coordenadas GeoJSON reais de seis cidades portuguesas (Lisboa, Porto, Coimbra, Braga, Faro e Setúbal).
 
 ### 3.3 Criar Índices de Performance e Espacial
 
-No **Mongosh** (terminal integrado do Compass), execute:
+No **Mongosh** (terminal integrado do Compass), executar:
 
 ```javascript
-// Índice para agrupamentos por categoria
+// 1. Índice para agrupamentos por categoria
 db.reviews.createIndex({ "product.category": 1 });
 
-// Índice composto para análise de causa raiz
+// 2. Índice composto para análise de causa raiz
 db.reviews.createIndex({ "metrics.sentiment": 1, "content.keywords": 1 });
 
-// Índice temporal para cálculo de Quality Decay Rate
+// 3. Índice temporal para cálculo de Quality Decay Rate
 db.reviews.createIndex({ "metadata.timestamp": -1 });
 
-// Índice 2dsphere — transforma MongoDB em Base de Dados Espacial
-// Habilita $geoNear, $geoWithin, $near sobre GeoJSON Points
+// 4. Índice 2dsphere — transforma o MongoDB em Base de Dados Espacial
+//    Habilita $geoNear, $geoWithin e $near sobre os campos GeoJSON Point
 db.reviews.createIndex({ "customer.location.coordinates": "2dsphere" });
 ```
 
-> O índice `2dsphere` é o elemento que habilita as **queries geoespaciais** descritas em `03_Implementacao/Queries_BI.md`, como "todas as reviews num raio de 200 km de Luanda".
+> O índice `2dsphere` é o elemento que habilita as queries geoespaciais descritas em `03_Implementacao/Queries_BI.md`, como "todas as reviews num raio de 100 km de Lisboa".
 
-### 3.4 Verificar o Schema dos Documentos
-
-Após a importação, confirme que os documentos têm a estrutura correta:
+### 3.4 Verificar a Importação
 
 ```javascript
-db.reviews.findOne()
-// Deve mostrar campos: review_id, product{}, customer{location{coordinates{type, coordinates[]}}}, metrics{}, content{keywords[]}, metadata{}
+// Deve retornar 25
+db.reviews.countDocuments()
+
+// Verificar a estrutura GeoJSON de um documento
+db.reviews.findOne({}, { "customer.location": 1, "product.name": 1 })
 ```
 
 ---
 
-## 4. Execução de Analytics no MongoDB Compass
+## 4. Executar as Queries de Analytics
 
-Vá à aba **"Aggregations"** do Compass e consulte as pipelines em `03_Implementacao/Queries_BI.md` para executar:
+No **MongoDB Compass**, aceder à aba **"Aggregations"** e executar as 9 pipelines documentadas em `03_Implementacao/Queries_BI.md`:
 
-- **KPI 1:** Ranking de satisfação (produtos críticos com nota ≤ 3.0)
-- **KPI 2:** Análise de polaridade por categoria
-- **KPI 3:** Root Cause Analysis (keywords negativas)
-- **KPI 4:** Quality Decay Rate mensal por produto
-- **KPI 5:** Anomaly Detection (quedas abruptas de rating)
-- **KPI Geo 1:** Reviews num raio de 200 km de Luanda
-- **KPI Geo 2:** Net Sentiment Score (NSS) por cidade
-- **KPI Geo 3:** Concentração regional de keywords de problema
-- **KPI Geo 4:** Keyword Correlation Index (KCI)
+**Pipelines Analíticas:**
+- KPI 1 — Ranking de satisfação (produtos com nota ≤ 3.0)
+- KPI 2 — Análise de polaridade por categoria
+- KPI 3 — Root Cause Analysis (keywords negativas e KCI)
+- KPI 4 — Quality Decay Rate mensal por produto
+- KPI 5 — Anomaly Detection (quedas ≥ 30% de rating)
+
+**Pipelines Geoespaciais:**
+- KPI Geo 1 — Reviews num raio de 100 km de Lisboa
+- KPI Geo 2 — Net Sentiment Score (NSS) por cidade portuguesa
+- KPI Geo 3 — Concentração regional de keywords de problema
+- KPI Geo 4 — Keyword Correlation Index (KCI) geoespacial
 
 ---
 
@@ -103,20 +111,13 @@ Vá à aba **"Aggregations"** do Compass e consulte as pipelines em `03_Implemen
 
 ```
 TABD/
-├── app_bi.py                          # Dashboard Streamlit (4 abas)
-├── requirements.txt                   # Dependências Python com versões
-├── .gitignore                         # Ficheiros ignorados pelo Git
-├── README.md                          # Visão geral do projeto
-├── INSTALL.md                         # Este guia
+├── app_bi.py                        # Dashboard Streamlit (4 abas interativas)
+├── requirements.txt                 # Dependências Python com versões mínimas
+├── INSTALL.md                       # Este guia
+├── README.md                        # Visão geral do projeto
 ├── 01_Definicao/
-│   └── Definicao_Projeto.md           # Problema de negócio + justificativa NoSQL + Espacial
+│   └── Definicao_Projeto.md         # Problema de negócio + justificativa NoSQL + Espacial
 ├── 02_Modelagem/
-│   └── Modelagem_Dados.md             # Schema GeoJSON + estratégia de indexação
+│   └── Modelagem_Dados.md           # Schema GeoJSON + coordenadas de Portugal + indexação
 ├── 03_Implementacao/
-│   ├── dataset_exemplo.json           # 25 registos com GeoJSON (Angola)
-│   └── Queries_BI.md                  # Pipelines MongoDB (analíticas + espaciais)
-├── 04_BI_Analysis/
-│   └── Planeamento_BI.md              # KPIs, especificações do dashboard, arquitetura
-└── 05_Entrega/
-    └── Relatorio_Final.md             # Relatório técnico consolidado
-```
+│   ├── dataset_exemplo.json         # 25 documentos com GeoJSON (Portu
