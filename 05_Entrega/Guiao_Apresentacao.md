@@ -148,4 +148,17 @@ db.reviews.find({
 
 ## Possíveis Perguntas e Respostas
 
-**P: Por que não usaram PostGIS em vez do MongoDB Geos
+**P: Por que não usaram PostGIS em vez do MongoDB Geospatial?**
+R: "O MongoDB Geospatial elimina a necessidade de um segundo sistema. Tanto as queries espaciais como as analíticas coexistem na mesma pipeline de agregação, usando GeoJSON — um padrão aberto (RFC 7946). Para o nosso caso de uso, é a solução mais simples, performante e operacionalmente menos custosa."
+
+**P: O dashboard funciona com dados reais do MongoDB ou apenas com o ficheiro JSON?**
+R: "O dashboard lê diretamente o ficheiro JSON de demonstração, que replica a estrutura exata dos documentos MongoDB. Para produção, basta substituir a função `load_data()` por uma query pymongo — a estrutura do documento é idêntica. O `INSTALL.md` documenta os passos de importação e criação dos índices."
+
+**P: Como escala para milhões de reviews?**
+R: "Os índices garantem complexidade O(log n) nas queries mais pesadas. Para escala horizontal, o MongoDB suporta sharding nativo com shard key em `product.category` ou `metadata.timestamp`. Para aggregations que excedam a RAM disponível, a opção `allowDiskUse: true` resolve o problema sem alterar as queries."
+
+**P: O que significa um Quality Decay Rate negativo?**
+R: "Um QDR de -30% significa que a nota média dos últimos 30 dias caiu 30% face ao histórico anterior. É o trigger para emissão de alerta vermelho e para o bloqueio preventivo do lote afetado."
+
+**P: Por que escolheram Streamlit e não Power BI ou Tableau?**
+R: "Streamlit permite integração nativa com Python e pymongo, tornando o pipeline de dados completamente programático e reproduzível. Para um ambiente empresarial, a Tab 4 poderia ser substituída por Power BI Embedded — a camada de dados MongoDB permanece inalterada."

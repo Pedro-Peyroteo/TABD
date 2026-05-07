@@ -390,4 +390,4 @@ with tab4:
     )
 
 st.markdown("---")
-st.caption("GlobalShop DSS v3.0  |  NoSQL (MongoDB) + Spatial (2dsphere GeoJSON) + Streamlit  |  
+st.caption("GlobalShop DSS v3.0  |  NoSQL (MongoDB) + Spatial (2dsphere GeoJSON) + Streamlit  |  Mercado Portugal")

@@ -202,4 +202,32 @@ O dashboard geoespacial permite identificar imediatamente:
 
 ### 7.1 Objetivos Alcançados
 
-- ✅ Base de dados NoSQL com schema dinâmico para reviews hetero
+- ✅ Base de dados NoSQL com schema dinâmico para reviews heterogéneas por categoria.
+- ✅ Base de dados espacial nativa via índice `2dsphere` com coordenadas GeoJSON de Portugal.
+- ✅ Pipeline completa: ingestão → aggregation → visualização.
+- ✅ Dashboard com 4 visões orientadas a diferentes perfis de gestão.
+- ✅ 5 KPIs implementados: NSS, Quality Decay Rate, Anomaly Detection, KCI e GSI.
+- ✅ 9 pipelines MongoDB documentadas (5 analíticas + 4 geoespaciais).
+
+### 7.2 Valor Demonstrado
+
+O sistema transforma a GlobalShop de uma empresa reativa — que deteta problemas após viralização nas redes sociais — para uma empresa proativa, capaz de identificar anomalias em minutos com localização geográfica precisa da causa. A integração da dimensão espacial acrescenta uma camada de inteligência que distingue problemas de produto (afetam todas as cidades de Portugal) de problemas logísticos (geograficamente concentrados numa região).
+
+### 7.3 Trabalhos Futuros
+
+- Integração com API REST para ingestão de reviews em tempo real (Atlas Data API ou Kafka).
+- Substituição da categorização manual de sentimentos por modelos de NLP (spaCy com modelos em português).
+- Implementação de alertas automáticos por email/webhook quando QDR < -30%.
+- Expansão da cobertura geográfica a ilhas (Açores, Madeira) com geometrias `MultiPoint`.
+- Integração com Power BI Service para camada Gold de um pipeline ELT empresarial.
+
+---
+
+## 8. Referências
+
+- MongoDB Documentation — Geospatial Queries: https://www.mongodb.com/docs/manual/geospatial-queries/
+- GeoJSON Specification (RFC 7946): https://tools.ietf.org/html/rfc7946
+- MongoDB Aggregation Framework: https://www.mongodb.com/docs/manual/aggregation/
+- Streamlit Documentation: https://docs.streamlit.io/
+- Plotly Scatter Mapbox: https://plotly.com/python/scattermapbox/
+- MongoDB Index Types — 2dsphere: https://www.mongodb.com/docs/manual/core/2dsphere/

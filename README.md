@@ -109,4 +109,8 @@ db.reviews.find({
 
 ## Valor Estratégico
 
-O sistema permite à GlobalShop 
+O sistema permite à GlobalShop Portugal:
+- Detetar **problemas de qualidade em minutos**, não em dias.
+- Identificar se um problema é **nacional ou logístico regional** (via mapa de sentimento por cidade).
+- Priorizar **ações corretivas baseadas em evidências geográficas** — ex: auditar transportadora em Faro se o NSS do Algarve for < -30%.
+- Monitorizar **decaimento de qualidade por lote** antes que se torne viral nas redes sociais.

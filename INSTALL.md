@@ -120,4 +120,23 @@ TABD/
 ├── 02_Modelagem/
 │   └── Modelagem_Dados.md           # Schema GeoJSON + coordenadas de Portugal + indexação
 ├── 03_Implementacao/
-│   ├── dataset_exemplo.json         # 25 documentos com GeoJSON (Portu
+│   ├── dataset_exemplo.json         # 25 documentos com GeoJSON (Portugal Continental)
+│   └── Queries_BI.md                # 9 pipelines MongoDB (analíticas + geoespaciais)
+├── 04_BI_Analysis/
+│   └── Planeamento_BI.md            # KPIs, especificações do dashboard, arquitetura
+└── 05_Entrega/
+    ├── Relatorio_Final.md           # Relatório técnico final consolidado
+    └── Guiao_Apresentacao.md        # Guião detalhado para a apresentação oral
+```
+
+---
+
+## 6. Resolução de Problemas Comuns
+
+| Problema | Causa Provável | Solução |
+| :--- | :--- | :--- |
+| `ModuleNotFoundError: wordcloud` | Dependência não instalada | `pip install wordcloud` |
+| Dashboard não abre no browser | Streamlit a usar porta diferente | Aceder manualmente a `http://localhost:8501` |
+| Erro ao importar JSON no Compass | Ficheiro com encoding incorreto | Verificar que o ficheiro está em UTF-8 |
+| Query `$nearSphere` falha | Índice `2dsphere` não criado | Executar o `createIndex` da secção 3.3 |
+| `UserWarning: timezone` no terminal | Timestamps com timezone UTC | Aviso não-crítico — não afeta o funcionamento |

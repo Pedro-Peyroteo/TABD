@@ -302,4 +302,65 @@ db.reviews.aggregate([
 
 ---
 
-### 3.4 Keyword Correlation Index (KCI) — Correlação Keyword / Rat
+### 3.4 Keyword Correlation Index (KCI) — Correlação Keyword / Rating
+
+Mapeia quais palavras-chave têm maior correlação com notas baixas, calculando o KCI para priorização de causa raiz.
+
+```javascript
+db.reviews.aggregate([
+  { $unwind: "$content.keywords" },
+  {
+    $group: {
+      _id: "$content.keywords",
+      notaMedia: { $avg: "$metrics.rating" },
+      frequencia: { $sum: 1 },
+      ocorrenciasNegativas: {
+        $sum: { $cond: [{ $eq: ["$metrics.sentiment", "Negative"] }, 1, 0] }
+      }
+    }
+  },
+  {
+    $project: {
+      keyword: "$_id",
+      notaMedia: { $round: ["$notaMedia", 2] },
+      frequencia: 1,
+      kci: {
+        $multiply: [{ $divide: ["$ocorrenciasNegativas", "$frequencia"] }, 100]
+      },
+      _id: 0
+    }
+  },
+  { $match: { frequencia: { $gte: 2 } } },
+  { $sort: { kci: -1 } },
+  { $limit: 15 }
+])
+```
+
+**Fórmula do KCI:**
+
+$$\text{KCI}(k) = \frac{\text{ocorrências de } k \text{ em reviews negativas}}{\text{total de ocorrências de } k} \times 100\%$$
+
+Um KCI de 90% para a keyword "sobreaquecimento" significa que 90% das vezes que este termo aparece, a review é Negative — confirmando uma falha de hardware específica.
+
+---
+
+## 4. Análise de Performance e Indexação
+
+| Query | Índice Utilizado | Complexidade Sem Índice | Complexidade Com Índice | Ganho |
+| :--- | :--- | :--- | :--- | :--- |
+| Ranking de produtos | `product.category: 1` | $\mathcal{O}(n)$ — full scan | $\mathcal{O}(\log n)$ | Evita varredura completa da coleção |
+| Root Cause Analysis | `sentiment + keywords` composto | $\mathcal{O}(n)$ | $\mathcal{O}(\log n + k)$ | Skip direto de reviews Positive/Neutral |
+| Quality Decay Rate | `metadata.timestamp: -1` | $\mathcal{O}(n \log n)$ | $\mathcal{O}(\log n)$ | Ordenação temporal pré-computada |
+| Queries espaciais | `2dsphere` (R-tree esférico) | Impossível nativamente | $\mathcal{O}(\log n)$ | Filtro geográfico antes de processar documentos |
+
+---
+
+## 5. Considerações de Escala
+
+Para datasets superiores a 100 MB de RAM disponível, ativar `allowDiskUse`:
+
+```javascript
+db.reviews.aggregate([...], { allowDiskUse: true })
+```
+
+Para escala horizontal (milhões de reviews), o MongoDB suporta **sharding** nativo com shard key em `product.category` ou `metadata.timestamp`, mantendo a compatibilidade com todos os operadores geoespaciais documentados nesta secção.

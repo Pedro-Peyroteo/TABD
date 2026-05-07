@@ -71,4 +71,25 @@ Dashboard interativo com quatro visões complementares, incluindo um **mapa geoe
 
 | Critério | PostGIS (extensão PostgreSQL) | MongoDB Geospatial | Impacto no Projeto |
 | :--- | :--- | :--- | :--- |
-| **Integração** | Sistema separado do BD principal (extensão) | Nativo no mesmo documento e 
+| **Integração** | Sistema separado do BD principal (extensão) | Nativo no mesmo documento e coleção | Uma única infraestrutura — sem gestão de sistemas adicionais |
+| **Formato de Dados** | Tipos espaciais proprietários (geometry, geography) | GeoJSON (padrão aberto RFC 7946) | Interoperabilidade direta com APIs REST e frontend |
+| **Índice Espacial** | GIST / BRIN (plano cartesiano ou esférico) | `2dsphere` (geometria esférica terrestre real) | Distâncias calculadas em haversine — precisas à superfície da Terra |
+| **Complexidade Operacional** | Alta — instalação, configuração e manutenção de extensão | Baixa — `createIndex` com tipo `"2dsphere"` | Redução significativa de infraestrutura e overhead operacional |
+| **Pipelines Combinadas** | Requer joins entre tabelas e funções PostGIS separadas | Queries espaciais e analíticas na mesma aggregation pipeline | Filtragem por raio geográfico e cálculo de NSS num único comando |
+
+A escolha do **MongoDB** elimina a necessidade de um sistema separado para análise espacial, reduzindo a superfície de infraestrutura e permitindo que as queries analíticas e geoespaciais coexistam na mesma pipeline de agregação — uma vantagem decisiva para o contexto operacional da GlobalShop.
+
+---
+
+## 5. Valor Estratégico Esperado
+
+| Problema Identificado | Solução Implementada | Resultado Esperado |
+| :--- | :--- | :--- |
+| Latência de deteção de defeitos | Quality Decay Rate + Anomaly Detection | Redução de dias para minutos na deteção de lotes defeituosos |
+| Cegueira geográfica da insatisfação | Geographic Sentiment Index + Mapa Interativo | Identificação imediata de regiões portuguesas com NSS negativo |
+| Análise de causa raiz manual | Keyword Correlation Index (KCI) | Priorização automática de falhas por frequência e correlação |
+| Dados heterogéneos não estruturados | Embedding NoSQL com schema dinâmico | Persistência eficiente de reviews com atributos variáveis por categoria |
+
+---
+
+**Conclusão:** O projeto não visa apenas a implementação de uma base de dados, mas a construção de um **Sistema de Suporte à Decisão (DSS)** que combina análise de sentimentos em NoSQL com inteligência geoespacial, transformando avaliações de clientes em decisões estratégicas acionáveis para a GlobalShop Portugal.

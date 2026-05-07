@@ -153,4 +153,33 @@ Permite o skip direto de documentos com sentimento Positive/Neutral nas queries 
 db.reviews.createIndex({ "metadata.timestamp": -1 });
 ```
 
-Suporta a separação eficiente entre o período recente (últimos 30 dias) e o histórico anterior, necessária para o cálculo do Q
+Suporta a separação eficiente entre o período recente (últimos 30 dias) e o histórico anterior, necessária para o cálculo do Quality Decay Rate.
+
+### 5.4 Índice Espacial — 2dsphere ⭐
+
+```javascript
+db.reviews.createIndex({ "customer.location.coordinates": "2dsphere" });
+```
+
+O índice `2dsphere` é o elemento central da componente espacial do sistema. Transforma o MongoDB numa base de dados espacial nativa, habilitando:
+- Queries de proximidade (`$near`, `$nearSphere`) — "reviews num raio de X km de Lisboa"
+- Queries de contenção (`$geoWithin`) — "reviews dentro de um polígono geográfico"
+- Cálculo de distâncias reais usando geometria esférica (fórmula de Haversine)
+
+| Índice | Tipo | Campo(s) | Complexidade | Operadores Habilitados |
+| :--- | :--- | :--- | :--- | :--- |
+| Categoria | Simples | `product.category` | $\mathcal{O}(\log n)$ | `$match`, `$group` |
+| Causa Raiz | Composto | `sentiment` + `keywords` | $\mathcal{O}(\log n + k)$ | `$match` seletivo |
+| Temporal | Simples | `metadata.timestamp` | $\mathcal{O}(\log n)$ | Range queries temporais |
+| **Espacial** | **2dsphere** | `location.coordinates` | $\mathcal{O}(\log n)$ | `$near`, `$geoNear`, `$geoWithin` |
+
+---
+
+## 6. Comparativo de Estratégias de Modelagem
+
+| Estratégia | Quando Usar | Desvantagem |
+| :--- | :--- | :--- |
+| **Embedding** *(adotada)* | Dados acedidos em conjunto; relação 1-para-poucos | Duplicação controlada de dados |
+| **Referencing** | Dados partilhados por muitas entidades; documentos muito grandes | Requer `$lookup` (equivalente ao JOIN) |
+
+Para o caso da GlobalShop, o Embedding é a escolha correta: cada review é uma entidade autónoma, o produto e o cliente são contextos históricos imutáveis, e a leitura conjunta é o padrão dominante de acesso.

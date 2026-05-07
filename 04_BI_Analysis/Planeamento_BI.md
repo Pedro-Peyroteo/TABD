@@ -152,4 +152,5 @@ O seguinte fluxo operacional ilustra o valor do DSS no contexto da GlobalShop Po
 1. **Aba 1 (Executiva):** O Quality Decay Rate aparece a -33% → sinal de alerta nacional.
 2. **Aba 3 (Operacional):** A tabela de anomalias identifica o Smartphone X1 com queda de 33% em Abril. O Word Cloud mostra "sobreaquecimento", "defeito" e "bateria" como termos dominantes.
 3. **Aba 3 (KCI):** O KCI de "sobreaquecimento" = 95% → confirma falha de hardware, não de entrega.
-4. **Aba 4 (Geoespacial
+4. **Aba 4 (Geoespacial):** O mapa mostra NSS negativo em Braga e Faro → o lote defeituoso está distribuído por rotas de distribuição específicas.
+5. **Decisão:** O gestor de qualidade bloqueia o lote e notifica o fornecedor TechCorp — tudo em menos de 5 minutos após abertura do dashboard.
