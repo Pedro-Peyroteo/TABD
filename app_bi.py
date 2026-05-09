@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import pandas as pd
 import json
 import plotly.express as px
@@ -312,16 +312,18 @@ with tab4:
         )
         .reset_index()
     )
-    city_stats["nss"] = (
-        (city_stats["positivos"] - city_stats["negativos"]) / city_stats["total"] * 100
-    ).round(1)
-    city_stats["nota_media"] = city_stats["nota_media"].round(2)
-    city_stats["label"] = city_stats.apply(
-        lambda r: f"{r['customer_location']}<br>Reviews: {r['total']}<br>NSS: {r['nss']:.0f}%<br>Nota: {r['nota_media']:.2f}⭐",
-        axis=1,
-    )
+    if city_stats.empty:
+        st.warning("Sem dados para exibir no mapa com os filtros selecionados.")
+    else:
+        city_stats["nss"] = (
+            (city_stats["positivos"] - city_stats["negativos"]) / city_stats["total"] * 100
+        ).round(1)
+        city_stats["nota_media"] = city_stats["nota_media"].round(2)
+        city_stats["label"] = city_stats.apply(
+            lambda r: f"{r['customer_location']}<br>Reviews: {r['total']}<br>NSS: {r['nss']:.0f}%<br>Nota: {r['nota_media']:.2f}⭐",
+            axis=1,
+        )
 
-    if not city_stats.empty:
         fig_map = px.scatter_mapbox(
             city_stats,
             lat="lat",
@@ -340,54 +342,52 @@ with tab4:
         )
         fig_map.update_layout(margin=dict(t=10, b=10, l=0, r=0), height=480)
         st.plotly_chart(fig_map, use_container_width=True)
-    else:
-        st.warning("Sem dados para exibir no mapa com os filtros selecionados.")
 
-    st.markdown("---")
-    col_geo1, col_geo2 = st.columns(2)
+        st.markdown("---")
+        col_geo1, col_geo2 = st.columns(2)
 
-    with col_geo1:
-        st.subheader("📍 NSS por Cidade")
-        city_sorted = city_stats.sort_values("nss", ascending=True)
-        fig_nss_city = px.bar(
-            city_sorted, x="nss", y="customer_location", orientation="h",
-            color="nss", color_continuous_scale="RdYlGn", range_color=[-100, 100],
-            labels={"nss": "NSS (%)", "customer_location": "Cidade"},
+        with col_geo1:
+            st.subheader("📍 NSS por Cidade")
+            city_sorted = city_stats.sort_values("nss", ascending=True)
+            fig_nss_city = px.bar(
+                city_sorted, x="nss", y="customer_location", orientation="h",
+                color="nss", color_continuous_scale="RdYlGn", range_color=[-100, 100],
+                labels={"nss": "NSS (%)", "customer_location": "Cidade"},
+            )
+            fig_nss_city.add_vline(x=0, line_dash="dash", line_color="#95a5a6")
+            st.plotly_chart(fig_nss_city, use_container_width=True)
+
+        with col_geo2:
+            st.subheader("📊 Volume e Nota Média por Cidade")
+            fig_vol = px.bar(
+                city_stats.sort_values("nota_media", ascending=False),
+                x="customer_location", y="nota_media",
+                color="nota_media", color_continuous_scale="RdYlGn", range_color=[1, 5],
+                text=city_stats.sort_values("nota_media", ascending=False)["total"].apply(
+                    lambda x: f"{x} rev."
+                ),
+                labels={"customer_location": "Cidade", "nota_media": "Nota Média"},
+            )
+            fig_vol.update_traces(textposition="outside")
+            fig_vol.update_layout(yaxis_range=[0, 5.5])
+            st.plotly_chart(fig_vol, use_container_width=True)
+
+        st.markdown("---")
+        st.subheader("📋 Resumo Regional")
+        display_cols = {
+            "customer_location": "Cidade",
+            "total": "Total Reviews",
+            "nota_media": "Nota Média",
+            "nss": "NSS (%)",
+            "positivos": "Positivos",
+            "negativos": "Negativos",
+        }
+        st.dataframe(
+            city_stats[list(display_cols.keys())].rename(columns=display_cols)
+            .sort_values("NSS (%)", ascending=False),
+            use_container_width=True,
+            hide_index=True,
         )
-        fig_nss_city.add_vline(x=0, line_dash="dash", line_color="#95a5a6")
-        st.plotly_chart(fig_nss_city, use_container_width=True)
-
-    with col_geo2:
-        st.subheader("📊 Volume e Nota Média por Cidade")
-        fig_vol = px.bar(
-            city_stats.sort_values("nota_media", ascending=False),
-            x="customer_location", y="nota_media",
-            color="nota_media", color_continuous_scale="RdYlGn", range_color=[1, 5],
-            text=city_stats.sort_values("nota_media", ascending=False)["total"].apply(
-                lambda x: f"{x} rev."
-            ),
-            labels={"customer_location": "Cidade", "nota_media": "Nota Média"},
-        )
-        fig_vol.update_traces(textposition="outside")
-        fig_vol.update_layout(yaxis_range=[0, 5.5])
-        st.plotly_chart(fig_vol, use_container_width=True)
-
-    st.markdown("---")
-    st.subheader("📋 Resumo Regional")
-    display_cols = {
-        "customer_location": "Cidade",
-        "total": "Total Reviews",
-        "nota_media": "Nota Média",
-        "nss": "NSS (%)",
-        "positivos": "Positivos",
-        "negativos": "Negativos",
-    }
-    st.dataframe(
-        city_stats[list(display_cols.keys())].rename(columns=display_cols)
-        .sort_values("NSS (%)", ascending=False),
-        use_container_width=True,
-        hide_index=True,
-    )
 
 st.markdown("---")
 st.caption("GlobalShop DSS v3.0  |  NoSQL (MongoDB) + Spatial (2dsphere GeoJSON) + Streamlit  |  Mercado Portugal")
