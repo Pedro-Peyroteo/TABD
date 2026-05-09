@@ -1,35 +1,16 @@
-import json
 import os
-from datetime import datetime, timezone
-from pathlib import Path
 
 from pymongo import MongoClient, UpdateOne
 
-
-BASE_DIR = Path(__file__).resolve().parents[1]
-DATASET_PATH = BASE_DIR / "03_Implementacao" / "dataset_exemplo.json"
-
-
-def parse_timestamp(value):
-    if isinstance(value, datetime):
-        return value
-    if not value:
-        return value
-    if isinstance(value, str):
-        normalized = value.replace("Z", "+00:00")
-        parsed = datetime.fromisoformat(normalized)
-        return parsed.astimezone(timezone.utc)
-    return value
+from globalshop_bi.data_access import (
+    create_review_indexes,
+    documents_with_mongo_dates,
+    load_json_documents,
+)
 
 
 def load_documents():
-    with open(DATASET_PATH, "r", encoding="utf-8") as f:
-        documents = json.load(f)
-
-    for document in documents:
-        metadata = document.setdefault("metadata", {})
-        metadata["timestamp"] = parse_timestamp(metadata.get("timestamp"))
-    return documents
+    return documents_with_mongo_dates(load_json_documents())
 
 
 def seed_mongodb():
@@ -48,10 +29,7 @@ def seed_mongodb():
         ]
 
         result = collection.bulk_write(operations, ordered=False) if operations else None
-        collection.create_index("product.category")
-        collection.create_index([("metrics.sentiment", 1), ("content.keywords", 1)])
-        collection.create_index([("metadata.timestamp", -1)])
-        collection.create_index([("customer.location.coordinates", "2dsphere")])
+        create_review_indexes(collection)
 
         count = collection.count_documents({})
         matched = result.matched_count if result else 0
