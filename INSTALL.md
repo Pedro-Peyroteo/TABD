@@ -23,7 +23,7 @@ Na raiz do repositório (`TABD/`), executar:
 pip install -r requirements.txt
 ```
 
-O ficheiro `requirements.txt` instala: `streamlit`, `pandas`, `plotly`, `wordcloud`, `matplotlib` e `pymongo`.
+O ficheiro `requirements.txt` instala: `streamlit`, `streamlit-autorefresh`, `pandas`, `plotly`, `wordcloud`, `matplotlib`, `pymongo` e `pytest`.
 
 ---
 
@@ -45,6 +45,8 @@ O browser abrirá automaticamente em `http://localhost:8501` com o dashboard int
 | `MONGO_URI` | não definido localmente | URI MongoDB. Exemplo local: `mongodb://localhost:27017`. |
 | `MONGO_DB` | `GlobalShop` | Base de dados MongoDB. |
 | `MONGO_COLLECTION` | `reviews` | Coleção de reviews. |
+| `DATA_CACHE_TTL_SECONDS` | `60` | Tempo de cache da leitura de dados do dashboard. |
+| `AUTO_REFRESH_SECONDS` | `0` | Intervalo de atualização automática da UI; `0` desativa. |
 
 Exemplos:
 
@@ -72,7 +74,7 @@ O Compose cria três serviços:
 | :--- | :--- |
 | `mongodb` | MongoDB 7 com volume persistente `mongodb_data` e porta `27017`. |
 | `seed` | Executa `03_Implementacao/seed_mongodb.py`, faz upsert dos 25 documentos e cria os índices. |
-| `app` | Streamlit em `http://localhost:8501`, ligado a `mongodb://mongodb:27017`. |
+| `app` | Streamlit em `http://localhost:8501`, ligado a `mongodb://mongodb:27017`, com cache e atualização automática de 5 segundos. |
 
 Para repetir apenas o seed após alterar o JSON:
 
@@ -85,6 +87,93 @@ Verificação rápida no MongoDB:
 ```bash
 docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('GlobalShop').reviews.countDocuments()"
 docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('GlobalShop').reviews.getIndexes()"
+```
+
+### 3.1 Simulação de Fluxo Real
+
+Para gerar reviews continuamente e simular entrada de dados operacional:
+
+```bash
+docker compose --profile simulation up --build
+```
+
+O serviço `simulator` usa o mesmo schema documentado em `02_Modelagem/Modelagem_Dados.md`, escolhe produtos e cidades do dataset base, gera rating/sentimento/keywords coerentes e insere documentos em `GlobalShop.reviews`.
+
+| Variável | Valor padrão | Uso |
+| :--- | :--- | :--- |
+| `SIM_INTERVAL_SECONDS` | `5` | Tempo entre ciclos de geração. |
+| `SIM_BATCH_SIZE` | `1` | Reviews inseridas por ciclo. |
+| `SIM_MAX_REVIEWS` | `500` | Limite total da coleção; usar `0` para fluxo sem limite. |
+| `SIM_SEED` | `42` | Semente para resultados reprodutíveis. |
+| `SIM_RESET_ON_START` | `false` | Remove reviews com `metadata.source=simulator` antes de iniciar. |
+
+Exemplo rápido para uma apresentação:
+
+```bash
+SIM_INTERVAL_SECONDS=2 SIM_BATCH_SIZE=3 SIM_MAX_REVIEWS=60 docker compose --profile simulation up --build
+```
+
+No dashboard em Docker, a UI atualiza automaticamente a cada 5 segundos. O botão **Atualizar dados** na sidebar continua disponível para forçar a leitura imediata. A sidebar também mostra o total carregado e a data/hora da última review.
+
+### 3.2 Mongo Express para Inspeção Visual
+
+Para abrir uma interface web sobre o MongoDB:
+
+```bash
+docker compose --profile tools up -d
+```
+
+Aceder a `http://localhost:8081` e abrir a base `GlobalShop`, coleção `reviews`. Este perfil é opcional e serve apenas para demonstração/inspeção.
+
+### 3.3 Ecossistema Completo
+
+Para arrancar todos os serviços numa só execução:
+
+```bash
+docker compose --profile simulation --profile tools up --build
+```
+
+Este comando inclui:
+
+| Serviço | Função |
+| :--- | :--- |
+| `mongodb` | Base de dados MongoDB em `localhost:27017`. |
+| `seed` | Carregamento inicial do dataset e criação dos índices. |
+| `app` | Dashboard Streamlit em `http://localhost:8501`. |
+| `simulator` | Geração contínua de novas reviews. |
+| `mongo-express` | Interface web MongoDB em `http://localhost:8081`. |
+
+Para executar em background:
+
+```bash
+docker compose --profile simulation --profile tools up --build -d
+```
+
+Para verificar o estado:
+
+```bash
+docker compose --profile simulation --profile tools ps
+```
+
+Para parar todos os serviços do ecossistema:
+
+```bash
+docker compose --profile simulation --profile tools down
+```
+
+### 3.4 Reset da Demo
+
+Para parar e remover containers mantendo o volume:
+
+```bash
+docker compose down
+```
+
+Para apagar todos os dados do volume MongoDB e recomeçar do seed:
+
+```bash
+docker compose down -v
+docker compose up --build
 ```
 
 ---
@@ -181,7 +270,14 @@ TABD/
 ├── 03_Implementacao/
 │   ├── dataset_exemplo.json         # 25 documentos com GeoJSON (Portugal Continental)
 │   ├── seed_mongodb.py              # Migração idempotente JSON -> MongoDB
+│   ├── simulate_reviews.py          # Simulador de fluxo vivo de reviews
 │   └── Queries_BI.md                # 9 pipelines MongoDB (analíticas + geoespaciais)
+├── globalshop_bi/
+│   ├── data_access.py               # Loaders JSON/Mongo e normalização partilhada
+│   └── simulator.py                 # Geração validada de reviews simuladas
+├── tests/
+│   ├── test_data_access.py          # Smoke tests de loaders e seed
+│   └── test_simulator.py            # Validação do schema simulado
 ├── 04_BI_Analysis/
 │   └── Planeamento_BI.md            # KPIs, especificações do dashboard, arquitetura
 └── 05_Entrega/
@@ -200,3 +296,17 @@ TABD/
 | Erro ao importar JSON no Compass | Ficheiro com encoding incorreto | Verificar que o ficheiro está em UTF-8 |
 | Query `$nearSphere` falha | Índice `2dsphere` não criado | Executar o `createIndex` da secção 4.3 |
 | `UserWarning: timezone` no terminal | Timestamps com timezone UTC | Aviso não-crítico — não afeta o funcionamento |
+| Simulator não insere novas reviews | `SIM_MAX_REVIEWS` já foi atingido | Aumentar `SIM_MAX_REVIEWS`, usar `0`, ou executar `docker compose down -v` para reset total |
+| Mongo Express falha com `network ... not found` | Container antigo ligado a uma rede Docker já removida | Executar `docker compose --profile tools up -d --force-recreate mongo-express` |
+
+---
+
+## 8. Testes Automatizados
+
+Depois de instalar as dependências:
+
+```bash
+pytest
+```
+
+Os testes cobrem normalização do JSON, fallback de fonte de dados, proteção contra filtro vazio, conversão de timestamps do seed e validade do schema gerado pelo simulador.

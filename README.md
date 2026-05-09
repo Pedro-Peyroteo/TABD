@@ -65,6 +65,53 @@ http://localhost:8501
 
 O `docker-compose.yml` cria um MongoDB local, carrega `03_Implementacao/dataset_exemplo.json` para `GlobalShop.reviews`, cria os índices analíticos e `2dsphere`, e inicia o Streamlit ligado ao MongoDB. O volume `mongodb_data` preserva os dados entre execuções.
 
+### Simulação de Fluxo Real
+
+Para transformar a demo estática num fluxo vivo de reviews, arrancar o perfil de simulação:
+
+```bash
+docker compose --profile simulation up --build
+```
+
+O serviço `simulator` escreve novas reviews diretamente em `GlobalShop.reviews`, seguindo o mesmo schema GeoJSON usado no dataset. O dashboard em Docker usa `DATA_CACHE_TTL_SECONDS=5`, `AUTO_REFRESH_SECONDS=5` e inclui botão **Atualizar dados**, total de reviews carregadas e timestamp da última review na sidebar.
+
+Variáveis úteis da simulação:
+
+| Variável | Valor padrão | Descrição |
+| :--- | :--- | :--- |
+| `SIM_INTERVAL_SECONDS` | `5` | Intervalo entre lotes simulados. |
+| `SIM_BATCH_SIZE` | `1` | Número de reviews criadas por ciclo. |
+| `SIM_MAX_REVIEWS` | `500` | Limite total de documentos na coleção; `0` remove o limite. |
+| `SIM_SEED` | `42` | Semente determinística do gerador. |
+| `SIM_RESET_ON_START` | `false` | Remove apenas reviews simuladas antes de começar. |
+
+Para inspecionar documentos no browser, usar o perfil de ferramentas:
+
+```bash
+docker compose --profile tools up -d
+```
+
+Mongo Express fica disponível em `http://localhost:8081`.
+
+Para arrancar o ecossistema completo numa só execução, incluindo dashboard, MongoDB, seed, simulador e Mongo Express:
+
+```bash
+docker compose --profile simulation --profile tools up --build
+```
+
+Em modo background:
+
+```bash
+docker compose --profile simulation --profile tools up --build -d
+```
+
+Verificar ou parar o ecossistema completo:
+
+```bash
+docker compose --profile simulation --profile tools ps
+docker compose --profile simulation --profile tools down
+```
+
 ### Fontes de Dados
 
 O dashboard suporta três modos através de variáveis de ambiente:
@@ -75,6 +122,8 @@ O dashboard suporta três modos através de variáveis de ambiente:
 | `MONGO_URI` | não definido localmente | URI de ligação MongoDB. No Docker: `mongodb://mongodb:27017`. |
 | `MONGO_DB` | `GlobalShop` | Nome da base de dados. |
 | `MONGO_COLLECTION` | `reviews` | Nome da coleção de reviews. |
+| `DATA_CACHE_TTL_SECONDS` | `60` local, `5` Docker | Tempo de cache da leitura de dados no dashboard. |
+| `AUTO_REFRESH_SECONDS` | `0` local, `5` Docker | Intervalo de atualização automática da UI; `0` desativa. |
 
 ---
 
