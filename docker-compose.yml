@@ -37,8 +37,43 @@ services:
       MONGO_URI: mongodb://mongodb:27017
       MONGO_DB: GlobalShop
       MONGO_COLLECTION: reviews
+      DATA_CACHE_TTL_SECONDS: ${DATA_CACHE_TTL_SECONDS:-5}
+      AUTO_REFRESH_SECONDS: ${AUTO_REFRESH_SECONDS:-5}
     ports:
       - "8501:8501"
+
+  simulator:
+    build: .
+    container_name: globalshop-simulator
+    profiles:
+      - simulation
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      MONGO_URI: mongodb://mongodb:27017
+      MONGO_DB: GlobalShop
+      MONGO_COLLECTION: reviews
+      SIM_INTERVAL_SECONDS: ${SIM_INTERVAL_SECONDS:-5}
+      SIM_BATCH_SIZE: ${SIM_BATCH_SIZE:-1}
+      SIM_MAX_REVIEWS: ${SIM_MAX_REVIEWS:-500}
+      SIM_SEED: ${SIM_SEED:-42}
+      SIM_RESET_ON_START: ${SIM_RESET_ON_START:-false}
+    command: ["python", "03_Implementacao/simulate_reviews.py"]
+
+  mongo-express:
+    image: mongo-express:1
+    container_name: globalshop-mongo-express
+    profiles:
+      - tools
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "8081:8081"
 
 volumes:
   mongodb_data:
