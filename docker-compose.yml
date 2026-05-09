@@ -1,0 +1,44 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: globalshop-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  seed:
+    build: .
+    container_name: globalshop-seed
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      DATA_SOURCE: mongo
+      MONGO_URI: mongodb://mongodb:27017
+      MONGO_DB: GlobalShop
+      MONGO_COLLECTION: reviews
+    command: ["python", "03_Implementacao/seed_mongodb.py"]
+    restart: "no"
+
+  app:
+    build: .
+    container_name: globalshop-app
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      DATA_SOURCE: auto
+      MONGO_URI: mongodb://mongodb:27017
+      MONGO_DB: GlobalShop
+      MONGO_COLLECTION: reviews
+    ports:
+      - "8501:8501"
+
+volumes:
+  mongodb_data:
