@@ -1,11 +1,39 @@
-﻿import streamlit as st
-import pandas as pd
 import json
-import plotly.express as px
+import os
 from collections import Counter
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+from wordcloud import WordCloud
+
+
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR / "03_Implementacao" / "dataset_exemplo.json"
+DATA_COLUMNS = [
+    "review_id",
+    "product_name",
+    "category",
+    "brand",
+    "customer_location",
+    "country",
+    "lon",
+    "lat",
+    "membership",
+    "rating",
+    "sentiment",
+    "verified_purchase",
+    "keywords",
+    "comment",
+    "language",
+    "timestamp",
+    "device",
+    "month",
+    "week",
+]
+
 
 st.set_page_config(page_title="GlobalShop BI Dashboard", layout="wide", page_icon="🛒")
 
@@ -17,57 +45,128 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-@st.cache_data
-def load_data():
-    data_path = Path(__file__).resolve().parent / "03_Implementacao" / "dataset_exemplo.json"
-    with open(data_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+def normalize_documents(documents):
     rows = []
-    for item in data:
-        loc = item["customer"]["location"]
-        coords = loc["coordinates"]["coordinates"]
+    for item in documents:
+        loc = item.get("customer", {}).get("location", {})
+        coords = loc.get("coordinates", {}).get("coordinates", [None, None])
+        product = item.get("product", {})
+        customer = item.get("customer", {})
+        metrics = item.get("metrics", {})
+        content = item.get("content", {})
+        metadata = item.get("metadata", {})
+
         rows.append({
-            "review_id": item["review_id"],
-            "product_name": item["product"]["name"],
-            "category": item["product"]["category"],
-            "brand": item["product"]["brand"],
-            "customer_location": loc["city"],
-            "country": loc["country"],
-            "lon": coords[0],
-            "lat": coords[1],
-            "membership": item["customer"]["membership"],
-            "rating": item["metrics"]["rating"],
-            "sentiment": item["metrics"]["sentiment"],
-            "verified_purchase": item["metrics"]["verified_purchase"],
-            "keywords": item["content"]["keywords"],
-            "comment": item["content"]["comment"],
-            "language": item["content"].get("language", "pt"),
-            "timestamp": pd.to_datetime(item["metadata"]["timestamp"]),
-            "device": item["metadata"].get("device", "Web"),
+            "review_id": item.get("review_id"),
+            "product_name": product.get("name"),
+            "category": product.get("category"),
+            "brand": product.get("brand"),
+            "customer_location": loc.get("city"),
+            "country": loc.get("country"),
+            "lon": coords[0] if len(coords) > 0 else None,
+            "lat": coords[1] if len(coords) > 1 else None,
+            "membership": customer.get("membership"),
+            "rating": metrics.get("rating"),
+            "sentiment": metrics.get("sentiment"),
+            "verified_purchase": metrics.get("verified_purchase", False),
+            "keywords": content.get("keywords", []),
+            "comment": content.get("comment"),
+            "language": content.get("language", "pt"),
+            "timestamp": metadata.get("timestamp"),
+            "device": metadata.get("device", "Web"),
         })
-    df = pd.DataFrame(rows)
+
+    df = pd.DataFrame(rows, columns=DATA_COLUMNS[:-2])
+    df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+    df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
+    df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
+    df["verified_purchase"] = df["verified_purchase"].fillna(False).astype(bool)
+    df["keywords"] = df["keywords"].apply(lambda value: value if isinstance(value, list) else [])
+    df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True, errors="coerce").dt.tz_convert(None)
     df["month"] = df["timestamp"].dt.to_period("M").astype(str)
     df["week"] = df["timestamp"].dt.to_period("W").astype(str)
-    return df
+    return df[DATA_COLUMNS]
 
 
-df = load_data()
+def load_json_documents():
+    with open(DATASET_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_mongo_documents(mongo_uri, db_name, collection_name):
+    from pymongo import MongoClient
+
+    client = MongoClient(mongo_uri, serverSelectionTimeoutMS=3000)
+    try:
+        client.admin.command("ping")
+        collection = client[db_name][collection_name]
+        return list(collection.find({}, {"_id": 0}))
+    finally:
+        client.close()
+
+
+@st.cache_data(ttl=60)
+def load_data(data_source, mongo_uri, db_name, collection_name):
+    requested_source = data_source.lower().strip()
+    if requested_source not in {"auto", "mongo", "json"}:
+        requested_source = "auto"
+
+    if requested_source == "json":
+        return normalize_documents(load_json_documents()), "JSON", None
+
+    if requested_source == "mongo" and not mongo_uri:
+        raise RuntimeError("DATA_SOURCE=mongo requer a variável MONGO_URI.")
+
+    if requested_source in {"auto", "mongo"} and mongo_uri:
+        try:
+            mongo_docs = load_mongo_documents(mongo_uri, db_name, collection_name)
+            if mongo_docs:
+                return normalize_documents(mongo_docs), "MongoDB", None
+            if requested_source == "mongo":
+                return normalize_documents([]), "MongoDB", "A coleção MongoDB não contém documentos."
+        except Exception as exc:
+            if requested_source == "mongo":
+                raise RuntimeError(f"Não foi possível carregar dados do MongoDB: {exc}") from exc
+
+    json_message = None
+    if requested_source == "auto" and mongo_uri:
+        json_message = "MongoDB indisponível ou vazio; app em modo JSON."
+    elif requested_source == "auto":
+        json_message = "MONGO_URI não configurado; app em modo JSON."
+
+    return normalize_documents(load_json_documents()), "JSON", json_message
+
+
+DATA_SOURCE = os.getenv("DATA_SOURCE", "auto")
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB = os.getenv("MONGO_DB", "GlobalShop")
+MONGO_COLLECTION = os.getenv("MONGO_COLLECTION", "reviews")
+
+try:
+    df, active_source, source_message = load_data(DATA_SOURCE, MONGO_URI, MONGO_DB, MONGO_COLLECTION)
+except RuntimeError as exc:
+    st.error(str(exc))
+    st.stop()
 
 SENTIMENT_COLORS = {"Positive": "#2ecc71", "Neutral": "#95a5a6", "Negative": "#e74c3c"}
+EMPTY_FILTER_MESSAGE = "Sem dados para os filtros selecionados."
 
 # --- SIDEBAR ---
 st.sidebar.title("🛒 GlobalShop BI")
 st.sidebar.markdown("---")
 st.sidebar.header("🔎 Filtros")
+st.sidebar.caption(f"Fonte de dados ativa: {active_source}")
+if source_message:
+    st.sidebar.info(source_message)
 
 selected_cat = st.sidebar.multiselect(
-    "Categoria", options=sorted(df["category"].unique()), default=sorted(df["category"].unique())
+    "Categoria", options=sorted(df["category"].dropna().unique()), default=sorted(df["category"].dropna().unique())
 )
 selected_mem = st.sidebar.multiselect(
-    "Membership", options=sorted(df["membership"].unique()), default=sorted(df["membership"].unique())
+    "Membership", options=sorted(df["membership"].dropna().unique()), default=sorted(df["membership"].dropna().unique())
 )
 selected_loc = st.sidebar.multiselect(
-    "Localização", options=sorted(df["customer_location"].unique()), default=sorted(df["customer_location"].unique())
+    "Localização", options=sorted(df["customer_location"].dropna().unique()), default=sorted(df["customer_location"].dropna().unique())
 )
 
 filtered_df = df[
@@ -75,6 +174,7 @@ filtered_df = df[
     & df["membership"].isin(selected_mem)
     & df["customer_location"].isin(selected_loc)
 ]
+has_data = not filtered_df.empty
 
 # --- HEADER ---
 st.title("🛒 GlobalShop: Sentiment Intelligence Dashboard")
@@ -90,7 +190,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # =============================================================
-# TAB 1 — VISÃO EXECUTIVA
+# TAB 1 - VISAO EXECUTIVA
 # =============================================================
 with tab1:
     n = len(filtered_df)
@@ -103,13 +203,14 @@ with tab1:
     avg_rating = filtered_df["rating"].mean() if n > 0 else 0
     verified_pct = filtered_df["verified_purchase"].sum() / n * 100 if n > 0 else 0
 
-    # Quality Decay Rate: últimos 30 dias vs. histórico anterior
-    cutoff = filtered_df["timestamp"].max() - pd.Timedelta(days=30)
-    recent = filtered_df[filtered_df["timestamp"] >= cutoff]
-    historical = filtered_df[filtered_df["timestamp"] < cutoff]
-    recent_avg = recent["rating"].mean() if len(recent) > 0 else avg_rating
-    hist_avg = historical["rating"].mean() if len(historical) > 0 else avg_rating
-    decay_rate = ((recent_avg - hist_avg) / hist_avg * 100) if hist_avg > 0 else 0
+    decay_rate = 0
+    if has_data:
+        cutoff = filtered_df["timestamp"].max() - pd.Timedelta(days=30)
+        recent = filtered_df[filtered_df["timestamp"] >= cutoff]
+        historical = filtered_df[filtered_df["timestamp"] < cutoff]
+        recent_avg = recent["rating"].mean() if len(recent) > 0 else avg_rating
+        hist_avg = historical["rating"].mean() if len(historical) > 0 else avg_rating
+        decay_rate = ((recent_avg - hist_avg) / hist_avg * 100) if hist_avg > 0 else 0
 
     col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric(
@@ -131,167 +232,178 @@ with tab1:
 
     st.markdown("---")
 
-    row1c1, row1c2 = st.columns([1, 2])
+    if not has_data:
+        st.info(EMPTY_FILTER_MESSAGE)
+    else:
+        row1c1, row1c2 = st.columns([1, 2])
 
-    with row1c1:
-        st.subheader("Distribuição de Sentimento")
-        sent_counts = filtered_df["sentiment"].value_counts().reset_index()
-        sent_counts.columns = ["Sentimento", "Quantidade"]
-        fig_pie = px.pie(
-            sent_counts,
-            names="Sentimento",
-            values="Quantidade",
-            color="Sentimento",
-            color_discrete_map=SENTIMENT_COLORS,
-            hole=0.45,
-        )
-        fig_pie.update_layout(margin=dict(t=10, b=10, l=0, r=0), showlegend=True)
-        st.plotly_chart(fig_pie, use_container_width=True)
+        with row1c1:
+            st.subheader("Distribuição de Sentimento")
+            sent_counts = filtered_df["sentiment"].value_counts().reset_index()
+            sent_counts.columns = ["Sentimento", "Quantidade"]
+            fig_pie = px.pie(
+                sent_counts,
+                names="Sentimento",
+                values="Quantidade",
+                color="Sentimento",
+                color_discrete_map=SENTIMENT_COLORS,
+                hole=0.45,
+            )
+            fig_pie.update_layout(margin=dict(t=10, b=10, l=0, r=0), showlegend=True)
+            st.plotly_chart(fig_pie, use_container_width=True)
 
-    with row1c2:
-        st.subheader("Tendência de Nota Média por Mês")
-        trend = filtered_df.groupby("month")["rating"].mean().reset_index()
-        trend.columns = ["Mês", "Nota Média"]
-        fig_trend = px.line(
-            trend, x="Mês", y="Nota Média", markers=True,
-            color_discrete_sequence=["#3498db"],
-        )
-        fig_trend.add_hline(
-            y=3.0, line_dash="dash", line_color="#e74c3c", annotation_text="Limite Crítico (3.0)"
-        )
-        fig_trend.update_layout(yaxis_range=[0, 5.5])
-        st.plotly_chart(fig_trend, use_container_width=True)
+        with row1c2:
+            st.subheader("Tendência de Nota Média por Mês")
+            trend = filtered_df.groupby("month")["rating"].mean().reset_index()
+            trend.columns = ["Mês", "Nota Média"]
+            fig_trend = px.line(
+                trend, x="Mês", y="Nota Média", markers=True,
+                color_discrete_sequence=["#3498db"],
+            )
+            fig_trend.add_hline(
+                y=3.0, line_dash="dash", line_color="#e74c3c", annotation_text="Limite Crítico (3.0)"
+            )
+            fig_trend.update_layout(yaxis_range=[0, 5.5])
+            st.plotly_chart(fig_trend, use_container_width=True)
 
 # =============================================================
-# TAB 2 — ANÁLISE TÁTICA
+# TAB 2 - ANALISE TATICA
 # =============================================================
 with tab2:
-    st.subheader("📊 Distribuição de Sentimento por Categoria")
-    fig_bar = px.histogram(
-        filtered_df, x="category", color="sentiment", barmode="group",
-        color_discrete_map=SENTIMENT_COLORS,
-        labels={"category": "Categoria", "count": "Quantidade", "sentiment": "Sentimento"},
-    )
-    st.plotly_chart(fig_bar, use_container_width=True)
-
-    st.markdown("---")
-    col_t1, col_t2 = st.columns(2)
-
-    with col_t1:
-        st.subheader("⚠️ Top Produtos Críticos (Rating Baixo)")
-        prod_ranking = (
-            filtered_df.groupby("product_name")["rating"]
-            .mean()
-            .sort_values()
-            .head(10)
-            .reset_index()
+    if not has_data:
+        st.info(EMPTY_FILTER_MESSAGE)
+    else:
+        st.subheader("📊 Distribuição de Sentimento por Categoria")
+        fig_bar = px.histogram(
+            filtered_df, x="category", color="sentiment", barmode="group",
+            color_discrete_map=SENTIMENT_COLORS,
+            labels={"category": "Categoria", "count": "Quantidade", "sentiment": "Sentimento"},
         )
-        prod_ranking.columns = ["Produto", "Nota Média"]
-        fig_prod = px.bar(
-            prod_ranking, x="Nota Média", y="Produto", orientation="h",
-            color="Nota Média", color_continuous_scale="RdYlGn", range_x=[0, 5],
-        )
-        st.plotly_chart(fig_prod, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True)
 
-    with col_t2:
-        st.subheader("🏷️ Performance por Marca")
-        brand_stats = (
-            filtered_df.groupby("brand")
-            .agg(
-                nota_media=("rating", "mean"),
-                total=("review_id", "count"),
-                nss_val=(
-                    "sentiment",
-                    lambda x: ((x == "Positive").sum() - (x == "Negative").sum()) / len(x) * 100,
-                ),
+        st.markdown("---")
+        col_t1, col_t2 = st.columns(2)
+
+        with col_t1:
+            st.subheader("⚠️ Top Produtos Críticos (Rating Baixo)")
+            prod_ranking = (
+                filtered_df.groupby("product_name")["rating"]
+                .mean()
+                .sort_values()
+                .head(10)
+                .reset_index()
             )
-            .reset_index()
-            .sort_values("nota_media", ascending=False)
-        )
-        fig_brand = px.bar(
-            brand_stats, x="brand", y="nota_media",
-            color="nss_val", color_continuous_scale="RdYlGn",
-            labels={"brand": "Marca", "nota_media": "Nota Média", "nss_val": "NSS (%)"},
-            text=brand_stats["total"].apply(lambda x: f"{x} rev."),
-        )
-        fig_brand.update_traces(textposition="outside")
-        fig_brand.update_layout(yaxis_range=[0, 6])
-        st.plotly_chart(fig_brand, use_container_width=True)
+            prod_ranking.columns = ["Produto", "Nota Média"]
+            fig_prod = px.bar(
+                prod_ranking, x="Nota Média", y="Produto", orientation="h",
+                color="Nota Média", color_continuous_scale="RdYlGn", range_x=[0, 5],
+            )
+            st.plotly_chart(fig_prod, use_container_width=True)
+
+        with col_t2:
+            st.subheader("🏷️ Performance por Marca")
+            brand_stats = (
+                filtered_df.groupby("brand")
+                .agg(
+                    nota_media=("rating", "mean"),
+                    total=("review_id", "count"),
+                    nss_val=(
+                        "sentiment",
+                        lambda x: ((x == "Positive").sum() - (x == "Negative").sum()) / len(x) * 100,
+                    ),
+                )
+                .reset_index()
+                .sort_values("nota_media", ascending=False)
+            )
+            fig_brand = px.bar(
+                brand_stats, x="brand", y="nota_media",
+                color="nss_val", color_continuous_scale="RdYlGn",
+                labels={"brand": "Marca", "nota_media": "Nota Média", "nss_val": "NSS (%)"},
+                text=brand_stats["total"].apply(lambda x: f"{x} rev."),
+            )
+            fig_brand.update_traces(textposition="outside")
+            fig_brand.update_layout(yaxis_range=[0, 6])
+            st.plotly_chart(fig_brand, use_container_width=True)
 
 # =============================================================
-# TAB 3 — ANÁLISE OPERACIONAL
+# TAB 3 - ANALISE OPERACIONAL
 # =============================================================
 with tab3:
-    col_op1, col_op2 = st.columns(2)
-
-    neg_df = filtered_df[filtered_df["sentiment"] == "Negative"]
-    all_neg_kw = []
-    for kw_list in neg_df["keywords"]:
-        all_neg_kw.extend(kw_list)
-
-    with col_op1:
-        st.subheader("☁️ Causa Raiz — Keywords Negativas")
-        if all_neg_kw:
-            text = " ".join(all_neg_kw)
-            wc = WordCloud(
-                width=700, height=350, background_color="white", colormap="Reds"
-            ).generate(text)
-            fig_wc, ax = plt.subplots(figsize=(7, 3.5))
-            ax.imshow(wc, interpolation="bilinear")
-            ax.axis("off")
-            st.pyplot(fig_wc)
-            plt.close(fig_wc)
-        else:
-            st.info("Nenhuma keyword negativa para os filtros selecionados.")
-
-    with col_op2:
-        st.subheader("📋 Frequência de Keywords Negativas (Top 10)")
-        if all_neg_kw:
-            kw_freq = Counter(all_neg_kw).most_common(10)
-            kw_df = pd.DataFrame(kw_freq, columns=["Keyword", "Frequência"])
-            fig_kw = px.bar(
-                kw_df, x="Frequência", y="Keyword", orientation="h",
-                color="Frequência", color_continuous_scale="Reds",
-            )
-            st.plotly_chart(fig_kw, use_container_width=True)
-
-    st.markdown("---")
-    st.subheader("🚨 Anomaly Detection — Quality Decay Rate por Produto")
-    st.caption("Produtos com maior queda de nota entre o penúltimo e o último mês com dados.")
-
-    monthly_avg = (
-        filtered_df.groupby(["product_name", "month"])["rating"]
-        .mean()
-        .reset_index()
-        .sort_values(["product_name", "month"])
-    )
-
-    anomaly_rows = []
-    for prod, grp in monthly_avg.groupby("product_name"):
-        if len(grp) >= 2:
-            last = grp.iloc[-1]
-            prev = grp.iloc[-2]
-            drop = prev["rating"] - last["rating"]
-            drop_pct = (drop / prev["rating"] * 100) if prev["rating"] > 0 else 0
-            anomaly_rows.append({
-                "Produto": prod,
-                "Mês Anterior": prev["month"],
-                "Nota Anterior": round(prev["rating"], 2),
-                "Último Mês": last["month"],
-                "Nota Atual": round(last["rating"], 2),
-                "Queda (pts)": round(drop, 2),
-                "Queda (%)": round(drop_pct, 1),
-                "Alerta": "🔴 Crítico" if drop_pct >= 30 else ("🟡 Atenção" if drop_pct >= 10 else "🟢 Estável"),
-            })
-
-    if anomaly_rows:
-        anomaly_df = pd.DataFrame(anomaly_rows).sort_values("Queda (%)", ascending=False)
-        st.dataframe(anomaly_df, use_container_width=True, hide_index=True)
+    if not has_data:
+        st.info(EMPTY_FILTER_MESSAGE)
     else:
-        st.info("Dados insuficientes para cálculo de anomalias com os filtros atuais.")
+        col_op1, col_op2 = st.columns(2)
+
+        neg_df = filtered_df[filtered_df["sentiment"] == "Negative"]
+        all_neg_kw = []
+        for kw_list in neg_df["keywords"]:
+            all_neg_kw.extend(kw_list)
+
+        with col_op1:
+            st.subheader("☁️ Causa Raiz - Keywords Negativas")
+            if all_neg_kw:
+                text = " ".join(all_neg_kw)
+                wc = WordCloud(
+                    width=700, height=350, background_color="white", colormap="Reds"
+                ).generate(text)
+                fig_wc, ax = plt.subplots(figsize=(7, 3.5))
+                ax.imshow(wc, interpolation="bilinear")
+                ax.axis("off")
+                st.pyplot(fig_wc)
+                plt.close(fig_wc)
+            else:
+                st.info("Nenhuma keyword negativa para os filtros selecionados.")
+
+        with col_op2:
+            st.subheader("📋 Frequência de Keywords Negativas (Top 10)")
+            if all_neg_kw:
+                kw_freq = Counter(all_neg_kw).most_common(10)
+                kw_df = pd.DataFrame(kw_freq, columns=["Keyword", "Frequência"])
+                fig_kw = px.bar(
+                    kw_df, x="Frequência", y="Keyword", orientation="h",
+                    color="Frequência", color_continuous_scale="Reds",
+                )
+                st.plotly_chart(fig_kw, use_container_width=True)
+            else:
+                st.info("Sem keywords negativas para apresentar.")
+
+        st.markdown("---")
+        st.subheader("🚨 Anomaly Detection - Quality Decay Rate por Produto")
+        st.caption("Produtos com maior queda de nota entre o penúltimo e o último mês com dados.")
+
+        monthly_avg = (
+            filtered_df.groupby(["product_name", "month"])["rating"]
+            .mean()
+            .reset_index()
+            .sort_values(["product_name", "month"])
+        )
+
+        anomaly_rows = []
+        for prod, grp in monthly_avg.groupby("product_name"):
+            if len(grp) >= 2:
+                last = grp.iloc[-1]
+                prev = grp.iloc[-2]
+                drop = prev["rating"] - last["rating"]
+                drop_pct = (drop / prev["rating"] * 100) if prev["rating"] > 0 else 0
+                anomaly_rows.append({
+                    "Produto": prod,
+                    "Mês Anterior": prev["month"],
+                    "Nota Anterior": round(prev["rating"], 2),
+                    "Último Mês": last["month"],
+                    "Nota Atual": round(last["rating"], 2),
+                    "Queda (pts)": round(drop, 2),
+                    "Queda (%)": round(drop_pct, 1),
+                    "Alerta": "🔴 Crítico" if drop_pct >= 30 else ("🟡 Atenção" if drop_pct >= 10 else "🟢 Estável"),
+                })
+
+        if anomaly_rows:
+            anomaly_df = pd.DataFrame(anomaly_rows).sort_values("Queda (%)", ascending=False)
+            st.dataframe(anomaly_df, use_container_width=True, hide_index=True)
+        else:
+            st.info("Dados insuficientes para cálculo de anomalias com os filtros atuais.")
 
 # =============================================================
-# TAB 4 — ANÁLISE GEOESPACIAL
+# TAB 4 - ANALISE GEOESPACIAL
 # =============================================================
 with tab4:
     st.subheader("🗺️ Mapa de Satisfação por Cidade (Geographic Sentiment Index)")
@@ -300,21 +412,21 @@ with tab4:
         "Tamanho da bolha = volume de reviews  |  Cor = Net Sentiment Score (NSS)"
     )
 
-    city_stats = (
-        filtered_df.groupby("customer_location")
-        .agg(
-            lat=("lat", "first"),
-            lon=("lon", "first"),
-            total=("review_id", "count"),
-            nota_media=("rating", "mean"),
-            positivos=("sentiment", lambda x: (x == "Positive").sum()),
-            negativos=("sentiment", lambda x: (x == "Negative").sum()),
-        )
-        .reset_index()
-    )
-    if city_stats.empty:
-        st.warning("Sem dados para exibir no mapa com os filtros selecionados.")
+    if not has_data:
+        st.info(EMPTY_FILTER_MESSAGE)
     else:
+        city_stats = (
+            filtered_df.groupby("customer_location")
+            .agg(
+                lat=("lat", "first"),
+                lon=("lon", "first"),
+                total=("review_id", "count"),
+                nota_media=("rating", "mean"),
+                positivos=("sentiment", lambda x: (x == "Positive").sum()),
+                negativos=("sentiment", lambda x: (x == "Negative").sum()),
+            )
+            .reset_index()
+        )
         city_stats["nss"] = (
             (city_stats["positivos"] - city_stats["negativos"]) / city_stats["total"] * 100
         ).round(1)
@@ -359,13 +471,12 @@ with tab4:
 
         with col_geo2:
             st.subheader("📊 Volume e Nota Média por Cidade")
+            city_by_rating = city_stats.sort_values("nota_media", ascending=False)
             fig_vol = px.bar(
-                city_stats.sort_values("nota_media", ascending=False),
+                city_by_rating,
                 x="customer_location", y="nota_media",
                 color="nota_media", color_continuous_scale="RdYlGn", range_color=[1, 5],
-                text=city_stats.sort_values("nota_media", ascending=False)["total"].apply(
-                    lambda x: f"{x} rev."
-                ),
+                text=city_by_rating["total"].apply(lambda x: f"{x} rev."),
                 labels={"customer_location": "Cidade", "nota_media": "Nota Média"},
             )
             fig_vol.update_traces(textposition="outside")
