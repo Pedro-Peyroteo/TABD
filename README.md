@@ -53,6 +53,29 @@ streamlit run app_bi.py
 
 O browser abrirá automaticamente em `http://localhost:8501`. Para configuração completa do MongoDB e criação dos índices espaciais, consulte `INSTALL.md`.
 
+### Execução com Docker + MongoDB
+
+```bash
+# 1. Construir e arrancar MongoDB, seed e dashboard
+docker compose up --build
+
+# 2. Abrir o dashboard
+http://localhost:8501
+```
+
+O `docker-compose.yml` cria um MongoDB local, carrega `03_Implementacao/dataset_exemplo.json` para `GlobalShop.reviews`, cria os índices analíticos e `2dsphere`, e inicia o Streamlit ligado ao MongoDB. O volume `mongodb_data` preserva os dados entre execuções.
+
+### Fontes de Dados
+
+O dashboard suporta três modos através de variáveis de ambiente:
+
+| Variável | Valor padrão | Descrição |
+| :--- | :--- | :--- |
+| `DATA_SOURCE` | `auto` | `auto`, `mongo` ou `json`. Em `auto`, usa MongoDB quando disponível e recorre ao JSON caso contrário. |
+| `MONGO_URI` | não definido localmente | URI de ligação MongoDB. No Docker: `mongodb://mongodb:27017`. |
+| `MONGO_DB` | `GlobalShop` | Nome da base de dados. |
+| `MONGO_COLLECTION` | `reviews` | Nome da coleção de reviews. |
+
 ---
 
 ## Dashboard BI — 4 Abas Interativas

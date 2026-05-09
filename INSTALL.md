@@ -11,6 +11,7 @@ Este guia detalha todos os passos necessários para executar o ecossistema de da
 - **Python 3.10+** instalado e no PATH do sistema.
 - **MongoDB Community Server 6.0+** instalado e em execução na porta padrão `27017` (opcional — o dashboard funciona em modo JSON sem MongoDB).
 - **MongoDB Compass** (interface visual opcional, recomendada para executar as queries de `Queries_BI.md`).
+- **Docker Desktop** com Docker Compose v2 (opcional, recomendado para executar o ecossistema completo com MongoDB em container).
 
 ---
 
@@ -34,20 +35,70 @@ Na raiz do repositório:
 streamlit run app_bi.py
 ```
 
-O browser abrirá automaticamente em `http://localhost:8501` com o dashboard interativo de 4 abas. O dashboard carrega os dados diretamente de `03_Implementacao/dataset_exemplo.json` — **não requer MongoDB** para demonstração.
+O browser abrirá automaticamente em `http://localhost:8501` com o dashboard interativo de 4 abas. Por defeito, o dashboard usa `DATA_SOURCE=auto`: se `MONGO_URI` não estiver configurado, carrega os dados diretamente de `03_Implementacao/dataset_exemplo.json` e **não requer MongoDB** para demonstração.
+
+### 2.1 Variáveis de Ambiente da Fonte de Dados
+
+| Variável | Valor padrão | Uso |
+| :--- | :--- | :--- |
+| `DATA_SOURCE` | `auto` | `auto`, `mongo` ou `json`. |
+| `MONGO_URI` | não definido localmente | URI MongoDB. Exemplo local: `mongodb://localhost:27017`. |
+| `MONGO_DB` | `GlobalShop` | Base de dados MongoDB. |
+| `MONGO_COLLECTION` | `reviews` | Coleção de reviews. |
+
+Exemplos:
+
+```bash
+# Forçar modo JSON
+DATA_SOURCE=json streamlit run app_bi.py
+
+# Usar MongoDB local
+DATA_SOURCE=mongo MONGO_URI=mongodb://localhost:27017 streamlit run app_bi.py
+```
 
 ---
 
-## 3. Configuração do MongoDB (Base de Dados NoSQL + Espacial)
+## 3. Execução com Docker Compose (App + MongoDB)
 
-### 3.1 Criar a Base de Dados e Coleção
+Na raiz do repositório:
+
+```bash
+docker compose up --build
+```
+
+O Compose cria três serviços:
+
+| Serviço | Função |
+| :--- | :--- |
+| `mongodb` | MongoDB 7 com volume persistente `mongodb_data` e porta `27017`. |
+| `seed` | Executa `03_Implementacao/seed_mongodb.py`, faz upsert dos 25 documentos e cria os índices. |
+| `app` | Streamlit em `http://localhost:8501`, ligado a `mongodb://mongodb:27017`. |
+
+Para repetir apenas o seed após alterar o JSON:
+
+```bash
+docker compose run --rm seed
+```
+
+Verificação rápida no MongoDB:
+
+```bash
+docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('GlobalShop').reviews.countDocuments()"
+docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('GlobalShop').reviews.getIndexes()"
+```
+
+---
+
+## 4. Configuração Manual do MongoDB (Base de Dados NoSQL + Espacial)
+
+### 4.1 Criar a Base de Dados e Coleção
 
 1. Abrir o **MongoDB Compass** e conectar a `mongodb://localhost:27017`.
 2. Clicar em **"Create Database"**:
    - Database Name: `GlobalShop`
    - Collection Name: `reviews`
 
-### 3.2 Importar o Dataset
+### 4.2 Importar o Dataset
 
 1. Com a coleção `reviews` aberta, clicar em **"Add Data"** → **"Import JSON or CSV File"**.
 2. Selecionar o ficheiro: `03_Implementacao/dataset_exemplo.json`
@@ -55,7 +106,13 @@ O browser abrirá automaticamente em `http://localhost:8501` com o dashboard int
 
 O dataset contém 25 documentos com coordenadas GeoJSON reais de seis cidades portuguesas (Lisboa, Porto, Coimbra, Braga, Faro e Setúbal).
 
-### 3.3 Criar Índices de Performance e Espacial
+Também é possível importar e criar índices por script:
+
+```bash
+MONGO_URI=mongodb://localhost:27017 python 03_Implementacao/seed_mongodb.py
+```
+
+### 4.3 Criar Índices de Performance e Espacial
 
 No **Mongosh** (terminal integrado do Compass), executar:
 
@@ -76,7 +133,7 @@ db.reviews.createIndex({ "customer.location.coordinates": "2dsphere" });
 
 > O índice `2dsphere` é o elemento que habilita as queries geoespaciais descritas em `03_Implementacao/Queries_BI.md`, como "todas as reviews num raio de 100 km de Lisboa".
 
-### 3.4 Verificar a Importação
+### 4.4 Verificar a Importação
 
 ```javascript
 // Deve retornar 25
@@ -88,7 +145,7 @@ db.reviews.findOne({}, { "customer.location": 1, "product.name": 1 })
 
 ---
 
-## 4. Executar as Queries de Analytics
+## 5. Executar as Queries de Analytics
 
 No **MongoDB Compass**, aceder à aba **"Aggregations"** e executar as 9 pipelines documentadas em `03_Implementacao/Queries_BI.md`:
 
@@ -107,10 +164,12 @@ No **MongoDB Compass**, aceder à aba **"Aggregations"** e executar as 9 pipelin
 
 ---
 
-## 5. Estrutura do Repositório
+## 6. Estrutura do Repositório
 
 ```
 TABD/
+├── Dockerfile                       # Imagem Streamlit para execução em container
+├── docker-compose.yml               # App + MongoDB + seed idempotente
 ├── app_bi.py                        # Dashboard Streamlit (4 abas interativas)
 ├── requirements.txt                 # Dependências Python com versões mínimas
 ├── INSTALL.md                       # Este guia
@@ -121,6 +180,7 @@ TABD/
 │   └── Modelagem_Dados.md           # Schema GeoJSON + coordenadas de Portugal + indexação
 ├── 03_Implementacao/
 │   ├── dataset_exemplo.json         # 25 documentos com GeoJSON (Portugal Continental)
+│   ├── seed_mongodb.py              # Migração idempotente JSON -> MongoDB
 │   └── Queries_BI.md                # 9 pipelines MongoDB (analíticas + geoespaciais)
 ├── 04_BI_Analysis/
 │   └── Planeamento_BI.md            # KPIs, especificações do dashboard, arquitetura
@@ -131,12 +191,12 @@ TABD/
 
 ---
 
-## 6. Resolução de Problemas Comuns
+## 7. Resolução de Problemas Comuns
 
 | Problema | Causa Provável | Solução |
 | :--- | :--- | :--- |
 | `ModuleNotFoundError: wordcloud` | Dependência não instalada | `pip install wordcloud` |
 | Dashboard não abre no browser | Streamlit a usar porta diferente | Aceder manualmente a `http://localhost:8501` |
 | Erro ao importar JSON no Compass | Ficheiro com encoding incorreto | Verificar que o ficheiro está em UTF-8 |
-| Query `$nearSphere` falha | Índice `2dsphere` não criado | Executar o `createIndex` da secção 3.3 |
+| Query `$nearSphere` falha | Índice `2dsphere` não criado | Executar o `createIndex` da secção 4.3 |
 | `UserWarning: timezone` no terminal | Timestamps com timezone UTC | Aviso não-crítico — não afeta o funcionamento |
