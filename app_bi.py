@@ -1,5 +1,4 @@
 import os
-from collections import Counter
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,6 +8,14 @@ from streamlit_autorefresh import st_autorefresh
 from wordcloud import WordCloud
 
 from globalshop_bi.data_access import load_dashboard_data
+from globalshop_bi.metrics import (
+    anomaly_detection_df,
+    brand_stats,
+    city_stats,
+    executive_metrics,
+    keyword_frequency_df,
+    negative_keywords,
+)
 
 
 st.set_page_config(page_title="GlobalShop BI Dashboard", layout="wide", page_icon="🛒")
@@ -104,24 +111,12 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # TAB 1 - VISAO EXECUTIVA
 # =============================================================
 with tab1:
-    n = len(filtered_df)
-
-    pos_count = (filtered_df["sentiment"] == "Positive").sum()
-    neg_count = (filtered_df["sentiment"] == "Negative").sum()
-    pos_pct = pos_count / n * 100 if n > 0 else 0
-    neg_pct = neg_count / n * 100 if n > 0 else 0
-    nss = pos_pct - neg_pct
-    avg_rating = filtered_df["rating"].mean() if n > 0 else 0
-    verified_pct = filtered_df["verified_purchase"].sum() / n * 100 if n > 0 else 0
-
-    decay_rate = 0
-    if has_data:
-        cutoff = filtered_df["timestamp"].max() - pd.Timedelta(days=30)
-        recent = filtered_df[filtered_df["timestamp"] >= cutoff]
-        historical = filtered_df[filtered_df["timestamp"] < cutoff]
-        recent_avg = recent["rating"].mean() if len(recent) > 0 else avg_rating
-        hist_avg = historical["rating"].mean() if len(historical) > 0 else avg_rating
-        decay_rate = ((recent_avg - hist_avg) / hist_avg * 100) if hist_avg > 0 else 0
+    metrics = executive_metrics(filtered_df)
+    n = metrics["total"]
+    nss = metrics["nss"]
+    avg_rating = metrics["avg_rating"]
+    verified_pct = metrics["verified_pct"]
+    decay_rate = metrics["decay_rate"]
 
     col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric(
@@ -213,24 +208,12 @@ with tab2:
 
         with col_t2:
             st.subheader("🏷️ Performance por Marca")
-            brand_stats = (
-                filtered_df.groupby("brand")
-                .agg(
-                    nota_media=("rating", "mean"),
-                    total=("review_id", "count"),
-                    nss_val=(
-                        "sentiment",
-                        lambda x: ((x == "Positive").sum() - (x == "Negative").sum()) / len(x) * 100,
-                    ),
-                )
-                .reset_index()
-                .sort_values("nota_media", ascending=False)
-            )
+            brand_data = brand_stats(filtered_df)
             fig_brand = px.bar(
-                brand_stats, x="brand", y="nota_media",
+                brand_data, x="brand", y="nota_media",
                 color="nss_val", color_continuous_scale="RdYlGn",
                 labels={"brand": "Marca", "nota_media": "Nota Média", "nss_val": "NSS (%)"},
-                text=brand_stats["total"].apply(lambda x: f"{x} rev."),
+                text=brand_data["total"].apply(lambda x: f"{x} rev."),
             )
             fig_brand.update_traces(textposition="outside")
             fig_brand.update_layout(yaxis_range=[0, 6])
@@ -245,10 +228,7 @@ with tab3:
     else:
         col_op1, col_op2 = st.columns(2)
 
-        neg_df = filtered_df[filtered_df["sentiment"] == "Negative"]
-        all_neg_kw = []
-        for kw_list in neg_df["keywords"]:
-            all_neg_kw.extend(kw_list)
+        all_neg_kw = negative_keywords(filtered_df)
 
         with col_op1:
             st.subheader("☁️ Causa Raiz - Keywords Negativas")
@@ -268,11 +248,11 @@ with tab3:
         with col_op2:
             st.subheader("📋 Frequência de Keywords Negativas (Top 10)")
             if all_neg_kw:
-                kw_freq = Counter(all_neg_kw).most_common(10)
-                kw_df = pd.DataFrame(kw_freq, columns=["Keyword", "Frequência"])
+                kw_df = keyword_frequency_df(all_neg_kw)
                 fig_kw = px.bar(
-                    kw_df, x="Frequência", y="Keyword", orientation="h",
-                    color="Frequência", color_continuous_scale="Reds",
+                    kw_df, x="Frequencia", y="Keyword", orientation="h",
+                    color="Frequencia", color_continuous_scale="Reds",
+                    labels={"Frequencia": "Frequência"},
                 )
                 st.plotly_chart(fig_kw, use_container_width=True)
             else:
@@ -282,34 +262,18 @@ with tab3:
         st.subheader("🚨 Anomaly Detection - Quality Decay Rate por Produto")
         st.caption("Produtos com maior queda de nota entre o penúltimo e o último mês com dados.")
 
-        monthly_avg = (
-            filtered_df.groupby(["product_name", "month"])["rating"]
-            .mean()
-            .reset_index()
-            .sort_values(["product_name", "month"])
-        )
-
-        anomaly_rows = []
-        for prod, grp in monthly_avg.groupby("product_name"):
-            if len(grp) >= 2:
-                last = grp.iloc[-1]
-                prev = grp.iloc[-2]
-                drop = prev["rating"] - last["rating"]
-                drop_pct = (drop / prev["rating"] * 100) if prev["rating"] > 0 else 0
-                anomaly_rows.append({
-                    "Produto": prod,
-                    "Mês Anterior": prev["month"],
-                    "Nota Anterior": round(prev["rating"], 2),
-                    "Último Mês": last["month"],
-                    "Nota Atual": round(last["rating"], 2),
-                    "Queda (pts)": round(drop, 2),
-                    "Queda (%)": round(drop_pct, 1),
-                    "Alerta": "🔴 Crítico" if drop_pct >= 30 else ("🟡 Atenção" if drop_pct >= 10 else "🟢 Estável"),
-                })
-
-        if anomaly_rows:
-            anomaly_df = pd.DataFrame(anomaly_rows).sort_values("Queda (%)", ascending=False)
-            st.dataframe(anomaly_df, use_container_width=True, hide_index=True)
+        anomaly_df = anomaly_detection_df(filtered_df)
+        if not anomaly_df.empty:
+            display_anomaly_df = anomaly_df.rename(columns={
+                "Mes Anterior": "Mês Anterior",
+                "Ultimo Mes": "Último Mês",
+            }).copy()
+            display_anomaly_df["Alerta"] = display_anomaly_df["Alerta"].replace({
+                "Critico": "🔴 Crítico",
+                "Atencao": "🟡 Atenção",
+                "Estavel": "🟢 Estável",
+            })
+            st.dataframe(display_anomaly_df, use_container_width=True, hide_index=True)
         else:
             st.info("Dados insuficientes para cálculo de anomalias com os filtros atuais.")
 
@@ -326,29 +290,10 @@ with tab4:
     if not has_data:
         st.info(EMPTY_FILTER_MESSAGE)
     else:
-        city_stats = (
-            filtered_df.groupby("customer_location")
-            .agg(
-                lat=("lat", "first"),
-                lon=("lon", "first"),
-                total=("review_id", "count"),
-                nota_media=("rating", "mean"),
-                positivos=("sentiment", lambda x: (x == "Positive").sum()),
-                negativos=("sentiment", lambda x: (x == "Negative").sum()),
-            )
-            .reset_index()
-        )
-        city_stats["nss"] = (
-            (city_stats["positivos"] - city_stats["negativos"]) / city_stats["total"] * 100
-        ).round(1)
-        city_stats["nota_media"] = city_stats["nota_media"].round(2)
-        city_stats["label"] = city_stats.apply(
-            lambda r: f"{r['customer_location']}<br>Reviews: {r['total']}<br>NSS: {r['nss']:.0f}%<br>Nota: {r['nota_media']:.2f}⭐",
-            axis=1,
-        )
+        city_data = city_stats(filtered_df)
 
         fig_map = px.scatter_mapbox(
-            city_stats,
+            city_data,
             lat="lat",
             lon="lon",
             size="total",
@@ -371,7 +316,7 @@ with tab4:
 
         with col_geo1:
             st.subheader("📍 NSS por Cidade")
-            city_sorted = city_stats.sort_values("nss", ascending=True)
+            city_sorted = city_data.sort_values("nss", ascending=True)
             fig_nss_city = px.bar(
                 city_sorted, x="nss", y="customer_location", orientation="h",
                 color="nss", color_continuous_scale="RdYlGn", range_color=[-100, 100],
@@ -382,7 +327,7 @@ with tab4:
 
         with col_geo2:
             st.subheader("📊 Volume e Nota Média por Cidade")
-            city_by_rating = city_stats.sort_values("nota_media", ascending=False)
+            city_by_rating = city_data.sort_values("nota_media", ascending=False)
             fig_vol = px.bar(
                 city_by_rating,
                 x="customer_location", y="nota_media",
@@ -405,7 +350,7 @@ with tab4:
             "negativos": "Negativos",
         }
         st.dataframe(
-            city_stats[list(display_cols.keys())].rename(columns=display_cols)
+            city_data[list(display_cols.keys())].rename(columns=display_cols)
             .sort_values("NSS (%)", ascending=False),
             use_container_width=True,
             hide_index=True,
