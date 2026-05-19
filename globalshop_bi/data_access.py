@@ -1,9 +1,12 @@
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
 from pymongo import MongoClient
+
+logger = logging.getLogger(__name__)
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -76,8 +79,8 @@ def normalize_documents(documents):
             "brand": product.get("brand"),
             "customer_location": loc.get("city"),
             "country": loc.get("country"),
-            "lon": coords[0] if len(coords) > 0 else None,
-            "lat": coords[1] if len(coords) > 1 else None,
+            "lon": coords[0] if coords and len(coords) > 0 else None,
+            "lat": coords[1] if coords and len(coords) > 1 else None,
             "membership": customer.get("membership"),
             "rating": metrics.get("rating"),
             "sentiment": metrics.get("sentiment"),
@@ -95,9 +98,10 @@ def normalize_documents(documents):
     df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
     df["verified_purchase"] = df["verified_purchase"].fillna(False).astype(bool)
     df["keywords"] = df["keywords"].apply(lambda value: value if isinstance(value, list) else [])
-    df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True, errors="coerce").dt.tz_convert(None)
-    df["month"] = df["timestamp"].dt.to_period("M").astype(str)
-    df["week"] = df["timestamp"].dt.to_period("W").astype(str)
+    df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True, errors="coerce")
+    _ts_naive = df["timestamp"].dt.tz_convert(None)
+    df["month"] = _ts_naive.dt.to_period("M").astype(str)
+    df["week"] = _ts_naive.dt.to_period("W").astype(str)
     return df[DATA_COLUMNS]
 
 
@@ -118,6 +122,7 @@ def load_mongo_documents(mongo_uri, db_name, collection_name):
 def load_dashboard_data(data_source, mongo_uri, db_name, collection_name):
     requested_source = data_source.lower().strip()
     if requested_source not in {"auto", "mongo", "json"}:
+        logger.warning("DATA_SOURCE='%s' desconhecido; usando 'auto'.", data_source)
         requested_source = "auto"
 
     if requested_source == "json":
@@ -130,12 +135,14 @@ def load_dashboard_data(data_source, mongo_uri, db_name, collection_name):
         try:
             mongo_docs = load_mongo_documents(mongo_uri, db_name, collection_name)
             if mongo_docs:
+                logger.info("Carregados %d documentos do MongoDB.", len(mongo_docs))
                 return normalize_documents(mongo_docs), "MongoDB", None
             if requested_source == "mongo":
                 return normalize_documents([]), "MongoDB", "A coleção MongoDB não contém documentos."
         except Exception as exc:
             if requested_source == "mongo":
                 raise RuntimeError(f"Não foi possível carregar dados do MongoDB: {exc}") from exc
+            logger.warning("MongoDB indisponível (%s); a recorrer ao JSON.", exc)
 
     json_message = None
     if requested_source == "auto" and mongo_uri:

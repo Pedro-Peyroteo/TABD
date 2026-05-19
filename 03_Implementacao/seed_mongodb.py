@@ -1,6 +1,10 @@
+import logging
 import os
 
 from pymongo import MongoClient, UpdateOne
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+logger = logging.getLogger(__name__)
 
 from globalshop_bi.data_access import (
     create_review_indexes,
@@ -23,6 +27,10 @@ def seed_mongodb():
         client.admin.command("ping")
         collection = client[db_name][collection_name]
         documents = load_documents()
+        if not documents:
+            logger.warning("Nenhum documento encontrado no dataset para fazer seed.")
+            return
+
         operations = [
             UpdateOne({"review_id": document["review_id"]}, {"$set": document}, upsert=True)
             for document in documents
@@ -35,9 +43,9 @@ def seed_mongodb():
         matched = result.matched_count if result else 0
         upserted = len(result.upserted_ids) if result else 0
         modified = result.modified_count if result else 0
-        print(
-            f"Seed concluído em {db_name}.{collection_name}: "
-            f"{count} documentos, {matched} encontrados, {modified} atualizados, {upserted} inseridos."
+        logger.info(
+            "Seed concluído em %s.%s: %d documentos, %d encontrados, %d atualizados, %d inseridos.",
+            db_name, collection_name, count, matched, modified, upserted,
         )
     finally:
         client.close()

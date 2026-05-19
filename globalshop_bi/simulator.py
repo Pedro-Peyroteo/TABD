@@ -1,10 +1,15 @@
+import logging
 import os
 import random
+import signal
 import time
+import uuid
 from copy import deepcopy
 from datetime import datetime, timezone
 
 from pymongo import MongoClient
+
+logger = logging.getLogger(__name__)
 
 from globalshop_bi.data_access import create_review_indexes, load_json_documents
 
@@ -77,7 +82,7 @@ def generate_review(rng, sequence, pools=None, now=None):
     keywords = rng.sample(KEYWORDS_BY_SENTIMENT[sentiment], k=3)
 
     return {
-        "review_id": f"SIM-{now.strftime('%Y%m%d%H%M%S')}-{sequence:06d}",
+        "review_id": f"SIM-{now.strftime('%Y%m%d%H%M%S%f')}-{sequence:06d}",
         "product": product,
         "customer": {
             "customer_id": f"SIMC-{sequence:06d}",
@@ -132,19 +137,30 @@ def run_simulator(config=None):
     config = config or simulator_config_from_env()
     rng = random.Random(config["seed"])
     pools = load_generation_pools()
+
+    stop_event = __import__("threading").Event()
+
+    def _handle_signal(signum, frame):
+        logger.info("Sinal %s recebido; a encerrar simulador...", signum)
+        stop_event.set()
+
+    signal.signal(signal.SIGTERM, _handle_signal)
+    signal.signal(signal.SIGINT, _handle_signal)
+
     client = MongoClient(config["mongo_uri"], serverSelectionTimeoutMS=5000)
     try:
         client.admin.command("ping")
         collection = client[config["db_name"]][config["collection_name"]]
         create_review_indexes(collection)
         if config["reset_on_start"]:
-            collection.delete_many({"metadata.source": "simulator"})
+            deleted = collection.delete_many({"metadata.source": "simulator"}).deleted_count
+            logger.info("Reset: %d reviews simuladas removidas.", deleted)
 
         sequence = collection.count_documents({"metadata.source": "simulator"}) + 1
-        while True:
+        while not stop_event.is_set():
             total = collection.count_documents({})
             if config["max_reviews"] > 0 and total >= config["max_reviews"]:
-                print(f"Simulação concluída: limite de {config['max_reviews']} reviews atingido.")
+                logger.info("Simulação concluída: limite de %d reviews atingido.", config["max_reviews"])
                 break
 
             batch = []
@@ -157,7 +173,8 @@ def run_simulator(config=None):
 
             if batch:
                 collection.insert_many(batch)
-                print(f"Inseridas {len(batch)} reviews simuladas. Total atual: {collection.count_documents({})}")
+                logger.info("Inseridas %d reviews simuladas. Total atual: %d", len(batch), collection.count_documents({}))
             time.sleep(config["interval_seconds"])
     finally:
         client.close()
+        logger.info("Simulador encerrado.")

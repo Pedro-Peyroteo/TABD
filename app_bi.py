@@ -1,3 +1,4 @@
+import logging
 import os
 from collections import Counter
 
@@ -7,6 +8,8 @@ import plotly.express as px
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 from wordcloud import WordCloud
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 from globalshop_bi.data_access import load_dashboard_data
 
@@ -30,6 +33,11 @@ def read_non_negative_int_env(name, default):
 
 DATA_CACHE_TTL_SECONDS = read_non_negative_int_env("DATA_CACHE_TTL_SECONDS", 60)
 AUTO_REFRESH_SECONDS = read_non_negative_int_env("AUTO_REFRESH_SECONDS", 0)
+
+try:
+    CRITICAL_RATING_THRESHOLD = float(os.getenv("CRITICAL_RATING_THRESHOLD", "3.0"))
+except ValueError:
+    CRITICAL_RATING_THRESHOLD = 3.0
 
 
 @st.cache_data(ttl=DATA_CACHE_TTL_SECONDS)
@@ -172,7 +180,10 @@ with tab1:
                 color_discrete_sequence=["#3498db"],
             )
             fig_trend.add_hline(
-                y=3.0, line_dash="dash", line_color="#e74c3c", annotation_text="Limite Crítico (3.0)"
+                y=CRITICAL_RATING_THRESHOLD,
+                line_dash="dash",
+                line_color="#e74c3c",
+                annotation_text=f"Limite Crítico ({CRITICAL_RATING_THRESHOLD})",
             )
             fig_trend.update_layout(yaxis_range=[0, 5.5])
             st.plotly_chart(fig_trend, use_container_width=True)
@@ -286,7 +297,10 @@ with tab3:
             filtered_df.groupby(["product_name", "month"])["rating"]
             .mean()
             .reset_index()
-            .sort_values(["product_name", "month"])
+        )
+        monthly_avg = monthly_avg.sort_values(
+            ["product_name", "month"],
+            key=lambda col: pd.PeriodIndex(col, freq="M") if col.name == "month" else col,
         )
 
         anomaly_rows = []
