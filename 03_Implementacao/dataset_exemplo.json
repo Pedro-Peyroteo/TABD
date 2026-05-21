@@ -1,302 +1,6600 @@
 [
   {
     "review_id": "R001",
-    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C501", "name": "João Silva",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Gold"
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Excelente bateria e câmara incrível! O melhor smartphone do mercado.", "keywords": ["bateria", "câmara", "desempenho"], "language": "pt" },
-    "metadata": { "timestamp": "2026-01-05T10:00:00Z", "device": "Mobile" }
+    "customer": {
+      "customer_id": "C1001",
+      "name": "Cliente 001",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Pessimo servico pos-venda. Nao resolveriam o problema.",
+      "keywords": [
+        "danificado",
+        "inconsistente",
+        "fragil",
+        "lento"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-13T00:06:08Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R002",
-    "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
     "customer": {
-      "customer_id": "C502", "name": "Maria Santos",
-      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
+      "customer_id": "C1002",
+      "name": "Cliente 002",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
       "membership": "Silver"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Ecrã nítido e desempenho rápido. Muito satisfeita.", "keywords": ["ecrã", "resolução", "velocidade"], "language": "pt" },
-    "metadata": { "timestamp": "2026-01-12T14:30:00Z", "device": "Web" }
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "adequado",
+        "ok"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-08T03:19:01Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R003",
-    "product": { "product_id": "P201", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
     "customer": {
-      "customer_id": "C503", "name": "Pedro Lima",
-      "location": { "city": "Coimbra", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4291, 40.2033] } },
+      "customer_id": "C1003",
+      "name": "Cliente 003",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
       "membership": "Bronze"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Muito confortáveis e bem desenhados. Recomendo.", "keywords": ["conforto", "design"], "language": "pt" },
-    "metadata": { "timestamp": "2026-01-18T09:15:00Z", "device": "Mobile" }
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "premium",
+        "rapidez",
+        "entrega",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-05T09:38:29Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R004",
-    "product": { "product_id": "P301", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
     "customer": {
-      "customer_id": "C504", "name": "Ana Costa",
-      "location": { "city": "Braga", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] } },
+      "customer_id": "C1004",
+      "name": "Cliente 004",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
       "membership": "Silver"
     },
-    "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
-    "content": { "comment": "Faz um bom café mas é muito barulhenta ao arrancar.", "keywords": ["café", "ruído", "facilidade"], "language": "pt" },
-    "metadata": { "timestamp": "2026-01-22T07:00:00Z", "device": "App" }
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "entrega",
+        "elegante",
+        "duravel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-14T14:48:35Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R005",
-    "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
     "customer": {
-      "customer_id": "C505", "name": "Carlos Ruas",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
+      "customer_id": "C1005",
+      "name": "Cliente 005",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
       "membership": "Gold"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Tecido de qualidade e corte perfeito. Adorei!", "keywords": ["tecido", "corte", "qualidade"], "language": "pt" },
-    "metadata": { "timestamp": "2026-01-28T18:00:00Z", "device": "Web" }
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "duravel",
+        "fiavel",
+        "design"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-29T07:24:21Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R006",
-    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C506", "name": "Luísa Figueira",
-      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
-      "membership": "Silver"
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Boa câmara, bateria razoável para o dia a dia.", "keywords": ["câmara", "bateria"], "language": "pt" },
-    "metadata": { "timestamp": "2026-02-03T11:00:00Z", "device": "Mobile" }
+    "customer": {
+      "customer_id": "C1006",
+      "name": "Cliente 006",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "fiavel",
+        "premium",
+        "rapidez",
+        "duravel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-31T05:51:02Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R007",
-    "product": { "product_id": "P302", "name": "Robot de Cozinha", "category": "Casa", "brand": "HomeEasy" },
+    "product": {
+      "product_id": "P-012",
+      "name": "Perfume Marine Bleu",
+      "category": "Beleza",
+      "brand": "LuxScent"
+    },
     "customer": {
-      "customer_id": "C507", "name": "Tomás Neto",
-      "location": { "city": "Faro", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-7.9304, 37.0194] } },
+      "customer_id": "C1007",
+      "name": "Cliente 007",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
       "membership": "Gold"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Muito potente e durável. Vale cada euro gasto.", "keywords": ["potência", "durabilidade"], "language": "pt" },
-    "metadata": { "timestamp": "2026-02-08T15:00:00Z", "device": "Web" }
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "design",
+        "fiavel",
+        "duravel",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-20T16:57:33Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R008",
-    "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C508", "name": "Beatriz Pinto",
-      "location": { "city": "Setúbal", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.8951, 38.5244] } },
-      "membership": "Silver"
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
     },
-    "metrics": { "rating": 2, "sentiment": "Negative", "verified_purchase": true },
-    "content": { "comment": "O ecrã tem atraso no toque. Dececionante para o preço.", "keywords": ["ecrã", "atraso", "dececionante"], "language": "pt" },
-    "metadata": { "timestamp": "2026-02-14T13:00:00Z", "device": "App" }
+    "customer": {
+      "customer_id": "C1008",
+      "name": "Cliente 008",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "normal",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-12T19:55:03Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R009",
-    "product": { "product_id": "P201", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
-    "customer": {
-      "customer_id": "C509", "name": "Ricardo Alves",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Gold"
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
     },
-    "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
-    "content": { "comment": "A entrega demorou 2 semanas e o tamanho era errado!", "keywords": ["entrega", "tamanho", "atraso"], "language": "pt" },
-    "metadata": { "timestamp": "2026-02-19T10:30:00Z", "device": "Mobile" }
+    "customer": {
+      "customer_id": "C1009",
+      "name": "Cliente 009",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "duravel",
+        "fiavel",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-22T16:28:23Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R010",
-    "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
-    "customer": {
-      "customer_id": "C510", "name": "Sofia Mendes",
-      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
-      "membership": "Bronze"
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Vestido elegante com acabamento impecável. Compra certa.", "keywords": ["elegância", "tecido", "acabamento"], "language": "pt" },
-    "metadata": { "timestamp": "2026-02-25T16:00:00Z", "device": "Web" }
+    "customer": {
+      "customer_id": "C1010",
+      "name": "Cliente 010",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto apresentou problemas logo apos a entrega.",
+      "keywords": [
+        "fragil",
+        "dececionante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-05T08:19:10Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R011",
-    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
     "customer": {
-      "customer_id": "C511", "name": "Filipe Carmo",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
+      "customer_id": "C1011",
+      "name": "Cliente 011",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
       "membership": "Gold"
     },
-    "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
-    "content": { "comment": "Começou bem mas a bateria aquece um pouco. Ainda aceitável.", "keywords": ["bateria", "sobreaquecimento", "lentidão"], "language": "pt" },
-    "metadata": { "timestamp": "2026-03-03T08:00:00Z", "device": "Mobile" }
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "qualidade",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-21T08:28:53Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R012",
-    "product": { "product_id": "P301", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
-    "customer": {
-      "customer_id": "C512", "name": "Catarina Sousa",
-      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
-      "membership": "Bronze"
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Excelente pressão e café aromático. Uso diário.", "keywords": ["café", "pressão", "aroma"], "language": "pt" },
-    "metadata": { "timestamp": "2026-03-09T07:30:00Z", "device": "App" }
+    "customer": {
+      "customer_id": "C1012",
+      "name": "Cliente 012",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "premium",
+        "eficiente",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-10-29T08:48:36Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R013",
-    "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
-    "customer": {
-      "customer_id": "C513", "name": "Glória Tavares",
-      "location": { "city": "Coimbra", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4291, 40.2033] } },
-      "membership": "Silver"
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
     },
-    "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": false },
-    "content": { "comment": "Produto razoável, a entrega demorou mais do esperado.", "keywords": ["tamanho", "entrega"], "language": "pt" },
-    "metadata": { "timestamp": "2026-03-15T12:00:00Z", "device": "Web" }
+    "customer": {
+      "customer_id": "C1013",
+      "name": "Cliente 013",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "satisfeito",
+        "elegante",
+        "intuitivo",
+        "recomendo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-22T08:53:32Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R014",
-    "product": { "product_id": "P302", "name": "Robot de Cozinha", "category": "Casa", "brand": "HomeEasy" },
-    "customer": {
-      "customer_id": "C514", "name": "Henrique Dias",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Gold"
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Motor silencioso e muito potente. Perfeito para a cozinha.", "keywords": ["motor", "potência", "silencioso"], "language": "pt" },
-    "metadata": { "timestamp": "2026-03-20T19:00:00Z", "device": "Mobile" }
+    "customer": {
+      "customer_id": "C1014",
+      "name": "Cliente 014",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "fiavel",
+        "duravel",
+        "premium"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-02T11:54:50Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R015",
-    "product": { "product_id": "P401", "name": "Livro Python Dev", "category": "Livros", "brand": "EduPress" },
-    "customer": {
-      "customer_id": "C515", "name": "Inês Rodrigues",
-      "location": { "city": "Setúbal", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.8951, 38.5244] } },
-      "membership": "Bronze"
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Conteúdo claro e cheio de exemplos práticos. Recomendo.", "keywords": ["conteúdo", "clareza", "exemplos"], "language": "pt" },
-    "metadata": { "timestamp": "2026-03-26T14:00:00Z", "device": "App" }
+    "customer": {
+      "customer_id": "C1015",
+      "name": "Cliente 015",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "ok",
+        "regular",
+        "basico"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-10-31T10:12:41Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R016",
-    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C516", "name": "Nuno Ferreira",
-      "location": { "city": "Braga", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] } },
-      "membership": "Silver"
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
     },
-    "metrics": { "rating": 2, "sentiment": "Negative", "verified_purchase": true },
-    "content": { "comment": "A bateria começa a sobreaquecer. Parece defeito de lote!", "keywords": ["bateria", "sobreaquecimento", "defeito"], "language": "pt" },
-    "metadata": { "timestamp": "2026-04-02T10:00:00Z", "device": "Mobile" }
+    "customer": {
+      "customer_id": "C1016",
+      "name": "Cliente 016",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "intuitivo",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-10T12:43:57Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R017",
-    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C517", "name": "Olívia Marques",
-      "location": { "city": "Faro", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-7.9304, 37.0194] } },
-      "membership": "Bronze"
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
     },
-    "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
-    "content": { "comment": "Sobreaquecimento grave, quase queimou a mão. Defeito claro no lote. Entrega também atrasou.", "keywords": ["sobreaquecimento", "defeito", "bateria", "atraso"], "language": "pt" },
-    "metadata": { "timestamp": "2026-04-07T09:00:00Z", "device": "App" }
+    "customer": {
+      "customer_id": "C1017",
+      "name": "Cliente 017",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "ok",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-24T19:22:07Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R018",
-    "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C518", "name": "Paulo Bento",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Gold"
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Ótimo desempenho e ecrã de alta resolução. Muito bom.", "keywords": ["desempenho", "ecrã", "resolução"], "language": "pt" },
-    "metadata": { "timestamp": "2026-04-12T16:00:00Z", "device": "Web" }
+    "customer": {
+      "customer_id": "C1018",
+      "name": "Cliente 018",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega atrasada e suporte pouco claro durante o processo.",
+      "keywords": [
+        "inconsistente",
+        "ruido",
+        "desconfortavel",
+        "avaria"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-21T04:03:17Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R019",
-    "product": { "product_id": "P201", "name": "Ténis AirMax", "category": "Moda", "brand": "Sporty" },
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
     "customer": {
-      "customer_id": "C519", "name": "Quintino Lopes",
-      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
+      "customer_id": "C1019",
+      "name": "Cliente 019",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
       "membership": "Silver"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Confortáveis e entregues bem embalados. Satisfeito.", "keywords": ["conforto", "entrega", "embalagem"], "language": "pt" },
-    "metadata": { "timestamp": "2026-04-18T11:00:00Z", "device": "Mobile" }
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "embalagem",
+        "adequado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-23T02:13:53Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R020",
-    "product": { "product_id": "P202", "name": "Vestido Bloom", "category": "Moda", "brand": "Fashion+" },
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
     "customer": {
-      "customer_id": "C520", "name": "Rosa Cunha",
-      "location": { "city": "Coimbra", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4291, 40.2033] } },
+      "customer_id": "C1020",
+      "name": "Cliente 020",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
       "membership": "Gold"
     },
-    "metrics": { "rating": 2, "sentiment": "Negative", "verified_purchase": true },
-    "content": { "comment": "A costura desfez-se na primeira semana. Qualidade péssima.", "keywords": ["costura", "qualidade", "defeito"], "language": "pt" },
-    "metadata": { "timestamp": "2026-04-24T14:00:00Z", "device": "Web" }
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "design",
+        "rapidez",
+        "satisfeito",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-29T12:03:56Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R021",
-    "product": { "product_id": "P101", "name": "Smartphone X1", "category": "Eletrónicos", "brand": "TechCorp" },
-    "customer": {
-      "customer_id": "C521", "name": "Sérgio Matos",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Gold"
+    "product": {
+      "product_id": "P-009",
+      "name": "Kit Yoga Premium",
+      "category": "Desporto",
+      "brand": "ZenFit"
     },
-    "metrics": { "rating": 1, "sentiment": "Negative", "verified_purchase": true },
-    "content": { "comment": "O telemóvel avariou completamente. Defeito grave, sobreaquecimento e bateria expandida.", "keywords": ["defeito", "sobreaquecimento", "bateria", "avaria"], "language": "pt" },
-    "metadata": { "timestamp": "2026-05-01T08:00:00Z", "device": "Mobile" }
+    "customer": {
+      "customer_id": "C1021",
+      "name": "Cliente 021",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "utilizacao",
+        "normal"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-11T21:29:30Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R022",
-    "product": { "product_id": "P301", "name": "Cafeteira Pro", "category": "Casa", "brand": "HomeEasy" },
-    "customer": {
-      "customer_id": "C522", "name": "Teresa Vaz",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Silver"
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
     },
-    "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
-    "content": { "comment": "Café razoável mas o ruído continua a incomodar.", "keywords": ["café", "ruído", "pressão"], "language": "pt" },
-    "metadata": { "timestamp": "2026-05-02T07:00:00Z", "device": "App" }
+    "customer": {
+      "customer_id": "C1022",
+      "name": "Cliente 022",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "intuitivo",
+        "design"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-09T01:50:16Z",
+      "device": "Web",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R023",
-    "product": { "product_id": "P302", "name": "Robot de Cozinha", "category": "Casa", "brand": "HomeEasy" },
-    "customer": {
-      "customer_id": "C523", "name": "Ulisses Barros",
-      "location": { "city": "Porto", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.6291, 41.1579] } },
-      "membership": "Gold"
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
     },
-    "metrics": { "rating": 5, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Robot fantástico, potente e cheio de receitas. Adoramos!", "keywords": ["motor", "potência", "receitas"], "language": "pt" },
-    "metadata": { "timestamp": "2026-05-02T19:00:00Z", "device": "Web" }
+    "customer": {
+      "customer_id": "C1023",
+      "name": "Cliente 023",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "eficiente",
+        "recomendo",
+        "rapidez"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-25T13:16:13Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R024",
-    "product": { "product_id": "P401", "name": "Livro Python Dev", "category": "Livros", "brand": "EduPress" },
-    "customer": {
-      "customer_id": "C524", "name": "Vera Nascimento",
-      "location": { "city": "Lisboa", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-9.1393, 38.7223] } },
-      "membership": "Silver"
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
     },
-    "metrics": { "rating": 4, "sentiment": "Positive", "verified_purchase": true },
-    "content": { "comment": "Excelente livro para aprender Python. Exemplos muito bons.", "keywords": ["conteúdo", "python", "exemplos"], "language": "pt" },
-    "metadata": { "timestamp": "2026-05-03T13:00:00Z", "device": "App" }
+    "customer": {
+      "customer_id": "C1024",
+      "name": "Cliente 024",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto apresentou problemas logo apos a entrega.",
+      "keywords": [
+        "fragil",
+        "defeito",
+        "lento"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-07T22:24:29Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   },
   {
     "review_id": "R025",
-    "product": { "product_id": "P102", "name": "Tablet ProMax", "category": "Eletrónicos", "brand": "TechCorp" },
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
     "customer": {
-      "customer_id": "C525", "name": "Xavier Gomes",
-      "location": { "city": "Braga", "country": "Portugal", "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] } },
+      "customer_id": "C1025",
+      "name": "Cliente 025",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto cumpre o esperado, sem grandes surpresas.",
+      "keywords": [
+        "funcional",
+        "aceitavel",
+        "regular"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-13T03:44:39Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R026",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1026",
+      "name": "Cliente 026",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "premium",
+        "design",
+        "duravel",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-16T15:51:05Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R027",
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
+    },
+    "customer": {
+      "customer_id": "C1027",
+      "name": "Cliente 027",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "design",
+        "duravel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-26T13:46:57Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R028",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1028",
+      "name": "Cliente 028",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega atrasada e suporte pouco claro durante o processo.",
+      "keywords": [
+        "atraso",
+        "defeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-24T12:03:58Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R029",
+    "product": {
+      "product_id": "P-015",
+      "name": "Cafeteira Smart Press",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1029",
+      "name": "Cliente 029",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "esperado",
+        "razoavel",
+        "regular"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-17T16:54:14Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R030",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1030",
+      "name": "Cliente 030",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "ok",
+        "regular"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-18T13:46:36Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R031",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1031",
+      "name": "Cliente 031",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "lento",
+        "inconsistente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-10T03:30:14Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R032",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1032",
+      "name": "Cliente 032",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "esperado",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-15T22:20:00Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R033",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1033",
+      "name": "Cliente 033",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "suporte",
+        "ruido",
+        "desconfortavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-04T02:56:53Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R034",
+    "product": {
+      "product_id": "P-012",
+      "name": "Perfume Marine Bleu",
+      "category": "Beleza",
+      "brand": "LuxScent"
+    },
+    "customer": {
+      "customer_id": "C1034",
+      "name": "Cliente 034",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
       "membership": "Bronze"
     },
-    "metrics": { "rating": 3, "sentiment": "Neutral", "verified_purchase": true },
-    "content": { "comment": "Ecrã ok mas o desempenho poderia ser melhor.", "keywords": ["ecrã", "desempenho"], "language": "pt" },
-    "metadata": { "timestamp": "2026-05-04T10:00:00Z", "device": "Mobile" }
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "avaria",
+        "dececionante",
+        "defeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-15T00:02:39Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R035",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1035",
+      "name": "Cliente 035",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "embalagem",
+        "normal",
+        "preco",
+        "ok"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-08T22:51:32Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R036",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1036",
+      "name": "Cliente 036",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "premium",
+        "eficiente",
+        "recomendo",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-22T19:26:43Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R037",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1037",
+      "name": "Cliente 037",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "design",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-12T12:18:19Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R038",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1038",
+      "name": "Cliente 038",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "entrega",
+        "fiavel",
+        "recomendo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-11T13:19:02Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R039",
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1039",
+      "name": "Cliente 039",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "qualidade",
+        "entrega",
+        "rapidez",
+        "premium"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-05T07:54:46Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R040",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1040",
+      "name": "Cliente 040",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "rapidez",
+        "duravel",
+        "design",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-02T10:34:32Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R041",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1041",
+      "name": "Cliente 041",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "entrega",
+        "rapidez",
+        "premium",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-20T09:24:14Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R042",
+    "product": {
+      "product_id": "P-009",
+      "name": "Kit Yoga Premium",
+      "category": "Desporto",
+      "brand": "ZenFit"
+    },
+    "customer": {
+      "customer_id": "C1042",
+      "name": "Cliente 042",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "aceitavel",
+        "adequado",
+        "razoavel",
+        "utilizacao"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-09T14:30:25Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R043",
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
+    },
+    "customer": {
+      "customer_id": "C1043",
+      "name": "Cliente 043",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "duravel",
+        "satisfeito",
+        "recomendo",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-19T10:12:23Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R044",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1044",
+      "name": "Cliente 044",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "recomendo",
+        "fiavel",
+        "design"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-09T06:58:03Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R045",
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
+    "customer": {
+      "customer_id": "C1045",
+      "name": "Cliente 045",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto cumpre o esperado, sem grandes surpresas.",
+      "keywords": [
+        "regular",
+        "utilizacao",
+        "razoavel",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-16T11:07:07Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R046",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1046",
+      "name": "Cliente 046",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "razoavel",
+        "utilizacao"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-20T00:00:15Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R047",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1047",
+      "name": "Cliente 047",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "duravel",
+        "elegante",
+        "premium",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-18T12:14:13Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R048",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1048",
+      "name": "Cliente 048",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Pessimo servico pos-venda. Nao resolveriam o problema.",
+      "keywords": [
+        "inconsistente",
+        "devolucao",
+        "danificado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-10-18T21:40:13Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R049",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1049",
+      "name": "Cliente 049",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "satisfeito",
+        "intuitivo",
+        "recomendo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-22T23:43:23Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R050",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1050",
+      "name": "Cliente 050",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "ok",
+        "normal",
+        "basico"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-14T02:59:54Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R051",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1051",
+      "name": "Cliente 051",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "elegante",
+        "entrega",
+        "design"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-19T02:51:51Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R052",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1052",
+      "name": "Cliente 052",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "eficiente",
+        "duravel",
+        "design",
+        "satisfeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-31T15:28:22Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R053",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1053",
+      "name": "Cliente 053",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "elegante",
+        "intuitivo",
+        "rapidez"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-21T12:52:24Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R054",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1054",
+      "name": "Cliente 054",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "design",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-07T12:08:05Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R055",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1055",
+      "name": "Cliente 055",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "recomendo",
+        "fiavel",
+        "satisfeito",
+        "design"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-05T21:11:40Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R056",
+    "product": {
+      "product_id": "P-012",
+      "name": "Perfume Marine Bleu",
+      "category": "Beleza",
+      "brand": "LuxScent"
+    },
+    "customer": {
+      "customer_id": "C1056",
+      "name": "Cliente 056",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "satisfeito",
+        "recomendo",
+        "intuitivo",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-24T01:02:37Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R057",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1057",
+      "name": "Cliente 057",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "design",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-03T04:11:00Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R058",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1058",
+      "name": "Cliente 058",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "recomendo",
+        "duravel",
+        "intuitivo",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-22T17:20:56Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R059",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1059",
+      "name": "Cliente 059",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "normal",
+        "basico",
+        "ok"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-21T08:35:01Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R060",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1060",
+      "name": "Cliente 060",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "fiavel",
+        "satisfeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-08T01:55:01Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R061",
+    "product": {
+      "product_id": "P-012",
+      "name": "Perfume Marine Bleu",
+      "category": "Beleza",
+      "brand": "LuxScent"
+    },
+    "customer": {
+      "customer_id": "C1061",
+      "name": "Cliente 061",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "basico",
+        "razoavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-09T06:07:34Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R062",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1062",
+      "name": "Cliente 062",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "rapidez",
+        "satisfeito",
+        "premium"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-28T01:45:37Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R063",
+    "product": {
+      "product_id": "P-009",
+      "name": "Kit Yoga Premium",
+      "category": "Desporto",
+      "brand": "ZenFit"
+    },
+    "customer": {
+      "customer_id": "C1063",
+      "name": "Cliente 063",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "ok",
+        "basico",
+        "normal"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-30T13:32:08Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R064",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1064",
+      "name": "Cliente 064",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "rapidez",
+        "recomendo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-10T12:05:29Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R065",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1065",
+      "name": "Cliente 065",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "premium",
+        "rapidez",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-23T07:05:39Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R066",
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1066",
+      "name": "Cliente 066",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Muito dececionante. Avariou ao fim de duas semanas.",
+      "keywords": [
+        "defeito",
+        "atraso",
+        "inconsistente",
+        "dececionante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-10T12:50:40Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R067",
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
+    "customer": {
+      "customer_id": "C1067",
+      "name": "Cliente 067",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Tive de devolver. Nao correspondeu ao descrito.",
+      "keywords": [
+        "avaria",
+        "defeito",
+        "atraso"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-07T17:05:44Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R068",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1068",
+      "name": "Cliente 068",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "eficiente",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-05T19:10:41Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R069",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1069",
+      "name": "Cliente 069",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "razoavel",
+        "ok",
+        "adequado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-06T02:33:13Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R070",
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
+    "customer": {
+      "customer_id": "C1070",
+      "name": "Cliente 070",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Muito dececionante. Avariou ao fim de duas semanas.",
+      "keywords": [
+        "fragil",
+        "defeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-02T06:34:25Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R071",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1071",
+      "name": "Cliente 071",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "entrega",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-28T04:44:14Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R072",
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1072",
+      "name": "Cliente 072",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "preco",
+        "razoavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-08T23:20:55Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R073",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1073",
+      "name": "Cliente 073",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "normal",
+        "ok",
+        "esperado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-09T06:45:34Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R074",
+    "product": {
+      "product_id": "P-009",
+      "name": "Kit Yoga Premium",
+      "category": "Desporto",
+      "brand": "ZenFit"
+    },
+    "customer": {
+      "customer_id": "C1074",
+      "name": "Cliente 074",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "premium",
+        "qualidade",
+        "satisfeito",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-07T03:47:23Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R075",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1075",
+      "name": "Cliente 075",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "rapidez",
+        "fiavel",
+        "recomendo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-17T19:04:00Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R076",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1076",
+      "name": "Cliente 076",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "satisfeito",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-04T03:17:16Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R077",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1077",
+      "name": "Cliente 077",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Tive de devolver. Nao correspondeu ao descrito.",
+      "keywords": [
+        "fragil",
+        "devolucao",
+        "avaria"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-24T10:59:18Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R078",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1078",
+      "name": "Cliente 078",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "eficiente",
+        "recomendo",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-14T00:07:45Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R079",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1079",
+      "name": "Cliente 079",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "utilizacao",
+        "basico",
+        "regular",
+        "preco"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-03T17:29:42Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R080",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1080",
+      "name": "Cliente 080",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "recomendo",
+        "design",
+        "fiavel",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-12T16:44:12Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R081",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1081",
+      "name": "Cliente 081",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "fiavel",
+        "premium",
+        "elegante",
+        "rapidez"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-01T04:02:59Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R082",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1082",
+      "name": "Cliente 082",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto cumpre o esperado, sem grandes surpresas.",
+      "keywords": [
+        "razoavel",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-29T11:24:22Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R083",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1083",
+      "name": "Cliente 083",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "elegante",
+        "design",
+        "premium"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-11T07:37:06Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R084",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1084",
+      "name": "Cliente 084",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Pessimo servico pos-venda. Nao resolveriam o problema.",
+      "keywords": [
+        "desconfortavel",
+        "devolucao"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-14T09:48:54Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R085",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1085",
+      "name": "Cliente 085",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Pessimo servico pos-venda. Nao resolveriam o problema.",
+      "keywords": [
+        "danificado",
+        "suporte"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-04T17:06:25Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R086",
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1086",
+      "name": "Cliente 086",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "esperado",
+        "normal",
+        "basico"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-22T12:47:17Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R087",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1087",
+      "name": "Cliente 087",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "premium",
+        "elegante",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-11T08:31:53Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R088",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1088",
+      "name": "Cliente 088",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "fiavel",
+        "eficiente",
+        "design",
+        "premium"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-26T08:55:38Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R089",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1089",
+      "name": "Cliente 089",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "satisfeito",
+        "fiavel",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-27T22:43:47Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R090",
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
+    },
+    "customer": {
+      "customer_id": "C1090",
+      "name": "Cliente 090",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "duravel",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-03T00:20:08Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R091",
+    "product": {
+      "product_id": "P-015",
+      "name": "Cafeteira Smart Press",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1091",
+      "name": "Cliente 091",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "premium",
+        "rapidez",
+        "duravel",
+        "satisfeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-30T18:43:30Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R092",
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
+    },
+    "customer": {
+      "customer_id": "C1092",
+      "name": "Cliente 092",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "rapidez",
+        "satisfeito",
+        "fiavel",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-31T03:11:54Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R093",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1093",
+      "name": "Cliente 093",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Pessimo servico pos-venda. Nao resolveriam o problema.",
+      "keywords": [
+        "fragil",
+        "avaria",
+        "atraso",
+        "defeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-12T17:40:03Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R094",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1094",
+      "name": "Cliente 094",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Tive de devolver. Nao correspondeu ao descrito.",
+      "keywords": [
+        "fragil",
+        "avaria"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-19T14:07:49Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R095",
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1095",
+      "name": "Cliente 095",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "danificado",
+        "desconfortavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-04T04:11:49Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R096",
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
+    "customer": {
+      "customer_id": "C1096",
+      "name": "Cliente 096",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "preco",
+        "funcional",
+        "aceitavel",
+        "embalagem"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-29T14:02:46Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R097",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1097",
+      "name": "Cliente 097",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "qualidade",
+        "fiavel",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-06T03:29:30Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R098",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1098",
+      "name": "Cliente 098",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "normal",
+        "utilizacao",
+        "basico"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-27T10:19:49Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R099",
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
+    },
+    "customer": {
+      "customer_id": "C1099",
+      "name": "Cliente 099",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "regular",
+        "aceitavel",
+        "preco"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-13T07:00:06Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R100",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1100",
+      "name": "Cliente 100",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "premium",
+        "elegante",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-21T22:34:11Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R101",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1101",
+      "name": "Cliente 101",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "duravel",
+        "elegante",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-07T06:18:11Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R102",
+    "product": {
+      "product_id": "P-007",
+      "name": "Vestido Bloom Linen",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1102",
+      "name": "Cliente 102",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "embalagem",
+        "regular",
+        "ok"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-31T17:24:14Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R103",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1103",
+      "name": "Cliente 103",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "premium",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-07T00:31:38Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R104",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1104",
+      "name": "Cliente 104",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "rapidez",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-15T19:49:14Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R105",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1105",
+      "name": "Cliente 105",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "entrega",
+        "fiavel",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-30T01:49:34Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R106",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1106",
+      "name": "Cliente 106",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "preco",
+        "adequado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-24T12:34:32Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R107",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1107",
+      "name": "Cliente 107",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "fragil",
+        "ruido"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-01T19:49:19Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R108",
+    "product": {
+      "product_id": "P-008",
+      "name": "Bicicleta Trail 29",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1108",
+      "name": "Cliente 108",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "esperado",
+        "adequado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-04T21:09:04Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R109",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1109",
+      "name": "Cliente 109",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "ruido",
+        "suporte"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-20T06:04:19Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R110",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1110",
+      "name": "Cliente 110",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "recomendo",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-31T10:25:58Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R111",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1111",
+      "name": "Cliente 111",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "elegante",
+        "rapidez",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-28T16:10:35Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R112",
+    "product": {
+      "product_id": "P-015",
+      "name": "Cafeteira Smart Press",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1112",
+      "name": "Cliente 112",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "design",
+        "elegante",
+        "qualidade",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-18T20:40:00Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R113",
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
+    "customer": {
+      "customer_id": "C1113",
+      "name": "Cliente 113",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "razoavel",
+        "preco",
+        "adequado",
+        "utilizacao"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-14T08:48:51Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R114",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1114",
+      "name": "Cliente 114",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "premium",
+        "satisfeito"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-12T10:08:04Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R115",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1115",
+      "name": "Cliente 115",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "premium",
+        "entrega",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-07T12:30:01Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R116",
+    "product": {
+      "product_id": "P-012",
+      "name": "Perfume Marine Bleu",
+      "category": "Beleza",
+      "brand": "LuxScent"
+    },
+    "customer": {
+      "customer_id": "C1116",
+      "name": "Cliente 116",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "premium",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-21T20:58:22Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R117",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1117",
+      "name": "Cliente 117",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "premium",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-04T09:01:36Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R118",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1118",
+      "name": "Cliente 118",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "regular",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-14T19:41:54Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R119",
+    "product": {
+      "product_id": "P-003",
+      "name": "Tablet SlimPad 10",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1119",
+      "name": "Cliente 119",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "qualidade",
+        "rapidez",
+        "eficiente",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-16T17:46:08Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R120",
+    "product": {
+      "product_id": "P-011",
+      "name": "Candeeiro LED Solar",
+      "category": "Casa e Jardim",
+      "brand": "EcoLight"
+    },
+    "customer": {
+      "customer_id": "C1120",
+      "name": "Cliente 120",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega dentro do prazo. Produto basico mas funcional.",
+      "keywords": [
+        "razoavel",
+        "embalagem",
+        "regular"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-23T15:02:06Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R121",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1121",
+      "name": "Cliente 121",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "eficiente",
+        "elegante",
+        "design",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-13T23:21:24Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R122",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1122",
+      "name": "Cliente 122",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "rapidez",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-12T21:23:15Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R123",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1123",
+      "name": "Cliente 123",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "design",
+        "rapidez",
+        "qualidade",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-30T12:17:17Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R124",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1124",
+      "name": "Cliente 124",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "regular",
+        "aceitavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-28T15:43:58Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R125",
+    "product": {
+      "product_id": "P-013",
+      "name": "Creme Anti-Idade Pro",
+      "category": "Beleza",
+      "brand": "DermaCare"
+    },
+    "customer": {
+      "customer_id": "C1125",
+      "name": "Cliente 125",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Adequado para o uso que tenho. Nada de especial.",
+      "keywords": [
+        "embalagem",
+        "funcional"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-11T01:01:25Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R126",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1126",
+      "name": "Cliente 126",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Voltaria a comprar sem hesitar. Funciona muito bem no dia a dia.",
+      "keywords": [
+        "eficiente",
+        "rapidez",
+        "fiavel",
+        "recomendo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-10T19:57:31Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R127",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1127",
+      "name": "Cliente 127",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "eficiente",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-25T07:21:23Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R128",
+    "product": {
+      "product_id": "P-015",
+      "name": "Cafeteira Smart Press",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1128",
+      "name": "Cliente 128",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto apresentou problemas logo apos a entrega.",
+      "keywords": [
+        "defeito",
+        "danificado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-18T14:19:22Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R129",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1129",
+      "name": "Cliente 129",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Qualidade abaixo do esperado para esta faixa de preco.",
+      "keywords": [
+        "defeito",
+        "ruido",
+        "desconfortavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-10T03:41:39Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R130",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1130",
+      "name": "Cliente 130",
+      "location": {
+        "city": "Porto",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.6291,
+            41.1579
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "rapidez",
+        "eficiente",
+        "design"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-19T22:04:41Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R131",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1131",
+      "name": "Cliente 131",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto apresentou problemas logo apos a entrega.",
+      "keywords": [
+        "defeito",
+        "lento",
+        "ruido"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-03T04:45:10Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R132",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1132",
+      "name": "Cliente 132",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "entrega",
+        "recomendo",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-16T04:58:13Z",
+      "device": "Tablet",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R133",
+    "product": {
+      "product_id": "P-015",
+      "name": "Cafeteira Smart Press",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1133",
+      "name": "Cliente 133",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "elegante",
+        "eficiente",
+        "qualidade",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-23T23:44:32Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R134",
+    "product": {
+      "product_id": "P-010",
+      "name": "Aspirador Ciclone V3",
+      "category": "Casa e Jardim",
+      "brand": "HomePlus"
+    },
+    "customer": {
+      "customer_id": "C1134",
+      "name": "Cliente 134",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto superou as expectativas. Chegou dentro do prazo e bem embalado.",
+      "keywords": [
+        "satisfeito",
+        "elegante"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-04T16:55:54Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R135",
+    "product": {
+      "product_id": "P-009",
+      "name": "Kit Yoga Premium",
+      "category": "Desporto",
+      "brand": "ZenFit"
+    },
+    "customer": {
+      "customer_id": "C1135",
+      "name": "Cliente 135",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "intuitivo",
+        "eficiente"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-21T09:48:16Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R136",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1136",
+      "name": "Cliente 136",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "utilizacao",
+        "ok",
+        "razoavel",
+        "funcional"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-08T00:33:54Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R137",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1137",
+      "name": "Cliente 137",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Superou tudo o que esperava. Design elegante e uso intuitivo.",
+      "keywords": [
+        "elegante",
+        "satisfeito",
+        "design",
+        "fiavel"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-17T09:15:11Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R138",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1138",
+      "name": "Cliente 138",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega atrasada e suporte pouco claro durante o processo.",
+      "keywords": [
+        "ruido",
+        "fragil",
+        "lento"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-21T11:02:27Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R139",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1139",
+      "name": "Cliente 139",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Pessimo servico pos-venda. Nao resolveriam o problema.",
+      "keywords": [
+        "desconfortavel",
+        "avaria",
+        "devolucao",
+        "lento"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-03-14T07:23:37Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R140",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1140",
+      "name": "Cliente 140",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Material solido e acabamento cuidado. Muito satisfeito.",
+      "keywords": [
+        "intuitivo",
+        "premium",
+        "entrega",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-31T17:44:17Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R141",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1141",
+      "name": "Cliente 141",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Tive de devolver. Nao correspondeu ao descrito.",
+      "keywords": [
+        "suporte",
+        "atraso"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-08T23:44:54Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R142",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1142",
+      "name": "Cliente 142",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Razoavel para o preco. Nao e o melhor mas serve.",
+      "keywords": [
+        "utilizacao",
+        "razoavel",
+        "esperado",
+        "adequado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-18T14:32:42Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R143",
+    "product": {
+      "product_id": "P-014",
+      "name": "Mochila Urban Trek 30L",
+      "category": "Desporto",
+      "brand": "ActiveGear"
+    },
+    "customer": {
+      "customer_id": "C1143",
+      "name": "Cliente 143",
+      "location": {
+        "city": "Braga",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.426,
+            41.5503
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto apresentou problemas logo apos a entrega.",
+      "keywords": [
+        "fragil",
+        "lento",
+        "atraso",
+        "avaria"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-04T23:44:33Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R144",
+    "product": {
+      "product_id": "P-005",
+      "name": "Casaco Urbano Slim",
+      "category": "Moda",
+      "brand": "UrbanStyle"
+    },
+    "customer": {
+      "customer_id": "C1144",
+      "name": "Cliente 144",
+      "location": {
+        "city": "Setubal",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.8882,
+            38.5244
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 4,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "intuitivo",
+        "duravel",
+        "eficiente",
+        "entrega"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-18T01:05:10Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R145",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1145",
+      "name": "Cliente 145",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 2,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Tive de devolver. Nao correspondeu ao descrito.",
+      "keywords": [
+        "suporte",
+        "atraso",
+        "defeito",
+        "danificado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-16T00:01:25Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R146",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1146",
+      "name": "Cliente 146",
+      "location": {
+        "city": "Faro",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -7.9304,
+            37.0193
+          ]
+        }
+      },
+      "membership": "Gold"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "preco",
+        "normal",
+        "embalagem",
+        "esperado"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-02-16T05:33:40Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R147",
+    "product": {
+      "product_id": "P-004",
+      "name": "Smart Watch Fit 3",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1147",
+      "name": "Cliente 147",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 3,
+      "sentiment": "Neutral",
+      "verified_purchase": false
+    },
+    "content": {
+      "comment": "Funciona bem, embora alguns detalhes pudessem ser melhores.",
+      "keywords": [
+        "ok",
+        "preco",
+        "utilizacao",
+        "embalagem"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-09T02:40:11Z",
+      "device": "Web",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R148",
+    "product": {
+      "product_id": "P-002",
+      "name": "Auriculares BT Ultra",
+      "category": "Eletronica",
+      "brand": "SoundWave"
+    },
+    "customer": {
+      "customer_id": "C1148",
+      "name": "Cliente 148",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 1,
+      "sentiment": "Negative",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Produto apresentou problemas logo apos a entrega.",
+      "keywords": [
+        "suporte",
+        "avaria"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-11-26T11:11:59Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R149",
+    "product": {
+      "product_id": "P-001",
+      "name": "Smartphone XR Pro",
+      "category": "Eletronica",
+      "brand": "TechNova"
+    },
+    "customer": {
+      "customer_id": "C1149",
+      "name": "Cliente 149",
+      "location": {
+        "city": "Coimbra",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -8.4291,
+            40.2033
+          ]
+        }
+      },
+      "membership": "Silver"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Entrega rapida e produto em perfeito estado. Recomendo.",
+      "keywords": [
+        "satisfeito",
+        "design",
+        "rapidez",
+        "qualidade"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2026-01-18T08:16:40Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
+  },
+  {
+    "review_id": "R150",
+    "product": {
+      "product_id": "P-006",
+      "name": "Sapatilhas RunPro X3",
+      "category": "Moda",
+      "brand": "FootFlex"
+    },
+    "customer": {
+      "customer_id": "C1150",
+      "name": "Cliente 150",
+      "location": {
+        "city": "Lisboa",
+        "country": "PT",
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            -9.1393,
+            38.7223
+          ]
+        }
+      },
+      "membership": "Bronze"
+    },
+    "metrics": {
+      "rating": 5,
+      "sentiment": "Positive",
+      "verified_purchase": true
+    },
+    "content": {
+      "comment": "Excelente qualidade. Relacao qualidade-preco imbativel.",
+      "keywords": [
+        "rapidez",
+        "recomendo",
+        "premium",
+        "intuitivo"
+      ],
+      "language": "pt"
+    },
+    "metadata": {
+      "timestamp": "2025-12-03T23:15:06Z",
+      "device": "Mobile",
+      "source": "dataset"
+    }
   }
 ]

@@ -106,17 +106,28 @@ def normalize_documents(documents):
 
 
 def mongo_collection(mongo_uri, db_name, collection_name, timeout_ms=3000):
+    """Devolve (client, collection). O chamador é responsável por fechar o client."""
     client = MongoClient(mongo_uri, serverSelectionTimeoutMS=timeout_ms)
     client.admin.command("ping")
     return client, client[db_name][collection_name]
 
 
 def load_mongo_documents(mongo_uri, db_name, collection_name):
+    """Carrega todos os documentos da colecção e fecha a ligação."""
     client, collection = mongo_collection(mongo_uri, db_name, collection_name)
     try:
         return list(collection.find({}, {"_id": 0}))
     finally:
         client.close()
+
+
+def get_mongo_collection_handle(mongo_uri, db_name, collection_name, timeout_ms=3000):
+    """
+    Devolve (client, collection) sem fechar a ligação.
+    Use quando precisar de executar múltiplas queries na mesma ligação.
+    O chamador DEVE invocar client.close() quando terminar.
+    """
+    return mongo_collection(mongo_uri, db_name, collection_name, timeout_ms)
 
 
 def load_dashboard_data(data_source, mongo_uri, db_name, collection_name):

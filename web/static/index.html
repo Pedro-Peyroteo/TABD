@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitMap — Onde treinar em Portugal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+       LANDING
+  ═══════════════════════════════════════════════════════ -->
+  <div id="landing">
+
+    <div class="landing-bg"></div>
+
+    <header class="landing-header">
+      <div class="landing-logo">
+        <span class="logo-mark">FM</span>
+        <div>
+          <span class="logo-name">FitMap</span>
+          <span class="logo-tag">Sports Facilities · Portugal</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="landing-hero">
+
+      <div class="hero-left">
+        <span class="hero-eyebrow">Open Data · OpenStreetMap</span>
+        <h1 class="landing-title">
+          Onde treinar,<br>
+          em qualquer ponto<br>
+          de Portugal.
+        </h1>
+        <p class="landing-sub">
+          Ginásios, piscinas, centros desportivos, dojos e estúdios — agregados a partir de dados públicos
+          e pesquisáveis por proximidade, modalidade ou cidade.
+        </p>
+        <div class="hero-stats" id="hero-stats"></div>
+      </div>
+
+      <div class="hero-right">
+        <div class="landing-card">
+          <p class="card-title">Comece a pesquisa</p>
+
+          <div class="lnd-field">
+            <label class="lnd-label">Categoria</label>
+            <select id="lnd-cat" class="lnd-select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="lnd-field">
+            <label class="lnd-label">Modalidade</label>
+            <select id="lnd-sport" class="lnd-select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="lnd-field">
+            <label class="lnd-label">Cidade</label>
+            <select id="lnd-city" class="lnd-select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <button id="lnd-btn" onclick="launchMap()">
+            Ver no mapa
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <button id="lnd-btn-geo" class="lnd-btn-secondary" onclick="useMyLocation()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+            Usar a minha localização
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       APP
+  ═══════════════════════════════════════════════════════ -->
+  <div id="app" class="app-hidden">
+
+    <header id="header">
+      <div class="brand" onclick="showLanding()" title="Voltar ao início" style="cursor:pointer">
+        <span class="brand-name">FitMap</span>
+        <span class="brand-sub">Portugal</span>
+      </div>
+
+      <nav id="main-tabs">
+        <button class="tab active" data-view="map" onclick="switchView('map')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.5-3V5l5.5 3 6-3 5.5 3v12l-5.5-3-6 3zM9 8v12M15 5v12"/></svg>
+          Mapa
+          <span class="tab-count" id="tab-count-facilities">—</span>
+        </button>
+      </nav>
+
+      <div id="kpi-bar-mini">
+        <div class="kpi-card">
+          <span class="kpi-label">Vis.</span>
+          <span class="kpi-value" id="kv-visible">—</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Horários</span>
+          <span class="kpi-value" id="kv-hours">—</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Website</span>
+          <span class="kpi-value" id="kv-web">—</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <span class="badge">MongoDB · OSM · Wikidata</span>
+      </div>
+    </header>
+
+    <div id="layout" class="view-active">
+
+      <aside id="sidebar">
+        <div class="sidebar-section">
+          <p class="sidebar-label">Pesquisar</p>
+          <input type="text" id="search-input" class="search-box" placeholder="Nome da instalação..." />
+        </div>
+        <div class="sidebar-section">
+          <p class="sidebar-label">Categoria</p>
+          <div id="cat-filters" class="filter-group"></div>
+        </div>
+        <div class="sidebar-section">
+          <p class="sidebar-label">Modalidade</p>
+          <div id="sport-filters" class="filter-group"></div>
+        </div>
+        <div class="sidebar-section">
+          <p class="sidebar-label">Cidades</p>
+          <div id="city-list" class="city-list"></div>
+        </div>
+        <div class="sidebar-section sidebar-footer">
+          <p class="sidebar-label">Stack</p>
+          <p class="tech-tag">$geoNear · $geoWithin</p>
+          <p class="tech-tag">$facet · $unwind</p>
+          <p class="tech-tag">FastAPI · Leaflet</p>
+        </div>
+      </aside>
+
+      <div id="map">
+        <div id="draw-toolbar">
+          <button id="btn-locate" class="draw-btn" onclick="useMyLocation()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+            Minha localização
+          </button>
+          <button id="btn-draw-poly" class="draw-btn" onclick="startDraw()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 19 2 19"/></svg>
+            Desenhar área
+          </button>
+          <button id="btn-clear" class="draw-btn draw-clear" onclick="clearSelection()" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            Limpar
+          </button>
+        </div>
+
+        <div id="map-hint">Botão direito no mapa para pesquisar num raio · Use "Desenhar área" para selecionar um polígono</div>
+
+        <div id="draw-hint" class="draw-hint hidden">
+          Clique para definir vértices · Duplo clique para fechar
+        </div>
+
+        <div id="legend"></div>
+
+        <div id="route-card" class="route-card hidden">
+          <div class="route-modes" id="route-modes">
+            <button class="route-mode active" data-mode="car" onclick="switchRouteMode('car')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14M6 13l1-5h10l1 5M5 17v3h3v-3M16 17v3h3v-3"/><circle cx="7.5" cy="14.5" r="1.5"/><circle cx="16.5" cy="14.5" r="1.5"/></svg>
+            </button>
+            <button class="route-mode" data-mode="foot" onclick="switchRouteMode('foot')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4" r="2"/><path d="M10 22v-6l-3-2v-4l5-2 4 3 2 4M14 22l-2-5"/></svg>
+            </button>
+            <button class="route-mode" data-mode="bike" onclick="switchRouteMode('bike')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M6 17l4-7h5l2 7M12 6h3l2 4M9 6h2"/></svg>
+            </button>
+          </div>
+          <div class="route-info" id="route-info">
+            <span class="route-loading">A calcular...</span>
+          </div>
+          <button class="route-close" onclick="clearRoute()" title="Limpar rota">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div id="toast" class="toast hidden"></div>
+      </div>
+
+      <aside id="panel" class="panel-closed">
+        <div id="panel-header">
+          <div style="flex:1; min-width:0">
+            <span id="panel-cat-badge" class="cat-badge">—</span>
+            <h2 id="panel-name">—</h2>
+            <p id="panel-address" class="panel-address">—</p>
+          </div>
+          <button id="panel-close" onclick="closePanel()">&#x2715;</button>
+        </div>
+        <div id="panel-body">
+          <div class="panel-block">
+            <p class="panel-block-title">Modalidades</p>
+            <div id="panel-sports" class="sport-pills"></div>
+          </div>
+          <div class="panel-block">
+            <p class="panel-block-title">Contactos</p>
+            <div id="panel-contacts" class="contacts-list"></div>
+          </div>
+          <div class="panel-block">
+            <p class="panel-block-title">Horários</p>
+            <p id="panel-hours" class="panel-hours">—</p>
+          </div>
+          <div class="panel-block">
+            <p class="panel-block-title">Acessibilidade</p>
+            <div id="panel-amenities" class="amenities-grid"></div>
+          </div>
+          <div class="panel-block" id="panel-events-block" style="display:none">
+            <p class="panel-block-title">Próximos eventos aqui ou perto</p>
+            <div id="panel-events" class="panel-events"></div>
+          </div>
+          <div class="panel-block">
+            <button class="panel-action" onclick="openDirections()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l18-9-7 18-3-7-8-2z"/></svg>
+              Calcular rota
+            </button>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <div id="area-panel" class="area-panel hidden">
+      <div class="area-header">
+        <span class="area-title" id="area-title">Área selecionada</span>
+        <button onclick="clearSelection()">&#x2715;</button>
+      </div>
+      <div id="area-summary" class="area-summary"></div>
+      <div id="area-results" class="area-results"></div>
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

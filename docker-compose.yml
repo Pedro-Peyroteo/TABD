@@ -1,7 +1,7 @@
 services:
   mongodb:
     image: mongo:7
-    container_name: globalshop-mongodb
+    container_name: fitmap-mongodb
     ports:
       - "27017:27017"
     volumes:
@@ -14,56 +14,39 @@ services:
 
   seed:
     build: .
-    container_name: globalshop-seed
+    container_name: fitmap-seed
     depends_on:
       mongodb:
         condition: service_healthy
     environment:
-      DATA_SOURCE: mongo
       MONGO_URI: mongodb://mongodb:27017
-      MONGO_DB: GlobalShop
-      MONGO_COLLECTION: reviews
-    command: ["python", "03_Implementacao/seed_mongodb.py"]
+      MONGO_DB: FitMap
+      MONGO_COLLECTION: facilities
+      EVENTS_COLLECTION: events
+      OSM_USE_CACHE: "1"
+    command: ["sh", "-c", "python 03_Implementacao/seed_osm.py && python 03_Implementacao/seed_events.py"]
+    volumes:
+      - ./03_Implementacao:/app/03_Implementacao
     restart: "no"
 
-  app:
-    build: .
-    container_name: globalshop-app
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: fitmap-web
     depends_on:
       seed:
         condition: service_completed_successfully
     environment:
-      DATA_SOURCE: auto
       MONGO_URI: mongodb://mongodb:27017
-      MONGO_DB: GlobalShop
-      MONGO_COLLECTION: reviews
-      DATA_CACHE_TTL_SECONDS: ${DATA_CACHE_TTL_SECONDS:-5}
-      AUTO_REFRESH_SECONDS: ${AUTO_REFRESH_SECONDS:-5}
+      MONGO_DB: FitMap
+      MONGO_COLLECTION: facilities
     ports:
-      - "8501:8501"
-
-  simulator:
-    build: .
-    container_name: globalshop-simulator
-    profiles:
-      - simulation
-    depends_on:
-      seed:
-        condition: service_completed_successfully
-    environment:
-      MONGO_URI: mongodb://mongodb:27017
-      MONGO_DB: GlobalShop
-      MONGO_COLLECTION: reviews
-      SIM_INTERVAL_SECONDS: ${SIM_INTERVAL_SECONDS:-5}
-      SIM_BATCH_SIZE: ${SIM_BATCH_SIZE:-1}
-      SIM_MAX_REVIEWS: ${SIM_MAX_REVIEWS:-500}
-      SIM_SEED: ${SIM_SEED:-42}
-      SIM_RESET_ON_START: ${SIM_RESET_ON_START:-false}
-    command: ["python", "03_Implementacao/simulate_reviews.py"]
+      - "8000:8000"
 
   mongo-express:
     image: mongo-express:1
-    container_name: globalshop-mongo-express
+    container_name: fitmap-mongo-express
     profiles:
       - tools
     depends_on:

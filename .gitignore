@@ -13,3 +13,14 @@ build/
 .idea/
 .vscode/
 *.ipynb_checkpoints/
+
+# IDE / agent artifacts
+.claude/
+
+# Office temporary lock files
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# Duplicate ASCII-safe template (used only as workaround)
+Template_relatorio_IHC.docx
