@@ -1,164 +1,78 @@
-# Guião de Apresentação
-## GlobalShop: Sistema NoSQL + Espacial de Business Intelligence
+# Guiao de Apresentacao: FitMap
 
-**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD)
-**Ano Letivo:** 2025/2026
-
-> **Como usar este guião:** Cada secção corresponde a um momento da apresentação.
-> Tempo estimado total: **15–20 minutos**
-> Antes de começar: executar `streamlit run app_bi.py` e manter o browser aberto em `http://localhost:8501`.
+**UC:** Tecnologias e Aplicacoes de Bases de Dados (TABD) | **Ano letivo:** 2025/2026  
+**Duracao sugerida:** 15–20 minutos
 
 ---
 
-## SLIDE 1 — Título (30 seg)
+## Estrutura da Apresentacao
 
-**Dizer:**
-> "O nosso projeto chama-se GlobalShop Sentiment Intelligence. O objetivo é transformar avaliações de clientes em decisões de negócio — em minutos, não em dias. Para isso, combinamos duas tecnologias de base de dados: o MongoDB como base de dados NoSQL orientada a documentos, e o mesmo MongoDB como base de dados espacial, através do índice `2dsphere` e do padrão GeoJSON. O caso de uso é o mercado português, com cobertura de Lisboa, Porto, Coimbra, Braga, Faro e Setúbal."
+### 1. Introducao (2 min)
 
----
+- "O FitMap responde a uma pergunta simples: onde posso treinar perto de mim?"
+- Mostrar a **landing page** — 3 390 instalacoes, 9 categorias, 234+ cidades
+- Destacar: dados reais do OpenStreetMap, nao sinteticos
 
-## SLIDE 2 — Problema de Negócio (1–2 min)
+### 2. Demonstracao ao vivo (8 min)
 
-**Contexto:**
-A GlobalShop é um marketplace que opera em Portugal Continental. Recebe centenas de avaliações diárias, mas enfrenta três problemas operacionais críticos:
+**Cenario 1 — Pesquisa por proximidade GPS**
+1. Clicar "Usar a minha localizacao"
+2. Mostrar o circulo de raio no mapa e os resultados ordenados por distancia
+3. Mostrar o painel `$geoNear · 3 km · $SGEONEAR` com resultados
+4. Expandir o raio automaticamente se nao houver resultados
 
-| Problema | Consequência |
-| :--- | :--- |
-| Deteta defeitos de produto com dias de atraso | Aumento de devoluções e perda de reputação |
-| Não sabe em que região do país a insatisfação é maior | Decisões logísticas sem suporte geográfico |
-| Não consegue isolar causa raiz (produto vs. entrega) | Ações corretivas direcionadas ao departamento errado |
+**Cenario 2 — Filtro por cidade e categoria**
+1. Selecionar "Lisboa" na lista de cidades
+2. Clicar no filtro "Ginasio"
+3. Mostrar os 69 ginasios de Lisboa
 
-**Dizer:**
-> "Imaginem que um lote defeituoso de smartphones chega ao mercado. Sem o nosso sistema, a empresa demora dias a perceber que algo está errado. Com o DSS que implementámos, em minutos conseguimos ver: que o Smartphone X1 caiu 50% de rating em Abril; que a causa raiz é 'sobreaquecimento' e 'defeito' de hardware, não de logística; e que o problema está geograficamente concentrado em Braga e Faro. Isto permite uma ação corretiva precisa e imediata."
+**Cenario 3 — Selecao por area**
+1. Clicar "Desenhar area"
+2. Desenhar um poligono sobre uma zona
+3. Mostrar o painel com instalacoes + breakdown por categoria
 
----
+**Cenario 4 — Rota e eventos**
+1. Clicar num marcador → abrir painel de detalhe
+2. Mostrar modalidades, acessibilidade, eventos proximos
+3. Clicar "Calcular rota" → rota de carro → mudar para a pe
 
-## SLIDE 3 — Por que NoSQL + Espacial? (2 min)
+### 3. Arquitetura e MongoDB (5 min)
 
-### Por que MongoDB (NoSQL)?
+- Mostrar diagrama: OSM → seed → MongoDB → FastAPI → Leaflet
+- Explicar indice `2dsphere`: "indexa pontos sobre uma esfera, distancia geodesica"
+- Mostrar pipeline `$geoNear` no codigo (web/server.py)
+- Explicar `$facet`: "5 agregacoes paralelas numa unica query"
+- Explicar `$unwind` + `$group` para modalidades multikey
 
-| Critério | SQL | MongoDB (NoSQL) |
-| :--- | :--- | :--- |
-| Esquema | Rígido — migrações dispendiosas | Dinâmico — novos atributos sem alteração |
-| Escalabilidade | Vertical (hardware mais caro) | Horizontal — sharding nativo |
-| Agregação | JOINs pesados entre tabelas normalizadas | Documentos auto-contidos — O(1) |
+### 4. Stack e Decisoes (3 min)
 
-> "Cada review de eletrónicos tem atributos técnicos; cada review de moda fala de tamanho e tecido. Num modelo relacional, precisaríamos de dezenas de colunas nulas. No MongoDB, cada documento tem o schema que precisa."
+- Por que MongoDB e nao PostgreSQL + PostGIS?
+  - Schema flexivel para dados OSM heterogeneos
+  - `$geoNear` e `$geoWithin` suficientes para points
+- Por que FastAPI?
+  - ASGI async, documentacao automatica `/docs`
+- Por que OSRM publico?
+  - Zero configuracao, 3 perfis, < 100 ms de resposta
 
-### Por que MongoDB Geospatial (Base de Dados Espacial)?
+### 5. Conclusao (2 min)
 
-> "Em vez de adicionar o PostGIS ao PostgreSQL — o que implicaria gerir um segundo sistema — o MongoDB suporta GeoJSON nativamente através do índice `2dsphere`. Isso significa que podemos fazer, na mesma pipeline de agregação, uma query como: 'qual é o NSS das reviews originadas num raio de 100 km de Lisboa?'. Uma única infraestrutura, zero configuração adicional."
-
-**Mostrar o campo de localização no `dataset_exemplo.json`:**
-```json
-"location": {
-  "city": "Braga",
-  "country": "Portugal",
-  "coordinates": { "type": "Point", "coordinates": [-8.4261, 41.5454] }
-}
-```
-
----
-
-## SLIDE 4 — Arquitetura da Solução (1 min)
-
-```
-Reviews (GeoJSON Portugal) → MongoDB (NoSQL + 2dsphere) → Aggregation Pipelines → Streamlit Dashboard
-```
-
-**Três camadas:**
-- **Bronze:** Ingestão bruta no MongoDB com índice espacial `2dsphere` ativo.
-- **Silver:** Transformação via Aggregation Framework — NSS, QDR, KCI, queries espaciais.
-- **Gold:** Visualização no dashboard com mapa interativo de Portugal.
+- 3 390 instalacoes reais, 234+ municipios, 9 categorias
+- Latencia media: 45–80 ms para queries geoespaciais
+- Cobertura nacional completa com dados auditaveis
+- Extensoes possiveis: clustering, heatmap, bus stops, reviews
 
 ---
 
-## SLIDE 5 — DEMO AO VIVO: Dashboard (8–10 min)
+## Perguntas Previstas
 
-> Abrir o browser em `http://localhost:8501`
+**"Como e que o $geoNear funciona internamente?"**
+> O indice 2dsphere organiza os pontos numa arvore espacial. O $geoNear percorre-a do mais proximo para o mais distante, sem fazer scan completo. Daí os ~45 ms mesmo com 3 390 documentos.
 
-### Aba 1 — Visão Executiva
-**Mostrar e comentar:**
-- **NSS Global:** "Mede a polaridade emocional. NSS positivo significa que a plataforma tem mais promotores do que detratores."
-- **Quality Decay Rate:** "Compara os últimos 30 dias com o histórico. O valor negativo aqui é o primeiro sinal de alerta — algo deteriorou-se recentemente."
-- **Gráfico de linha mensal:** "Vemos a nota a descer consistentemente a partir de Março — padrão claro de deterioração."
+**"Porque nao usaram PostGIS?"**
+> Os dados OSM sao heterogeneos — cada instalacao tem um conjunto diferente de tags. O modelo documental elimina ALTER TABLE a cada nova tag. Para operacoes de ponto ($geoNear, $geoWithin), o MongoDB e equivalente ao PostGIS em termos funcionais.
 
-### Aba 2 — Análise Tática
-**Mostrar e comentar:**
-- "Aqui os gestores de categoria veem quais departamentos têm mais sentimentos negativos — Eletrónicos destaca-se."
-- Apontar o **Smartphone X1** no gráfico de produtos críticos: "Este produto está em zona crítica. Nota média abaixo de 2.0, o que é extremamente preocupante."
+**"Os dados sao atualizados?"**
+> Sao um snapshot OSM. Para producao, o seed poderia correr periodicamente (cron) sem parar o servidor web, aproveitando a separacao seed/web do Docker Compose.
 
-### Aba 3 — Análise Operacional
-**Mostrar e comentar:**
-- **Word Cloud:** "As palavras maiores são as mais frequentes nas reviews negativas. 'Sobreaquecimento', 'defeito' e 'bateria' dominam — apontam inequivocamente para um problema de hardware."
-- **Tabela de Anomaly Detection:** "O Smartphone X1 tem uma queda de 50% — classificado como 🔴 Crítico. Este é o gatilho automático para o gestor de qualidade."
-
-### Aba 4 — Análise Geoespacial ⭐ (ponto diferenciador)
-**Mostrar e comentar:**
-- **Mapa de bolhas:** "Cada bolha é uma cidade portuguesa. O tamanho representa o volume de reviews, a cor representa o NSS — verde é satisfação, vermelho é insatisfação. Braga e Faro aparecem a vermelho — é aqui que o lote defeituoso está concentrado."
-- **NSS por cidade:** "Conseguimos ver instantaneamente quais regiões de Portugal têm clientes mais insatisfeitos."
-- **Resumo regional:** "Um diretor de logística usa esta tabela para decidir se deve auditar o parceiro de entrega regional do Algarve ou se o problema é nacional."
-
----
-
-## SLIDE 6 — Queries Geoespaciais MongoDB (1 min)
-
-**Mostrar o código de `Queries_BI.md` e dizer:**
-
-> "Estas queries só são possíveis porque criámos o índice `2dsphere`. Por exemplo, esta query recupera todas as reviews de clientes num raio de 100 km de Lisboa — usando geometria esférica real, em haversine."
-
-```javascript
-db.reviews.find({
-  "customer.location.coordinates": {
-    $nearSphere: {
-      $geometry: { type: "Point", coordinates: [-9.1393, 38.7223] },
-      $maxDistance: 100000
-    }
-  }
-})
-```
-
----
-
-## SLIDE 7 — KPIs Implementados (30 seg)
-
-| KPI | Fórmula | Onde no Dashboard |
-| :--- | :--- | :--- |
-| NSS | (% Positive) − (% Negative) | Tab 1 + Tab 4 |
-| Quality Decay Rate | (média 30d − média hist.) / hist. × 100% | Tab 1 |
-| Anomaly Detection | Queda ≥ 30% entre meses consecutivos | Tab 3 |
-| Keyword Correlation Index | % ocorrências negativas por keyword | Tab 3 + Queries_BI.md |
-| Geographic Sentiment Index | NSS calculado por cidade — visualizado no mapa | Tab 4 |
-
----
-
-## SLIDE 8 — Conclusões (1 min)
-
-**Dizer:**
-> "O projeto demonstra que o MongoDB pode servir simultaneamente como base de dados NoSQL para dados não estruturados e como base de dados espacial para análise geográfica — sem infraestrutura adicional, usando GeoJSON como standard aberto. O resultado é um DSS que reduz o tempo de deteção de problemas de dias para minutos, e que acrescenta a dimensão geográfica à análise de satisfação — algo que um SQL clássico não consegue sem extensões complexas."
-
-**Resultados concretos do projeto:**
-- ✅ Lote defeituoso detetado automaticamente — Smartphone X1, Abril 2026, queda de 50%.
-- ✅ Causa raiz identificada via KCI: `sobreaquecimento` + `defeito` (hardware, não logística).
-- ✅ Dimensão geográfica: mapa de NSS por cidade de Portugal Continental.
-- ✅ 9 pipelines MongoDB documentadas (5 analíticas + 4 geoespaciais).
-- ✅ Dashboard com 4 visões orientadas a CEO, gestores de categoria, analistas de qualidade e diretores de logística.
-
----
-
-## Possíveis Perguntas e Respostas
-
-**P: Por que não usaram PostGIS em vez do MongoDB Geospatial?**
-R: "O MongoDB Geospatial elimina a necessidade de um segundo sistema. Tanto as queries espaciais como as analíticas coexistem na mesma pipeline de agregação, usando GeoJSON — um padrão aberto (RFC 7946). Para o nosso caso de uso, é a solução mais simples, performante e operacionalmente menos custosa."
-
-**P: O dashboard funciona com dados reais do MongoDB ou apenas com o ficheiro JSON?**
-R: "O dashboard lê diretamente o ficheiro JSON de demonstração, que replica a estrutura exata dos documentos MongoDB. Para produção, basta substituir a função `load_data()` por uma query pymongo — a estrutura do documento é idêntica. O `INSTALL.md` documenta os passos de importação e criação dos índices."
-
-**P: Como escala para milhões de reviews?**
-R: "Os índices garantem complexidade O(log n) nas queries mais pesadas. Para escala horizontal, o MongoDB suporta sharding nativo com shard key em `product.category` ou `metadata.timestamp`. Para aggregations que excedam a RAM disponível, a opção `allowDiskUse: true` resolve o problema sem alterar as queries."
-
-**P: O que significa um Quality Decay Rate negativo?**
-R: "Um QDR de -30% significa que a nota média dos últimos 30 dias caiu 30% face ao histórico anterior. É o trigger para emissão de alerta vermelho e para o bloqueio preventivo do lote afetado."
-
-**P: Por que escolheram Streamlit e não Power BI ou Tableau?**
-R: "Streamlit permite integração nativa com Python e pymongo, tornando o pipeline de dados completamente programático e reproduzível. Para um ambiente empresarial, a Tab 4 poderia ser substituída por Power BI Embedded — a camada de dados MongoDB permanece inalterada."
+**"O que e o $facet?"**
+> Permite executar multiplas sub-pipelines de agregacao em paralelo sobre o mesmo conjunto de dados numa unica query. Usamos para calcular totais, categorias, modalidades e cidades ao mesmo tempo.
