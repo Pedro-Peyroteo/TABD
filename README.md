@@ -1,19 +1,92 @@
-# GlobalShop: Sistema de Análise de Sentimentos e Inteligência de Negócio
+# FitMap — Onde Treinar em Portugal
 
 **Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD) | **Ano Letivo:** 2025/2026
 
-Este projeto consiste no design, implementação e análise de uma infraestrutura de dados **NoSQL** com suporte a **dados espaciais**, integrada com Business Intelligence (BI) para a empresa fictícia **GlobalShop** — um marketplace de e-commerce que opera em Portugal Continental, com cobertura das cidades de Lisboa, Porto, Coimbra, Braga, Faro e Setúbal.
+FitMap é uma **plataforma WebSIG** (Sistema de Informação Geográfica na Web) para descoberta de instalações desportivas em Portugal — ginásios, piscinas, centros desportivos, dojos, estúdios e muito mais — agregadas a partir de **dados abertos** do OpenStreetMap e pesquisáveis por proximidade, modalidade ou cidade. Inclui ainda uma camada de **eventos desportivos** geolocalizados.
 
-O objetivo central é resolver o problema de "silos de dados não estruturados", transformando avaliações de clientes em decisões estratégicas de qualidade, experiência do utilizador e **inteligência geográfica de satisfação**.
+O projeto demonstra o uso de **MongoDB como base de dados espacial nativa** (índice `2dsphere` sobre GeoJSON) servida por uma API **FastAPI** e consumida por um frontend **Leaflet** de página única.
+
+> Nota: o repositório contém também um projeto anterior — o dashboard *GlobalShop* em Streamlit (`app_bi.py`, `globalshop_bi/`). A configuração de execução atual (`docker-compose.yml`) constrói e arranca apenas o FitMap; o GlobalShop é considerado legado.
 
 ---
 
-## Visão Geral do Ecossistema
+## Arquitetura
 
-O sistema opera num cenário de **Big Data**, combinando duas tecnologias de base de dados numa solução unificada:
+```
+OpenStreetMap / Overpass ─┐
+Nominatim (geocoding)    ─┼─►  Seeds (Python)  ─►  MongoDB  ─►  FastAPI  ─►  Leaflet SPA
+Scrapers (eventos)       ─┘     seed_osm.py        FitMap        web/         web/static/
+                                seed_events.py    (2dsphere)    server.py    index.html
+```
 
-1. **MongoDB (NoSQL):** Base de dados orientada a documentos com schema dinâmico, ideal para reviews com atributos variados por categoria de produto.
-2. **MongoDB Geospatial (Espacial):** O índice `2dsphere` sobre campos GeoJSON transforma o MongoDB numa base de dados espacial nativa, habilitando operadores como `$geoNear`, `$geoWithin` e `$near` para análise geográfica da satisfação por cidade e região.
+| Camada | Tecnologia | Papel |
+| :--- | :--- | :--- |
+| Base de dados | MongoDB 7 | Documentos com índice geoespacial `2dsphere` |
+| Dados espaciais | GeoJSON (RFC 7946) + `2dsphere` | `$geoNear`, `$geoWithin`, `$facet`, `$unwind` |
+| Backend | FastAPI + uvicorn | API REST `/api/*` e serviço da SPA |
+| Driver | pymongo | Ligação ao MongoDB (cliente partilhado) |
+| Frontend | Leaflet + Leaflet.draw + Routing Machine | Mapa interativo, desenho de polígonos, rotas |
+| Origem de dados | OpenStreetMap, Nominatim, Wikidata, federações | Instalações e eventos |
+
+O MongoDB armazena duas coleções:
+
+- **`facilities`** — instalações desportivas: `osm_id`, `name`, `category`, `sports[]`, `address.{city,street,housenumber,postcode}`, `contact.{phone,website,email}`, `opening_hours`, `amenities`, `operator` e `location` (GeoJSON `Point`, coordenadas `[lon, lat]`).
+- **`events`** — eventos desportivos: `title`, `sport`, `category`, `start_date`/`end_date`, `venue_name`, `city`, `source`, `location` (GeoJSON `Point`) e `near_facility` (instalação OSM mais próxima, ligada por `$geoNear`).
+
+---
+
+## Início Rápido (Docker)
+
+```bash
+docker compose up --build
+```
+
+Isto constrói e arranca três serviços: `mongodb`, `seed` (carrega instalações e eventos) e `web`. Quando o seed terminar, abrir:
+
+```
+http://localhost:8000
+```
+
+Para incluir o **Mongo Express** (inspeção visual da base de dados em `http://localhost:8081`):
+
+```bash
+docker compose --profile tools up --build
+```
+
+> Se obtiver um erro `network ... not found` ao arrancar, ver a secção de resolução de problemas no [INSTALL.md](INSTALL.md) — normalmente resolve-se com `docker compose down --remove-orphans`.
+
+O guia completo de instalação (incluindo execução manual sem Docker e variáveis de ambiente) está em **[INSTALL.md](INSTALL.md)**.
+
+---
+
+## Funcionalidades
+
+- **Mapa interativo** de todas as instalações, com cores por categoria e legenda.
+- **Filtros** por categoria, modalidade e cidade, combináveis entre si.
+- **Pesquisa por raio** (`$geoNear`): clique direito no mapa ou "Minha localização" — expande automaticamente o raio até encontrar resultados.
+- **Seleção poligonal** (`$geoWithin`): desenhe uma área e veja as instalações lá contidas, com resumo por categoria.
+- **Rotas** até uma instalação (carro / a pé / bicicleta) via OSRM.
+- **Eventos desportivos** geolocalizados, com ligação à instalação mais próxima.
+- **Botão "Início"** no cabeçalho para regressar ao ecrã inicial a partir do mapa.
+
+---
+
+## API (FastAPI)
+
+Documentação interativa automática em `http://localhost:8000/docs`.
+
+| Endpoint | Operador MongoDB | Descrição |
+| :--- | :--- | :--- |
+| `GET /api/overview` | `$facet` | KPIs globais (total, categorias, modalidades, cidades) numa só query |
+| `GET /api/facilities` | `$match` + `$project` | Lista de instalações com filtros |
+| `GET /api/facilities/{osm_id}` | `find_one` | Detalhe completo de uma instalação |
+| `GET /api/geo/nearby` | `$geoNear` | Instalações dentro de um raio, ordenadas por distância |
+| `GET /api/geo/within` | `$geoWithin` | Instalações dentro de um polígono desenhado |
+| `GET /api/categories` · `/api/sports` · `/api/cities` | `$group` / `$unwind` | Listagens auxiliares para filtros |
+| `GET /api/events` | `$match` + `$sort` | Eventos (futuros por defeito) |
+| `GET /api/events/overview` | `$facet` | Estatísticas de eventos |
+| `GET /api/events/near` | `$geoNear` | Eventos próximos de um ponto |
+| `GET /api/events/by-facility/{osm_id}` | `$geoNear` | Eventos ligados/próximos de uma instalação |
 
 ---
 
@@ -21,168 +94,39 @@ O sistema opera num cenário de **Big Data**, combinando duas tecnologias de bas
 
 ```
 TABD/
-├── app_bi.py                        # Dashboard Streamlit — 4 abas interativas
-├── requirements.txt                 # Dependências Python com versões mínimas
+├── docker-compose.yml               # mongodb + seed + web (+ mongo-express no perfil "tools")
+├── Dockerfile                       # Imagem usada pelo serviço de seed
 ├── INSTALL.md                       # Guia completo de instalação e execução
 ├── README.md                        # Este ficheiro
-├── 01_Definicao/
-│   └── Definicao_Projeto.md         # Cenário de negócio, problema, justificativa NoSQL + Espacial
-├── 02_Modelagem/
-│   └── Modelagem_Dados.md           # Schema GeoJSON, coordenadas de Portugal, estratégia de embedding e índices
+├── web/                             # Aplicação FitMap
+│   ├── Dockerfile                   # Imagem FastAPI/uvicorn
+│   ├── requirements.txt             # fastapi, uvicorn, pymongo
+│   ├── server.py                    # API REST + serviço da SPA
+│   └── static/                      # Frontend Leaflet (index.html, js/app.js, css/main.css)
 ├── 03_Implementacao/
-│   ├── dataset_exemplo.json         # 25 reviews com coordenadas GeoJSON (cidades portuguesas)
-│   └── Queries_BI.md                # 9 pipelines de agregação MongoDB (5 analíticas + 4 geoespaciais)
-├── 04_BI_Analysis/
-│   └── Planeamento_BI.md            # KPIs, especificações do dashboard, stack tecnológico
-└── 05_Entrega/
-    ├── Relatorio_Final.md           # Relatório técnico final consolidado
-    └── Guiao_Apresentacao.md        # Guião detalhado para a apresentação oral
+│   ├── seed_osm.py                  # Carrega instalações do OpenStreetMap (cache: osm_cache.json)
+│   ├── seed_events.py               # Carrega e geocodifica eventos (cache: geocode_cache.json)
+│   └── scrapers/                    # Scrapers de eventos (wikidata, fpme, smoothcomp)
+├── 01_Definicao/ · 02_Modelagem/ · 04_BI_Analysis/ · 05_Entrega/   # Documentação académica
+└── tests/                           # Testes pytest
 ```
 
 ---
 
-## Instalação Rápida
-
-```bash
-# 1. Instalar dependências
-pip install -r requirements.txt
-
-# 2. Lançar o dashboard
-streamlit run app_bi.py
-```
-
-O browser abrirá automaticamente em `http://localhost:8501`. Para configuração completa do MongoDB e criação dos índices espaciais, consulte `INSTALL.md`.
-
-### Execução com Docker + MongoDB
-
-```bash
-# 1. Construir e arrancar MongoDB, seed e dashboard
-docker compose up --build
-
-# 2. Abrir o dashboard
-http://localhost:8501
-```
-
-O `docker-compose.yml` cria um MongoDB local, carrega `03_Implementacao/dataset_exemplo.json` para `GlobalShop.reviews`, cria os índices analíticos e `2dsphere`, e inicia o Streamlit ligado ao MongoDB. O volume `mongodb_data` preserva os dados entre execuções.
-
-### Simulação de Fluxo Real
-
-Para transformar a demo estática num fluxo vivo de reviews, arrancar o perfil de simulação:
-
-```bash
-docker compose --profile simulation up --build
-```
-
-O serviço `simulator` escreve novas reviews diretamente em `GlobalShop.reviews`, seguindo o mesmo schema GeoJSON usado no dataset. O dashboard em Docker usa `DATA_CACHE_TTL_SECONDS=5`, `AUTO_REFRESH_SECONDS=5` e inclui botão **Atualizar dados**, total de reviews carregadas e timestamp da última review na sidebar.
-
-Variáveis úteis da simulação:
-
-| Variável | Valor padrão | Descrição |
-| :--- | :--- | :--- |
-| `SIM_INTERVAL_SECONDS` | `5` | Intervalo entre lotes simulados. |
-| `SIM_BATCH_SIZE` | `1` | Número de reviews criadas por ciclo. |
-| `SIM_MAX_REVIEWS` | `500` | Limite total de documentos na coleção; `0` remove o limite. |
-| `SIM_SEED` | `42` | Semente determinística do gerador. |
-| `SIM_RESET_ON_START` | `false` | Remove apenas reviews simuladas antes de começar. |
-
-Para inspecionar documentos no browser, usar o perfil de ferramentas:
-
-```bash
-docker compose --profile tools up -d
-```
-
-Mongo Express fica disponível em `http://localhost:8081`.
-
-Para arrancar o ecossistema completo numa só execução, incluindo dashboard, MongoDB, seed, simulador e Mongo Express:
-
-```bash
-docker compose --profile simulation --profile tools up --build
-```
-
-Em modo background:
-
-```bash
-docker compose --profile simulation --profile tools up --build -d
-```
-
-Verificar ou parar o ecossistema completo:
-
-```bash
-docker compose --profile simulation --profile tools ps
-docker compose --profile simulation --profile tools down
-```
-
-### Fontes de Dados
-
-O dashboard suporta três modos através de variáveis de ambiente:
-
-| Variável | Valor padrão | Descrição |
-| :--- | :--- | :--- |
-| `DATA_SOURCE` | `auto` | `auto`, `mongo` ou `json`. Em `auto`, usa MongoDB quando disponível e recorre ao JSON caso contrário. |
-| `MONGO_URI` | não definido localmente | URI de ligação MongoDB. No Docker: `mongodb://mongodb:27017`. |
-| `MONGO_DB` | `GlobalShop` | Nome da base de dados. |
-| `MONGO_COLLECTION` | `reviews` | Nome da coleção de reviews. |
-| `DATA_CACHE_TTL_SECONDS` | `60` local, `5` Docker | Tempo de cache da leitura de dados no dashboard. |
-| `AUTO_REFRESH_SECONDS` | `0` local, `5` Docker | Intervalo de atualização automática da UI; `0` desativa. |
-
----
-
-## Dashboard BI — 4 Abas Interativas
-
-| Aba | Público-Alvo | Conteúdo |
-| :--- | :--- | :--- |
-| 📊 **Visão Executiva** | CEOs / Diretores | NSS Global, Quality Decay Rate, tendência mensal, distribuição de sentimento |
-| 🏷️ **Análise Tática** | Gestores de Categoria | Sentimento por categoria, top produtos críticos, performance por marca |
-| 🔍 **Análise Operacional** | Analistas de Qualidade | Word Cloud de keywords negativas, anomaly detection (quedas abruptas de rating) |
-| 🗺️ **Análise Geoespacial** | Diretores de Logística | Mapa interativo de NSS por cidade portuguesa, Geographic Sentiment Index, resumo regional |
-
----
-
-## KPIs Implementados
-
-- **Net Sentiment Score (NSS):** $(\% \text{Positive}) - (\% \text{Negative})$ — polaridade emocional global e por cidade.
-- **Quality Decay Rate (QDR):** Variação da nota média dos últimos 30 dias vs. histórico — deteta lotes defeituosos.
-- **Anomaly Detection:** Identifica produtos com queda de rating ≥ 30% entre meses consecutivos.
-- **Keyword Correlation Index (KCI):** Correlação entre keywords negativas e notas baixas — isola a causa raiz.
-- **Geographic Sentiment Index (GSI):** NSS calculado por cidade e visualizado em mapa interativo de Portugal.
-
----
-
-## Tecnologias Utilizadas
-
-| Componente | Tecnologia | Papel |
-| :--- | :--- | :--- |
-| Base de Dados NoSQL | MongoDB | Armazenamento de documentos com schema dinâmico |
-| Base de Dados Espacial | MongoDB + índice `2dsphere` | Queries geoespaciais sobre GeoJSON |
-| Formato de Dados | GeoJSON (RFC 7946) | Representação padronizada de localizações geográficas |
-| Dashboard | Streamlit | Interface interativa de BI |
-| Visualizações | Plotly Express | Gráficos interativos e mapa scatter_mapbox |
-| NLP Básico | WordCloud + Matplotlib | Visualização de keywords negativas |
-| Processamento | Pandas | Transformação e agregação de dados |
-| Driver Python | pymongo | Conexão ao MongoDB em modo produção |
-
----
-
-## Exemplo de Query Geoespacial (MongoDB)
+## Demonstração de Queries Geoespaciais
 
 ```javascript
-// Reviews num raio de 100 km de Lisboa
-db.reviews.find({
-  "customer.location.coordinates": {
-    $nearSphere: {
-      $geometry: { type: "Point", coordinates: [-9.1393, 38.7223] },
-      $maxDistance: 100000
-    }
-  }
-})
+// Instalações num raio de 5 km de um ponto (Lisboa), ordenadas por distância
+db.facilities.aggregate([
+  { $geoNear: {
+      near: { type: "Point", coordinates: [-9.1393, 38.7223] },
+      distanceField: "distancia_m",
+      maxDistance: 5000,
+      spherical: true,
+      key: "location"
+  }},
+  { $limit: 10 }
+])
 ```
 
----
-
-## Valor Estratégico
-
-O sistema permite à GlobalShop Portugal:
-- Detetar **problemas de qualidade em minutos**, não em dias.
-- Identificar se um problema é **nacional ou logístico regional** (via mapa de sentimento por cidade).
-- Priorizar **ações corretivas baseadas em evidências geográficas** — ex: auditar transportadora em Faro se o NSS do Algarve for < -30%.
-- Monitorizar **decaimento de qualidade por lote** antes que se torne viral nas redes sociais.
+O índice `2dsphere` sobre `location` é o que habilita `$geoNear` e `$geoWithin`. Os seeds criam-no automaticamente e o backend garante-o no arranque.
