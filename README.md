@@ -2,63 +2,91 @@
 
 **Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD) | **Ano Letivo:** 2025/2026
 
-**FitMap** é uma plataforma WebSIG funcional para descoberta de instalações desportivas em Portugal Continental. Agrega dados reais do OpenStreetMap (3 390 instalações) numa base de dados MongoDB com índices geoespaciais nativos, exposta através de uma API REST em FastAPI e visualizada num mapa interativo Leaflet.js.
+FitMap é uma **plataforma WebSIG** (Sistema de Informação Geográfica na Web) para descoberta de instalações desportivas em Portugal — ginásios, piscinas, centros desportivos, dojos, estúdios e muito mais — agregadas a partir de **dados abertos** do OpenStreetMap e pesquisáveis por proximidade, modalidade ou cidade. Inclui ainda uma camada de **eventos desportivos** geolocalizados.
 
----
+O projeto demonstra o uso de **MongoDB como base de dados espacial nativa** (índice `2dsphere` sobre GeoJSON) servida por uma API **FastAPI** e consumida por um frontend **Leaflet** de página única.
 
-## Motivação e Objetivos
-
-O projeto demonstra a aplicação prática de bases de dados NoSQL com suporte espacial num cenário real:
-
-- **Cobertura nacional** — ginásios, piscinas, campos de futebol, dojos, estúdios, centros desportivos e outras instalações em todo o território português
-- **Dados reais** — recolhidos via Overpass API (OpenStreetMap) e enriquecidos com atributos de acessibilidade, contactos e horários
-- **Consultas geoespaciais** — `$geoNear` para proximidade, `$geoWithin` para seleção por polígono desenhado pelo utilizador, `$facet` para agregações paralelas
-- **Interoperabilidade** — integração com OSRM (rotas multimodal: carro/a pé/bicicleta) e Nominatim (geocodificação com cache local)
+> Nota: o repositório contém também um projeto anterior — o dashboard *GlobalShop* em Streamlit (`app_bi.py`, `globalshop_bi/`). A configuração de execução atual (`docker-compose.yml`) constrói e arranca apenas o FitMap; o GlobalShop é considerado legado.
 
 ---
 
 ## Arquitetura
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Browser (Leaflet.js SPA)                                   │
-│  Landing → Mapa → Painel de detalhe → Área por polígono     │
-└────────────────────┬────────────────────────────────────────┘
-                     │ HTTP / JSON
-┌────────────────────▼────────────────────────────────────────┐
-│  FastAPI  (web/server.py)   — 9 endpoints REST              │
-│  /api/overview  /api/facilities  /api/geo/nearby            │
-│  /api/geo/within  /api/categories  /api/sports  /api/cities │
-└────────────────────┬────────────────────────────────────────┘
-                     │ pymongo
-┌────────────────────▼────────────────────────────────────────┐
-│  MongoDB 7  (fitmap DB, colecao facilities)                  │
-│  Indices: 2dsphere · category · sports · city               │
-└─────────────────────────────────────────────────────────────┘
+OpenStreetMap / Overpass ─┐
+Nominatim (geocoding)    ─┼─►  Seeds (Python)  ─►  MongoDB  ─►  FastAPI  ─►  Leaflet SPA
+Scrapers (eventos)       ─┘     seed_osm.py        FitMap        web/         web/static/
+                                seed_events.py    (2dsphere)    server.py    index.html
 ```
 
-### Pipelines MongoDB utilizados
+| Camada | Tecnologia | Papel |
+| :--- | :--- | :--- |
+| Base de dados | MongoDB 7 | Documentos com índice geoespacial `2dsphere` |
+| Dados espaciais | GeoJSON (RFC 7946) + `2dsphere` | `$geoNear`, `$geoWithin`, `$facet`, `$unwind` |
+| Backend | FastAPI + uvicorn | API REST `/api/*` e serviço da SPA |
+| Driver | pymongo | Ligação ao MongoDB (cliente partilhado) |
+| Frontend | Leaflet + Leaflet.draw + Routing Machine | Mapa interativo, desenho de polígonos, rotas |
+| Origem de dados | OpenStreetMap, Nominatim, Wikidata, federações | Instalações e eventos |
 
-| Pipeline | Operador principal | Finalidade |
-|---|---|---|
-| Visão geral | `$facet` | Contagens paralelas por categoria, cidade e modalidade |
-| Proximidade | `$geoNear` | Instalações ordenadas por distância a um ponto |
-| Área | `$geoWithin` + `$geometry` | Instalações dentro de polígono desenhado |
-| Modalidades | `$unwind` + `$group` | Lista distinta de desportos com contagem |
-| Cidades | `$group` + `$sort` | Cidades com maior concentração de instalações |
+O MongoDB armazena duas coleções:
+
+- **`facilities`** — instalações desportivas: `osm_id`, `name`, `category`, `sports[]`, `address.{city,street,housenumber,postcode}`, `contact.{phone,website,email}`, `opening_hours`, `amenities`, `operator` e `location` (GeoJSON `Point`, coordenadas `[lon, lat]`).
+- **`events`** — eventos desportivos: `title`, `sport`, `category`, `start_date`/`end_date`, `venue_name`, `city`, `source`, `location` (GeoJSON `Point`) e `near_facility` (instalação OSM mais próxima, ligada por `$geoNear`).
+
+---
+
+## Início Rápido (Docker)
+
+```bash
+docker compose up --build
+```
+
+Isto constrói e arranca três serviços: `mongodb`, `seed` (carrega instalações e eventos) e `web`. Quando o seed terminar, abrir:
+
+```
+http://localhost:8000
+```
+
+Para incluir o **Mongo Express** (inspeção visual da base de dados em `http://localhost:8081`):
+
+```bash
+docker compose --profile tools up --build
+```
+
+> Se obtiver um erro `network ... not found` ao arrancar, ver a secção de resolução de problemas no [INSTALL.md](INSTALL.md) — normalmente resolve-se com `docker compose down --remove-orphans`.
+
+O guia completo de instalação (incluindo execução manual sem Docker e variáveis de ambiente) está em **[INSTALL.md](INSTALL.md)**.
 
 ---
 
 ## Funcionalidades
 
-- **Pesquisa combinada** por categoria, modalidade e cidade na landing page
-- **Filtros dinâmicos** — modalidades disponíveis filtradas pela categoria selecionada (sem combinações ilógicas)
-- **Mapa interativo** com marcadores agrupados por categoria (cor + ícone)
-- **Seleção por polígono** desenhado diretamente no mapa (`$geoWithin`)
-- **Geolocalização GPS** com expansão automática de raio (3 → 5 → 10 → 25 → 50 → 100 km) quando não há resultados próximos
-- **Painel de detalhe** com modalidades, contactos, horários e acessibilidade
-- **Cálculo de rota** multimodal (carro / a pé / bicicleta) via OSRM
-- **KPIs em tempo real** — instalações visíveis, taxa de horários e de websites
+- **Mapa interativo** de todas as instalações, com cores por categoria e legenda.
+- **Filtros** por categoria, modalidade e cidade, combináveis entre si.
+- **Pesquisa por raio** (`$geoNear`): clique direito no mapa ou "Minha localização" — expande automaticamente o raio até encontrar resultados.
+- **Seleção poligonal** (`$geoWithin`): desenhe uma área e veja as instalações lá contidas, com resumo por categoria.
+- **Rotas** até uma instalação (carro / a pé / bicicleta) via OSRM.
+- **Eventos desportivos** geolocalizados, com ligação à instalação mais próxima.
+- **Botão "Início"** no cabeçalho para regressar ao ecrã inicial a partir do mapa.
+
+---
+
+## API (FastAPI)
+
+Documentação interativa automática em `http://localhost:8000/docs`.
+
+| Endpoint | Operador MongoDB | Descrição |
+| :--- | :--- | :--- |
+| `GET /api/overview` | `$facet` | KPIs globais (total, categorias, modalidades, cidades) numa só query |
+| `GET /api/facilities` | `$match` + `$project` | Lista de instalações com filtros |
+| `GET /api/facilities/{osm_id}` | `find_one` | Detalhe completo de uma instalação |
+| `GET /api/geo/nearby` | `$geoNear` | Instalações dentro de um raio, ordenadas por distância |
+| `GET /api/geo/within` | `$geoWithin` | Instalações dentro de um polígono desenhado |
+| `GET /api/categories` · `/api/sports` · `/api/cities` | `$group` / `$unwind` | Listagens auxiliares para filtros |
+| `GET /api/events` | `$match` + `$sort` | Eventos (futuros por defeito) |
+| `GET /api/events/overview` | `$facet` | Estatísticas de eventos |
+| `GET /api/events/near` | `$geoNear` | Eventos próximos de um ponto |
+| `GET /api/events/by-facility/{osm_id}` | `$geoNear` | Eventos ligados/próximos de uma instalação |
 
 ---
 
@@ -66,111 +94,39 @@ O projeto demonstra a aplicação prática de bases de dados NoSQL com suporte e
 
 ```
 TABD/
-├── README.md                            # Este ficheiro
-├── INSTALL.md                           # Guia de instalacao e execucao
-├── docker-compose.yml                   # Orquestracao: MongoDB + seed + FastAPI
-├── Relatorio_FitMap.docx                # Relatorio academico (gerado por docs/)
-├── Template relatorio_projeto_IHC.docx  # Template Word fornecido pelo docente
-│
-├── web/                                 # Aplicacao web
-│   ├── server.py                        # FastAPI — 9 endpoints REST
-│   ├── requirements.txt                 # Dependencias Python do servidor
-│   └── static/
-│       ├── index.html                   # SPA (landing + mapa + paineis)
-│       ├── css/main.css                 # Tema dark (--bg:#0b0b0d, --accent:#ff5b3a)
-│       └── js/app.js                    # Logica Leaflet, filtros, rota, poligono
-│
+├── docker-compose.yml               # mongodb + seed + web (+ mongo-express no perfil "tools")
+├── Dockerfile                       # Imagem usada pelo serviço de seed
+├── INSTALL.md                       # Guia completo de instalação e execução
+├── README.md                        # Este ficheiro
+├── web/                             # Aplicação FitMap
+│   ├── Dockerfile                   # Imagem FastAPI/uvicorn
+│   ├── requirements.txt             # fastapi, uvicorn, pymongo
+│   ├── server.py                    # API REST + serviço da SPA
+│   └── static/                      # Frontend Leaflet (index.html, js/app.js, css/main.css)
 ├── 03_Implementacao/
-│   ├── seed_osm.py                      # ETL: Overpass API → normalizacao → MongoDB
-│   └── scrapers/
-│       ├── wikidata.py                  # SPARQL — instalacoes via Wikidata
-│       ├── smoothcomp.py                # Eventos desportivos (JSON-LD, paralelo)
-│       └── fpme.py                      # Federacao Portuguesa de Modalidades
-│
-└── docs/
-    ├── generate_report.py               # Gerador do relatorio Word (python-docx)
-    └── inspect_template.py              # Utilitario de inspecao do template
+│   ├── seed_osm.py                  # Carrega instalações do OpenStreetMap (cache: osm_cache.json)
+│   ├── seed_events.py               # Carrega e geocodifica eventos (cache: geocode_cache.json)
+│   └── scrapers/                    # Scrapers de eventos (wikidata, fpme, smoothcomp)
+├── 01_Definicao/ · 02_Modelagem/ · 04_BI_Analysis/ · 05_Entrega/   # Documentação académica
+└── tests/                           # Testes pytest
 ```
 
 ---
 
-## Quickstart (Docker Compose)
+## Demonstração de Queries Geoespaciais
 
-```bash
-# 1. Clonar o repositorio
-git clone https://github.com/Pedro-Peyroteo/TABD.git
-cd TABD
-
-# 2. Construir e arrancar todos os servicos
-docker compose up --build
-
-# 3. Abrir no browser
-http://localhost:8000
+```javascript
+// Instalações num raio de 5 km de um ponto (Lisboa), ordenadas por distância
+db.facilities.aggregate([
+  { $geoNear: {
+      near: { type: "Point", coordinates: [-9.1393, 38.7223] },
+      distanceField: "distancia_m",
+      maxDistance: 5000,
+      spherical: true,
+      key: "location"
+  }},
+  { $limit: 10 }
+])
 ```
 
-O servico `fitmap-seed` corre automaticamente, descarrega os dados do OpenStreetMap via Overpass API e popula o MongoDB. O processo demora 1–3 minutos na primeira execucao.
-
-Para parar:
-```bash
-docker compose down
-```
-
-> Consulte `INSTALL.md` para instalacao manual (sem Docker) e opcoes avancadas de configuracao.
-
----
-
-## Stack Tecnologico
-
-| Camada | Tecnologia |
-|---|---|
-| Base de dados | MongoDB 7 — indice `2dsphere`, `$geoNear`, `$geoWithin`, `$facet` |
-| Backend | FastAPI (Python 3.11) + pymongo + uvicorn |
-| Frontend | Leaflet.js 1.9 + Leaflet.draw + Leaflet Routing Machine |
-| Geocodificacao | Nominatim (OSM) com cache local |
-| Rotas | OSRM (carro / a pe / bicicleta) — endpoint publico |
-| Dados | OpenStreetMap via Overpass API (3 390 instalacoes) |
-| Orquestracao | Docker Compose v2 |
-| Relatorio | python-docx — geracao programatica do relatorio Word |
-
----
-
-## Schema do Documento MongoDB
-
-O script `03_Implementacao/seed_osm.py` normaliza cada instalacao para o seguinte schema:
-
-```json
-{
-  "osm_id": 123456789,
-  "name": "Ginasio Municipal de Aveiro",
-  "category": "gym",
-  "sports": ["fitness", "yoga"],
-  "address": {
-    "city": "Aveiro",
-    "street": "Rua de Exemplo",
-    "postcode": "3800-000"
-  },
-  "location": {
-    "type": "Point",
-    "coordinates": [-8.654, 40.641]
-  },
-  "contacts": {
-    "phone": "+351 234 000 000",
-    "website": "https://exemplo.pt",
-    "email": "info@exemplo.pt"
-  },
-  "opening_hours": "Mo-Fr 07:00-22:00; Sa 09:00-18:00",
-  "amenities": {
-    "wheelchair": true,
-    "parking": true,
-    "shower": true
-  },
-  "source": "osm",
-  "fetched_at": "2025-..."
-}
-```
-
----
-
-## Equipa
-
-Projeto desenvolvido no ambito da Unidade Curricular de **Tecnologias e Aplicacoes de Bases de Dados (TABD)**, Universidade de Aveiro, ano letivo 2025/2026.
+O índice `2dsphere` sobre `location` é o que habilita `$geoNear` e `$geoWithin`. Os seeds criam-no automaticamente e o backend garante-o no arranque.

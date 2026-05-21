@@ -1,234 +1,197 @@
-# Guia de Instalacao e Execucao: FitMap
+# Guia de Instalação e Execução: FitMap
 
-**Unidade Curricular:** Tecnologias e Aplicacoes de Bases de Dados (TABD) | **Ano Letivo:** 2025/2026
+**Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD) | **Ano Letivo:** 2025/2026
 
-Este guia detalha todos os passos necessarios para executar a plataforma **FitMap** — um WebSIG de instalacoes desportivas em Portugal, composto por uma base de dados **MongoDB 7** com suporte a dados espaciais (indice `2dsphere`) e uma aplicacao web **FastAPI + Leaflet.js**.
-
----
-
-## Pre-requisitos
-
-### Opcao A — Docker (recomendado)
-
-- **Docker Desktop** com Docker Compose v2 instalado e em execucao
-- Ligacao a internet (Overpass API / OSM para recolha de dados no primeiro arranque)
-- Porta **8000** disponivel no host (aplicacao web)
-- Porta **27017** disponivel no host (MongoDB)
-
-### Opcao B — Instalacao manual
-
-- **Python 3.11+** instalado e no PATH do sistema
-- **MongoDB Community Server 7.0+** instalado e em execucao na porta `27017`
-- Ligacao a internet para a recolha de dados via Overpass API
+Este guia detalha como executar o **FitMap**, uma plataforma WebSIG composta por **MongoDB** (com índice geoespacial `2dsphere`), uma API **FastAPI** e um frontend **Leaflet**. O caminho recomendado é via **Docker Compose**.
 
 ---
 
-## Opcao A: Docker Compose (recomendado)
+## Pré-requisitos
 
-### 1. Clonar o repositorio
+- **Docker Desktop** com Docker Compose v2 — caminho recomendado, arranca todo o ecossistema.
+- Para execução manual (sem Docker): **Python 3.12+** e um **MongoDB 7** acessível em `localhost:27017`.
 
-```bash
-git clone https://github.com/Pedro-Peyroteo/TABD.git
-cd TABD
-```
+---
 
-### 2. Construir e arrancar todos os servicos
+## 1. Execução com Docker Compose (recomendado)
+
+Na raiz do repositório (`TABD/`):
 
 ```bash
 docker compose up --build
 ```
 
-Este comando inicia tres servicos em sequencia:
+O Compose constrói e arranca três serviços por defeito:
 
-| Servico | Imagem | Funcao |
-|---|---|---|
-| `fitmap-mongodb` | `mongo:7` | Base de dados MongoDB na porta 27017 |
-| `fitmap-seed` | Python 3.11 | ETL: descarrega dados OSM e popula MongoDB |
-| `fitmap-web` | Python 3.11 | FastAPI + Leaflet na porta 8000 |
+| Serviço | Imagem / Build | Porta | Função |
+| :--- | :--- | :--- | :--- |
+| `mongodb` | `mongo:7` | `27017` | Base de dados, com volume persistente `mongodb_data` |
+| `seed` | `Dockerfile` (raiz) | — | Executa `seed_osm.py` e depois `seed_events.py`, populando `facilities` e `events` |
+| `web` | `web/Dockerfile` | `8000` | API FastAPI (`uvicorn server:app`) + serviço do frontend |
 
-O `fitmap-seed` aguarda o MongoDB estar pronto e executa `03_Implementacao/seed_osm.py`, que:
-1. Consulta a Overpass API para todas as instalacoes desportivas em Portugal
-2. Normaliza e insere os documentos na colecao `facilities`
-3. Cria os indices: `2dsphere` (location), `category`, `sports`, `city`
+Quando o seed terminar, abrir a aplicação em:
 
-**Duracao da seed:** 1–3 minutos (dependendo da ligacao a internet).
-
-### 3. Aceder a aplicacao
-
-Abrir no browser:
 ```
 http://localhost:8000
 ```
 
-### 4. Parar os servicos
+A documentação interativa da API fica em `http://localhost:8000/docs`.
+
+### 1.1 Mongo Express (perfil `tools`)
+
+Para inspecionar a base de dados numa interface web:
 
 ```bash
+docker compose --profile tools up --build
+```
+
+O Mongo Express fica disponível em `http://localhost:8081` (base `FitMap`, coleções `facilities` e `events`).
+
+> **Nota sobre perfis:** este projeto define apenas o perfil `tools`. Um perfil `simulation` **não existe** nesta versão (pertencia ao projeto legado GlobalShop). Comandos como `docker compose --profile simulation ... up` não dão erro, mas o perfil é simplesmente ignorado. O comando correto para o ecossistema completo é:
+>
+> ```bash
+> docker compose --profile tools up --build
+> ```
+
+### 1.2 Repetir apenas o seed
+
+Após alterar dados de origem ou limpar a base:
+
+```bash
+docker compose run --rm seed
+```
+
+### 1.3 Verificação rápida no MongoDB
+
+```bash
+docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('FitMap').facilities.countDocuments()"
+docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('FitMap').facilities.getIndexes()"
+```
+
+### 1.4 Reset da demo
+
+```bash
+# Parar e remover containers, mantendo os dados
 docker compose down
-```
 
-Para remover tambem os volumes de dados (apaga o MongoDB):
-```bash
+# Apagar também o volume MongoDB e recomeçar do zero
 docker compose down -v
-```
-
-### 5. Opcao: MongoDB Express (interface visual)
-
-Para arrancar o MongoDB Express (interface web para explorar a base de dados):
-
-```bash
-docker compose --profile tools up
-```
-
-Aceder em: `http://localhost:8081`
-
----
-
-## Opcao B: Instalacao Manual
-
-### 1. Clonar o repositorio
-
-```bash
-git clone https://github.com/Pedro-Peyroteo/TABD.git
-cd TABD
-```
-
-### 2. Instalar dependencias Python
-
-```bash
-cd web
-pip install -r requirements.txt
-cd ..
-```
-
-O `requirements.txt` instala: `fastapi`, `uvicorn`, `pymongo`, `httpx`, `python-dotenv`.
-
-### 3. Garantir MongoDB em execucao
-
-Verificar que o MongoDB esta activo na porta padrao:
-
-```bash
-# Linux / macOS
-mongosh --eval "db.runCommand({ ping: 1 })"
-
-# Windows (PowerShell)
-mongosh --eval "db.runCommand({ ping: 1 })"
-```
-
-Se necessario, iniciar o servico:
-```bash
-# Linux (systemd)
-sudo systemctl start mongod
-
-# macOS (Homebrew)
-brew services start mongodb-community
-
-# Windows
-net start MongoDB
-```
-
-### 4. Executar a seed (recolha de dados OSM)
-
-```bash
-cd 03_Implementacao
-pip install requests pymongo
-python seed_osm.py
-cd ..
-```
-
-O script demora 1–3 minutos. No final, apresenta o numero de instalacoes inseridas e os indices criados.
-
-### 5. Arrancar o servidor FastAPI
-
-```bash
-cd web
-uvicorn server:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Aceder em: `http://localhost:8000`
-
----
-
-## Variaveis de Ambiente
-
-| Variavel | Valor padrao | Descricao |
-|---|---|---|
-| `MONGO_URI` | `mongodb://localhost:27017` | URI de ligacao ao MongoDB |
-| `MONGO_DB` | `fitmap` | Nome da base de dados |
-| `MONGO_COLLECTION` | `facilities` | Nome da colecao principal |
-| `PORT` | `8000` | Porta do servidor FastAPI |
-
-Para personalizar, criar um ficheiro `.env` na pasta `web/`:
-
-```env
-MONGO_URI=mongodb://fitmap-mongodb:27017
-MONGO_DB=fitmap
-MONGO_COLLECTION=facilities
-PORT=8000
+docker compose up --build
 ```
 
 ---
 
-## Endpoints da API REST
+## 2. Execução Manual (sem Docker)
 
-| Metodo | Endpoint | Descricao |
-|---|---|---|
-| `GET` | `/api/overview` | Estatisticas gerais (`$facet`) |
-| `GET` | `/api/facilities` | Lista de instalacoes com filtros opcionais |
-| `GET` | `/api/facilities/{osm_id}` | Detalhe de uma instalacao |
-| `GET` | `/api/geo/nearby` | Instalacoes proximas de um ponto (`$geoNear`) |
-| `POST` | `/api/geo/within` | Instalacoes dentro de um poligono (`$geoWithin`) |
-| `GET` | `/api/categories` | Lista de categorias disponiveis |
-| `GET` | `/api/sports` | Modalidades disponiveis (com filtro por categoria) |
-| `GET` | `/api/cities` | Cidades com contagem de instalacoes |
+Útil para desenvolvimento. Requer um MongoDB a correr localmente.
 
-Documentacao interativa disponivel em: `http://localhost:8000/docs`
+### 2.1 Instalar dependências
+
+```bash
+pip install -r web/requirements.txt          # fastapi, uvicorn, pymongo (backend)
+pip install -r requirements.txt              # dependências dos seeds (requests, pymongo, ...)
+```
+
+### 2.2 Popular a base de dados
+
+A partir da pasta `03_Implementacao/`:
+
+```bash
+python seed_osm.py        # instalações a partir do OpenStreetMap (usa cache osm_cache.json)
+python seed_events.py     # eventos geocodificados (usa cache geocode_cache.json)
+```
+
+### 2.3 Arrancar a API + frontend
+
+A partir da pasta `web/`:
+
+```bash
+uvicorn server:app --reload --port 8000
+```
+
+Abrir `http://localhost:8000`.
 
 ---
 
-## Verificacao pos-instalacao
+## 3. Variáveis de Ambiente
 
-Apos o arranque, verificar:
+Lidas tanto pelo backend (`web/server.py`) como pelos seeds. Os valores padrão no Docker estão definidos em `docker-compose.yml`.
 
-1. **Landing page** carrega com estatisticas (total de instalacoes, cidades, modalidades)
-2. **Mapa** apresenta marcadores coloridos por categoria em todo o territorio nacional
-3. **Filtros** de categoria, modalidade e cidade funcionam e limitam os resultados
-4. **Pesquisa por proximidade** — clicar com o botao direito no mapa ou usar "Minha localizacao"
-5. **Selecao por poligono** — usar o botao "Desenhar area" e clicar para definir vertices
-6. **Painel de detalhe** — clicar num marcador mostra modalidades, contactos e horarios
-7. **Calculo de rota** — clicar "Calcular rota" no painel de detalhe e selecionar modo de transporte
+| Variável | Padrão | Uso |
+| :--- | :--- | :--- |
+| `MONGO_URI` | `mongodb://localhost:27017` | URI de ligação. No Docker: `mongodb://mongodb:27017`. |
+| `MONGO_DB` | `FitMap` | Nome da base de dados. |
+| `MONGO_COLLECTION` | `facilities` | Coleção de instalações. |
+| `EVENTS_COLLECTION` | `events` | Coleção de eventos. |
+| `OSM_USE_CACHE` | `1` | Se `1`, `seed_osm.py` usa `osm_cache.json` em vez de consultar a Overpass API. |
 
 ---
 
-## Resolucao de Problemas
+## 4. Resolução de Problemas
 
-### A seed demora muito ou falha
+| Problema | Causa Provável | Solução |
+| :--- | :--- | :--- |
+| `network <id> not found` ao fazer `up` | Container órfão de uma execução anterior (ex. um `mongo-express` do perfil `tools`) ainda referencia uma rede do Compose já removida | Ver secção **4.1** abaixo |
+| Página abre mas sem instalações no mapa | O serviço `seed` ainda não terminou, ou falhou | Aguardar o fim do seed; ver `docker compose logs seed` |
+| `$geoNear`/`$geoWithin` devolve erro | Índice `2dsphere` em falta | Correr o seed; o backend também cria o índice no arranque |
+| `web` não liga ao MongoDB | MongoDB ainda a arrancar | O `web` depende do `seed`, que depende do `mongodb` saudável; aguardar e repetir |
+| Geocoding lento no `seed_events.py` | Limite de 1 pedido/seg do Nominatim | Comportamento esperado; resultados ficam em cache (`geocode_cache.json`) |
 
-A Overpass API pode estar temporariamente indisponivel. Aguardar alguns minutos e tentar novamente:
+### 4.1 Erro de rede do Docker (`network ... not found`)
+
+**Sintoma:**
+
+```
+Error response from daemon: network <id> not found
+```
+
+**Causa:** um container deixado por uma execução anterior (frequentemente o `mongo-express` do perfil `tools`) continua ligado a uma rede do Compose que já não existe, impedindo a recriação do stack.
+
+**Solução:**
+
 ```bash
-docker compose restart fitmap-seed
+# 1. Remover containers já não definidos no compose atual (passo-chave)
+docker compose down --remove-orphans
+
+# 2. Limpar redes não utilizadas
+docker network prune -f
+
+# 3. Se ainda restar um container com o mesmo nome:
+docker rm <nome-do-container>
+
+# 4. Voltar a arrancar
+docker compose --profile tools up --build
 ```
 
-### Porta 8000 ou 27017 em uso
+O passo determinante é `docker compose down --remove-orphans`, que remove containers que já não constam do ficheiro Compose atual.
 
-Editar `docker-compose.yml` e alterar o mapeamento de portas:
-```yaml
-ports:
-  - "8001:8000"   # alterar 8001 para outra porta livre
-```
+---
 
-### MongoDB nao arranca (instalacao manual)
+## 5. Testes Automatizados
 
-Verificar se o directorio de dados existe:
 ```bash
-# Linux / macOS
-sudo mkdir -p /var/lib/mongodb
-sudo chown -R mongodb:mongodb /var/lib/mongodb
+pytest
 ```
 
-### Nenhum resultado no mapa
+---
 
-Confirmar que a seed foi concluida com sucesso. Verificar no MongoDB:
-```bash
-mongosh fitmap --eval "db.facilities.countDocuments()"
+## 6. Estrutura do Repositório
+
 ```
-Deve retornar um valor proximos de 3390.
+TABD/
+├── docker-compose.yml               # mongodb + seed + web (+ mongo-express no perfil "tools")
+├── Dockerfile                       # Imagem usada pelo serviço de seed
+├── INSTALL.md                       # Este guia
+├── README.md                        # Visão geral do projeto
+├── web/
+│   ├── Dockerfile                   # Imagem FastAPI/uvicorn
+│   ├── requirements.txt             # fastapi, uvicorn, pymongo
+│   ├── server.py                    # API REST + serviço da SPA
+│   └── static/                      # Frontend Leaflet (index.html, js/app.js, css/main.css)
+├── 03_Implementacao/
+│   ├── seed_osm.py                  # Instalações do OpenStreetMap
+│   ├── seed_events.py               # Eventos geocodificados
+│   └── scrapers/                    # Scrapers de eventos
+├── 01_Definicao/ · 02_Modelagem/ · 04_BI_Analysis/ · 05_Entrega/   # Documentação académica
+└── tests/                           # Testes pytest
+```
