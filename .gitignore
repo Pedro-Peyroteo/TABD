@@ -24,3 +24,7 @@ build/
 
 # Duplicate ASCII-safe template (used only as workaround)
 Template_relatorio_IHC.docx
+
+# Cache files gerados pelo seed
+03_Implementacao/osm_cache.json
+03_Implementacao/geocode_cache.json
