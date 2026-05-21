@@ -1,255 +1,177 @@
-# Guia de Instalação e Execução: GlobalShop BI
+# Guia de Instalação e Execução: FitMap
 
 **Unidade Curricular:** Tecnologias e Aplicações de Bases de Dados (TABD) | **Ano Letivo:** 2025/2026
 
-Este guia detalha todos os passos necessários para executar o ecossistema de dados da GlobalShop Portugal, composto por uma base de dados **NoSQL** (MongoDB) com suporte a **dados espaciais** (GeoJSON + índice `2dsphere`) e um dashboard interativo Streamlit.
+Este guia detalha como executar o **FitMap**, uma plataforma WebSIG composta por **MongoDB** (com índice geoespacial `2dsphere`), uma API **FastAPI** e um frontend **Leaflet**. O caminho recomendado é via **Docker Compose**.
 
 ---
 
 ## Pré-requisitos
 
-- **Python 3.10+** instalado e no PATH do sistema.
-- **MongoDB Community Server 6.0+** instalado e em execução na porta padrão `27017` (opcional — o dashboard funciona em modo JSON sem MongoDB).
-- **MongoDB Compass** (interface visual opcional, recomendada para executar as queries de `Queries_BI.md`).
-- **Docker Desktop** com Docker Compose v2 (opcional, recomendado para executar o ecossistema completo com MongoDB em container).
+- **Docker Desktop** com Docker Compose v2 — caminho recomendado, arranca todo o ecossistema.
+- Para execução manual (sem Docker): **Python 3.12+** e um **MongoDB 7** acessível em `localhost:27017`.
 
 ---
 
-## 1. Instalação das Dependências Python
+## 1. Execução com Docker Compose (recomendado)
 
-Na raiz do repositório (`TABD/`), executar:
-
-```bash
-pip install -r requirements.txt
-```
-
-O ficheiro `requirements.txt` instala: `streamlit`, `streamlit-autorefresh`, `pandas`, `plotly`, `wordcloud`, `matplotlib`, `pymongo` e `pytest`.
-
----
-
-## 2. Lançar o Dashboard BI
-
-Na raiz do repositório:
-
-```bash
-streamlit run app_bi.py
-```
-
-O browser abrirá automaticamente em `http://localhost:8501` com o dashboard interativo de 4 abas. Por defeito, o dashboard usa `DATA_SOURCE=auto`: se `MONGO_URI` não estiver configurado, carrega os dados diretamente de `03_Implementacao/dataset_exemplo.json` e **não requer MongoDB** para demonstração.
-
-### 2.1 Variáveis de Ambiente da Fonte de Dados
-
-| Variável | Valor padrão | Uso |
-| :--- | :--- | :--- |
-| `DATA_SOURCE` | `auto` | `auto`, `mongo` ou `json`. |
-| `MONGO_URI` | não definido localmente | URI MongoDB. Exemplo local: `mongodb://localhost:27017`. |
-| `MONGO_DB` | `GlobalShop` | Base de dados MongoDB. |
-| `MONGO_COLLECTION` | `reviews` | Coleção de reviews. |
-| `DATA_CACHE_TTL_SECONDS` | `60` | Tempo de cache da leitura de dados do dashboard. |
-| `AUTO_REFRESH_SECONDS` | `0` | Intervalo de atualização automática da UI; `0` desativa. |
-
-Exemplos:
-
-```bash
-# Forçar modo JSON
-DATA_SOURCE=json streamlit run app_bi.py
-
-# Usar MongoDB local
-DATA_SOURCE=mongo MONGO_URI=mongodb://localhost:27017 streamlit run app_bi.py
-```
-
----
-
-## 3. Execução com Docker Compose (App + MongoDB)
-
-Na raiz do repositório:
+Na raiz do repositório (`TABD/`):
 
 ```bash
 docker compose up --build
 ```
 
-O Compose cria três serviços:
+O Compose constrói e arranca três serviços por defeito:
 
-| Serviço | Função |
-| :--- | :--- |
-| `mongodb` | MongoDB 7 com volume persistente `mongodb_data` e porta `27017`. |
-| `seed` | Executa `03_Implementacao/seed_mongodb.py`, faz upsert dos 25 documentos e cria os índices. |
-| `app` | Streamlit em `http://localhost:8501`, ligado a `mongodb://mongodb:27017`, com cache e atualização automática de 5 segundos. |
+| Serviço | Imagem / Build | Porta | Função |
+| :--- | :--- | :--- | :--- |
+| `mongodb` | `mongo:7` | `27017` | Base de dados, com volume persistente `mongodb_data` |
+| `seed` | `Dockerfile` (raiz) | — | Executa `seed_osm.py` e depois `seed_events.py`, populando `facilities` e `events` |
+| `web` | `web/Dockerfile` | `8000` | API FastAPI (`uvicorn server:app`) + serviço do frontend |
 
-Para repetir apenas o seed após alterar o JSON:
+Quando o seed terminar, abrir a aplicação em:
+
+```
+http://localhost:8000
+```
+
+A documentação interativa da API fica em `http://localhost:8000/docs`.
+
+### 1.1 Mongo Express (perfil `tools`)
+
+Para inspecionar a base de dados numa interface web:
+
+```bash
+docker compose --profile tools up --build
+```
+
+O Mongo Express fica disponível em `http://localhost:8081` (base `FitMap`, coleções `facilities` e `events`).
+
+> **Nota sobre perfis:** este projeto define apenas o perfil `tools`. Um perfil `simulation` **não existe** nesta versão (pertencia ao projeto legado GlobalShop). Comandos como `docker compose --profile simulation ... up` não dão erro, mas o perfil é simplesmente ignorado. O comando correto para o ecossistema completo é:
+>
+> ```bash
+> docker compose --profile tools up --build
+> ```
+
+### 1.2 Repetir apenas o seed
+
+Após alterar dados de origem ou limpar a base:
 
 ```bash
 docker compose run --rm seed
 ```
 
-Verificação rápida no MongoDB:
+### 1.3 Verificação rápida no MongoDB
 
 ```bash
-docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('GlobalShop').reviews.countDocuments()"
-docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('GlobalShop').reviews.getIndexes()"
+docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('FitMap').facilities.countDocuments()"
+docker compose exec mongodb mongosh --quiet --eval "db.getSiblingDB('FitMap').facilities.getIndexes()"
 ```
 
-### 3.1 Simulação de Fluxo Real
-
-Para gerar reviews continuamente e simular entrada de dados operacional:
+### 1.4 Reset da demo
 
 ```bash
-docker compose --profile simulation up --build
-```
-
-O serviço `simulator` usa o mesmo schema documentado em `02_Modelagem/Modelagem_Dados.md`, escolhe produtos e cidades do dataset base, gera rating/sentimento/keywords coerentes e insere documentos em `GlobalShop.reviews`.
-
-| Variável | Valor padrão | Uso |
-| :--- | :--- | :--- |
-| `SIM_INTERVAL_SECONDS` | `5` | Tempo entre ciclos de geração. |
-| `SIM_BATCH_SIZE` | `1` | Reviews inseridas por ciclo. |
-| `SIM_MAX_REVIEWS` | `500` | Limite total da coleção; usar `0` para fluxo sem limite. |
-| `SIM_SEED` | `42` | Semente para resultados reprodutíveis. |
-| `SIM_RESET_ON_START` | `false` | Remove reviews com `metadata.source=simulator` antes de iniciar. |
-
-Exemplo rápido para uma apresentação:
-
-```bash
-SIM_INTERVAL_SECONDS=2 SIM_BATCH_SIZE=3 SIM_MAX_REVIEWS=60 docker compose --profile simulation up --build
-```
-
-No dashboard em Docker, a UI atualiza automaticamente a cada 5 segundos. O botão **Atualizar dados** na sidebar continua disponível para forçar a leitura imediata. A sidebar também mostra o total carregado e a data/hora da última review.
-
-### 3.2 Mongo Express para Inspeção Visual
-
-Para abrir uma interface web sobre o MongoDB:
-
-```bash
-docker compose --profile tools up -d
-```
-
-Aceder a `http://localhost:8081` e abrir a base `GlobalShop`, coleção `reviews`. Este perfil é opcional e serve apenas para demonstração/inspeção.
-
-### 3.3 Ecossistema Completo
-
-Para arrancar todos os serviços numa só execução:
-
-```bash
-docker compose --profile simulation --profile tools up --build
-```
-
-Este comando inclui:
-
-| Serviço | Função |
-| :--- | :--- |
-| `mongodb` | Base de dados MongoDB em `localhost:27017`. |
-| `seed` | Carregamento inicial do dataset e criação dos índices. |
-| `app` | Dashboard Streamlit em `http://localhost:8501`. |
-| `simulator` | Geração contínua de novas reviews. |
-| `mongo-express` | Interface web MongoDB em `http://localhost:8081`. |
-
-Para executar em background:
-
-```bash
-docker compose --profile simulation --profile tools up --build -d
-```
-
-Para verificar o estado:
-
-```bash
-docker compose --profile simulation --profile tools ps
-```
-
-Para parar todos os serviços do ecossistema:
-
-```bash
-docker compose --profile simulation --profile tools down
-```
-
-### 3.4 Reset da Demo
-
-Para parar e remover containers mantendo o volume:
-
-```bash
+# Parar e remover containers, mantendo os dados
 docker compose down
-```
 
-Para apagar todos os dados do volume MongoDB e recomeçar do seed:
-
-```bash
+# Apagar também o volume MongoDB e recomeçar do zero
 docker compose down -v
 docker compose up --build
 ```
 
 ---
 
-## 4. Configuração Manual do MongoDB (Base de Dados NoSQL + Espacial)
+## 2. Execução Manual (sem Docker)
 
-### 4.1 Criar a Base de Dados e Coleção
+Útil para desenvolvimento. Requer um MongoDB a correr localmente.
 
-1. Abrir o **MongoDB Compass** e conectar a `mongodb://localhost:27017`.
-2. Clicar em **"Create Database"**:
-   - Database Name: `GlobalShop`
-   - Collection Name: `reviews`
-
-### 4.2 Importar o Dataset
-
-1. Com a coleção `reviews` aberta, clicar em **"Add Data"** → **"Import JSON or CSV File"**.
-2. Selecionar o ficheiro: `03_Implementacao/dataset_exemplo.json`
-3. Clicar em **Import**.
-
-O dataset contém 25 documentos com coordenadas GeoJSON reais de seis cidades portuguesas (Lisboa, Porto, Coimbra, Braga, Faro e Setúbal).
-
-Também é possível importar e criar índices por script:
+### 2.1 Instalar dependências
 
 ```bash
-MONGO_URI=mongodb://localhost:27017 python 03_Implementacao/seed_mongodb.py
+pip install -r web/requirements.txt          # fastapi, uvicorn, pymongo (backend)
+pip install -r requirements.txt              # dependências dos seeds (requests, pymongo, ...)
 ```
 
-### 4.3 Criar Índices de Performance e Espacial
+### 2.2 Popular a base de dados
 
-No **Mongosh** (terminal integrado do Compass), executar:
+A partir da pasta `03_Implementacao/`:
 
-```javascript
-// 1. Índice para agrupamentos por categoria
-db.reviews.createIndex({ "product.category": 1 });
-
-// 2. Índice composto para análise de causa raiz
-db.reviews.createIndex({ "metrics.sentiment": 1, "content.keywords": 1 });
-
-// 3. Índice temporal para cálculo de Quality Decay Rate
-db.reviews.createIndex({ "metadata.timestamp": -1 });
-
-// 4. Índice 2dsphere — transforma o MongoDB em Base de Dados Espacial
-//    Habilita $geoNear, $geoWithin e $near sobre os campos GeoJSON Point
-db.reviews.createIndex({ "customer.location.coordinates": "2dsphere" });
+```bash
+python seed_osm.py        # instalações a partir do OpenStreetMap (usa cache osm_cache.json)
+python seed_events.py     # eventos geocodificados (usa cache geocode_cache.json)
 ```
 
-> O índice `2dsphere` é o elemento que habilita as queries geoespaciais descritas em `03_Implementacao/Queries_BI.md`, como "todas as reviews num raio de 100 km de Lisboa".
+### 2.3 Arrancar a API + frontend
 
-### 4.4 Verificar a Importação
+A partir da pasta `web/`:
 
-```javascript
-// Deve retornar 25
-db.reviews.countDocuments()
-
-// Verificar a estrutura GeoJSON de um documento
-db.reviews.findOne({}, { "customer.location": 1, "product.name": 1 })
+```bash
+uvicorn server:app --reload --port 8000
 ```
+
+Abrir `http://localhost:8000`.
 
 ---
 
-## 5. Executar as Queries de Analytics
+## 3. Variáveis de Ambiente
 
-No **MongoDB Compass**, aceder à aba **"Aggregations"** e executar as 9 pipelines documentadas em `03_Implementacao/Queries_BI.md`:
+Lidas tanto pelo backend (`web/server.py`) como pelos seeds. Os valores padrão no Docker estão definidos em `docker-compose.yml`.
 
-**Pipelines Analíticas:**
-- KPI 1 — Ranking de satisfação (produtos com nota ≤ 3.0)
-- KPI 2 — Análise de polaridade por categoria
-- KPI 3 — Root Cause Analysis (keywords negativas e KCI)
-- KPI 4 — Quality Decay Rate mensal por produto
-- KPI 5 — Anomaly Detection (quedas ≥ 30% de rating)
+| Variável | Padrão | Uso |
+| :--- | :--- | :--- |
+| `MONGO_URI` | `mongodb://localhost:27017` | URI de ligação. No Docker: `mongodb://mongodb:27017`. |
+| `MONGO_DB` | `FitMap` | Nome da base de dados. |
+| `MONGO_COLLECTION` | `facilities` | Coleção de instalações. |
+| `EVENTS_COLLECTION` | `events` | Coleção de eventos. |
+| `OSM_USE_CACHE` | `1` | Se `1`, `seed_osm.py` usa `osm_cache.json` em vez de consultar a Overpass API. |
 
-**Pipelines Geoespaciais:**
-- KPI Geo 1 — Reviews num raio de 100 km de Lisboa
-- KPI Geo 2 — Net Sentiment Score (NSS) por cidade portuguesa
-- KPI Geo 3 — Concentração regional de keywords de problema
-- KPI Geo 4 — Keyword Correlation Index (KCI) geoespacial
+---
+
+## 4. Resolução de Problemas
+
+| Problema | Causa Provável | Solução |
+| :--- | :--- | :--- |
+| `network <id> not found` ao fazer `up` | Container órfão de uma execução anterior (ex. um `mongo-express` do perfil `tools`) ainda referencia uma rede do Compose já removida | Ver secção **4.1** abaixo |
+| Página abre mas sem instalações no mapa | O serviço `seed` ainda não terminou, ou falhou | Aguardar o fim do seed; ver `docker compose logs seed` |
+| `$geoNear`/`$geoWithin` devolve erro | Índice `2dsphere` em falta | Correr o seed; o backend também cria o índice no arranque |
+| `web` não liga ao MongoDB | MongoDB ainda a arrancar | O `web` depende do `seed`, que depende do `mongodb` saudável; aguardar e repetir |
+| Geocoding lento no `seed_events.py` | Limite de 1 pedido/seg do Nominatim | Comportamento esperado; resultados ficam em cache (`geocode_cache.json`) |
+
+### 4.1 Erro de rede do Docker (`network ... not found`)
+
+**Sintoma:**
+
+```
+Error response from daemon: network <id> not found
+```
+
+**Causa:** um container deixado por uma execução anterior (frequentemente o `mongo-express` do perfil `tools`) continua ligado a uma rede do Compose que já não existe, impedindo a recriação do stack.
+
+**Solução:**
+
+```bash
+# 1. Remover containers já não definidos no compose atual (passo-chave)
+docker compose down --remove-orphans
+
+# 2. Limpar redes não utilizadas
+docker network prune -f
+
+# 3. Se ainda restar um container com o mesmo nome:
+docker rm <nome-do-container>
+
+# 4. Voltar a arrancar
+docker compose --profile tools up --build
+```
+
+O passo determinante é `docker compose down --remove-orphans`, que remove containers que já não constam do ficheiro Compose atual.
+
+---
+
+## 5. Testes Automatizados
+
+```bash
+pytest
+```
 
 ---
 
@@ -257,56 +179,19 @@ No **MongoDB Compass**, aceder à aba **"Aggregations"** e executar as 9 pipelin
 
 ```
 TABD/
-├── Dockerfile                       # Imagem Streamlit para execução em container
-├── docker-compose.yml               # App + MongoDB + seed idempotente
-├── app_bi.py                        # Dashboard Streamlit (4 abas interativas)
-├── requirements.txt                 # Dependências Python com versões mínimas
+├── docker-compose.yml               # mongodb + seed + web (+ mongo-express no perfil "tools")
+├── Dockerfile                       # Imagem usada pelo serviço de seed
 ├── INSTALL.md                       # Este guia
 ├── README.md                        # Visão geral do projeto
-├── 01_Definicao/
-│   └── Definicao_Projeto.md         # Problema de negócio + justificativa NoSQL + Espacial
-├── 02_Modelagem/
-│   └── Modelagem_Dados.md           # Schema GeoJSON + coordenadas de Portugal + indexação
+├── web/
+│   ├── Dockerfile                   # Imagem FastAPI/uvicorn
+│   ├── requirements.txt             # fastapi, uvicorn, pymongo
+│   ├── server.py                    # API REST + serviço da SPA
+│   └── static/                      # Frontend Leaflet (index.html, js/app.js, css/main.css)
 ├── 03_Implementacao/
-│   ├── dataset_exemplo.json         # 25 documentos com GeoJSON (Portugal Continental)
-│   ├── seed_mongodb.py              # Migração idempotente JSON -> MongoDB
-│   ├── simulate_reviews.py          # Simulador de fluxo vivo de reviews
-│   └── Queries_BI.md                # 9 pipelines MongoDB (analíticas + geoespaciais)
-├── globalshop_bi/
-│   ├── data_access.py               # Loaders JSON/Mongo e normalização partilhada
-│   └── simulator.py                 # Geração validada de reviews simuladas
-├── tests/
-│   ├── test_data_access.py          # Smoke tests de loaders e seed
-│   └── test_simulator.py            # Validação do schema simulado
-├── 04_BI_Analysis/
-│   └── Planeamento_BI.md            # KPIs, especificações do dashboard, arquitetura
-└── 05_Entrega/
-    ├── Relatorio_Final.md           # Relatório técnico final consolidado
-    └── Guiao_Apresentacao.md        # Guião detalhado para a apresentação oral
+│   ├── seed_osm.py                  # Instalações do OpenStreetMap
+│   ├── seed_events.py               # Eventos geocodificados
+│   └── scrapers/                    # Scrapers de eventos
+├── 01_Definicao/ · 02_Modelagem/ · 04_BI_Analysis/ · 05_Entrega/   # Documentação académica
+└── tests/                           # Testes pytest
 ```
-
----
-
-## 7. Resolução de Problemas Comuns
-
-| Problema | Causa Provável | Solução |
-| :--- | :--- | :--- |
-| `ModuleNotFoundError: wordcloud` | Dependência não instalada | `pip install wordcloud` |
-| Dashboard não abre no browser | Streamlit a usar porta diferente | Aceder manualmente a `http://localhost:8501` |
-| Erro ao importar JSON no Compass | Ficheiro com encoding incorreto | Verificar que o ficheiro está em UTF-8 |
-| Query `$nearSphere` falha | Índice `2dsphere` não criado | Executar o `createIndex` da secção 4.3 |
-| `UserWarning: timezone` no terminal | Timestamps com timezone UTC | Aviso não-crítico — não afeta o funcionamento |
-| Simulator não insere novas reviews | `SIM_MAX_REVIEWS` já foi atingido | Aumentar `SIM_MAX_REVIEWS`, usar `0`, ou executar `docker compose down -v` para reset total |
-| Mongo Express falha com `network ... not found` | Container antigo ligado a uma rede Docker já removida | Executar `docker compose --profile tools up -d --force-recreate mongo-express` |
-
----
-
-## 8. Testes Automatizados
-
-Depois de instalar as dependências:
-
-```bash
-pytest
-```
-
-Os testes cobrem normalização do JSON, fallback de fonte de dados, proteção contra filtro vazio, conversão de timestamps do seed e validade do schema gerado pelo simulador.

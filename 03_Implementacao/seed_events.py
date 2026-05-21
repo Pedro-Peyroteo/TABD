@@ -16,7 +16,7 @@ import logging
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Ensure scrapers/ is importable
@@ -39,6 +39,8 @@ GEOCODE_CACHE  = HERE / "geocode_cache.json"
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 USER_AGENT    = "TABD-FitMap/1.0 (university project; contact: estudante@exemplo.pt)"
+# Política de uso do Nominatim: no máximo 1 pedido por segundo.
+NOMINATIM_RATE_LIMIT_SECONDS = 1.1
 
 
 # ─── Geocoding via Nominatim ─────────────────────────────────────────────────
@@ -49,7 +51,11 @@ def load_geocode_cache() -> dict:
     return {}
 
 def save_geocode_cache(cache: dict) -> None:
-    GEOCODE_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Escrita atómica: grava num ficheiro temporário e só depois substitui,
+    # para não corromper a cache se o processo for interrompido a meio.
+    tmp = GEOCODE_CACHE.with_suffix(GEOCODE_CACHE.suffix + ".tmp")
+    tmp.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, GEOCODE_CACHE)
 
 
 def geocode(query: str, cache: dict) -> tuple[float, float] | None:
@@ -58,7 +64,7 @@ def geocode(query: str, cache: dict) -> tuple[float, float] | None:
         return tuple(cache[query]) if cache[query] else None
 
     try:
-        time.sleep(1.1)  # rate limit
+        time.sleep(NOMINATIM_RATE_LIMIT_SECONDS)  # respeita o rate limit do Nominatim
         response = requests.get(
             NOMINATIM_URL,
             params={"q": query, "format": "json", "limit": 1, "countrycodes": "pt"},
@@ -90,14 +96,17 @@ def fetch_external_events() -> list[dict]:
     external: list[dict] = []
     try:
         from scrapers import wikidata, fpme, smoothcomp
-        logger.info("→ A invocar scraper Wikidata...")
-        external += wikidata.scrape()
-        logger.info("→ A invocar scraper Smoothcomp (BJJ)...")
-        external += smoothcomp.scrape()
-        logger.info("→ A invocar scraper FPME...")
-        external += fpme.scrape()
     except ImportError as exc:
         logger.warning("Scrapers indisponíveis: %s", exc)
+        return external
+
+    # Cada scraper é isolado: a falha de um não impede os restantes nem aborta o seed.
+    for name, scraper in (("Wikidata", wikidata), ("Smoothcomp (BJJ)", smoothcomp), ("FPME", fpme)):
+        try:
+            logger.info("→ A invocar scraper %s...", name)
+            external += scraper.scrape()
+        except Exception as exc:
+            logger.warning("Scraper %s falhou: %s", name, exc)
     return external
 
 
@@ -157,7 +166,7 @@ def normalize_event(ev: dict, lat: float, lon: float) -> dict:
         "registration_url": ev.get("registration_url", ""),
         "price":        ev.get("price", ""),
         "location":     {"type": "Point", "coordinates": [lon, lat]},
-        "scraped_at":   datetime.utcnow(),
+        "scraped_at":   datetime.now(timezone.utc).replace(tzinfo=None),
         "status":       "scheduled",
     }
 
