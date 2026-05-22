@@ -390,13 +390,17 @@ async function loadFilters() {
 
   // Cidades clicáveis
   const cityEl = document.getElementById("city-list");
-  cityEl.innerHTML = ov.topCities.map(c =>
-    `<div class="city-row${c.name === activeCity ? " active" : ""}" data-city="${c.name}">
-       <span>${c.name}</span><span class="city-count">${c.count}</span>
-     </div>`).join("");
+  cityEl.innerHTML =
+    `<div class="city-row${!activeCity ? " active" : ""}" data-city="">
+       <span>Todas</span><span class="city-count">${fmt(ov.total)}</span>
+     </div>` +
+    ov.topCities.map(c =>
+      `<div class="city-row${c.name === activeCity ? " active" : ""}" data-city="${c.name}">
+         <span>${c.name}</span><span class="city-count">${c.count}</span>
+       </div>`).join("");
   cityEl.querySelectorAll(".city-row").forEach(r =>
     r.addEventListener("click", () => {
-      activeCity = activeCity === r.dataset.city ? "" : r.dataset.city;
+      activeCity = r.dataset.city;
       cityEl.querySelectorAll(".city-row").forEach(x => x.classList.toggle("active", x.dataset.city === activeCity));
       loadFacilities();
     }));
