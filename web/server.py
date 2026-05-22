@@ -160,7 +160,7 @@ def facilities(
     if sport:    match["sports"]         = sport
     if city:     match["address.city"]   = city
 
-    pipeline = []
+    pipeline: list = []
     if match:
         pipeline.append({"$match": match})
     pipeline += [
@@ -176,7 +176,7 @@ def facilities(
             "hasHours": {"$ne": ["$opening_hours", ""]},
             "hasWeb":   {"$ne": ["$contact.website", ""]},
         }},
-        {"$limit": limit},
+        {"$limit": limit},   # sempre depois do $match
     ]
     return list(c.aggregate(pipeline))
 

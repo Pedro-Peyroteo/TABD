@@ -335,9 +335,16 @@ async function loadFacilities() {
       allMarkers.push(marker);
     });
 
-    if (filtered.length && filtered.length < 80 && (activeCity || activeCategory || activeSport)) {
+    // Zoom para enquadrar resultados sempre que um filtro está activo
+    if (filtered.length && (activeCity || activeCategory || activeSport || activeSearch)) {
       const grp = L.featureGroup(allMarkers);
-      map.fitBounds(grp.getBounds().pad(0.15));
+      map.fitBounds(grp.getBounds().pad(0.12), { maxZoom: 14 });
+    }
+
+    // Feedback visual do filtro
+    const filterLabel = activeCategory || activeSport || activeCity || activeSearch;
+    if (filterLabel) {
+      toast(`${fmt(filtered.length)} instalações · ${filterLabel}`, 3000);
     }
   } catch (e) { console.error("facilities:", e); }
 }
