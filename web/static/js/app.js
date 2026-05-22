@@ -27,6 +27,10 @@ let toastTimeout = null;
 let routeControl = null;
 let userLocation = null;     // [lat, lon] (cached after geolocate)
 let routeMode = "car";       // car | foot | bike
+// Geolocation watch state
+let watchId = null;
+let lastRadiusItems = [];    // itens actualmente no painel de raio
+let lastUsedRadius = 0;
 
 // Events state
 let eventsVisible = false;
@@ -36,6 +40,16 @@ let activeEvent = null;
 let originalPanelBody = null;  // template for facility mode
 
 const api = async p => { const r = await fetch(p); if (!r.ok) throw new Error(p); return r.json(); };
+
+// ── Haversine distance (km) ──────────────────────────────────
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 const fmt = n => n.toLocaleString("pt-PT");
 
@@ -147,19 +161,56 @@ async function useMyLocation() {
   if (!navigator.geolocation) { toast("Geolocalização não suportada no browser."); return; }
   toast("A obter localização...", 5000);
 
-  navigator.geolocation.getCurrentPosition(
+  // Parar watch anterior se existir
+  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+
+  let firstFix = true;
+
+  watchId = navigator.geolocation.watchPosition(
     pos => {
       const { latitude: lat, longitude: lon } = pos.coords;
-      if (!mapInitialized) {
-        launchMap();
-        setTimeout(() => locateAndExpand(lat, lon), 550);
+      if (firstFix) {
+        firstFix = false;
+        if (!mapInitialized) {
+          launchMap();
+          setTimeout(() => locateAndExpand(lat, lon), 550);
+        } else {
+          locateAndExpand(lat, lon);
+        }
       } else {
-        locateAndExpand(lat, lon);
+        // Posição actualizada — mover marcador e recalcular distâncias
+        updateUserPosition(lat, lon);
       }
     },
     err => toast(`Localização indisponível: ${err.message}`, 4000),
-    { enableHighAccuracy: true, timeout: 10000 }
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
+}
+
+function updateUserPosition(lat, lon) {
+  userLocation = [lat, lon];
+
+  // Mover marcador
+  if (userMarker) {
+    userMarker.setLatLng([lat, lon]);
+  } else {
+    userMarker = L.circleMarker([lat, lon], {
+      radius: 7, color: "#fff", weight: 2,
+      fillColor: "#ff5b3a", fillOpacity: 1,
+    }).addTo(map).bindTooltip("Você está aqui", { className: "leaflet-dark-tooltip" });
+  }
+
+  // Mover círculo de raio
+  if (radiusCircle) radiusCircle.setLatLng([lat, lon]);
+
+  // Recalcular distâncias dos itens no painel e reordenar
+  if (lastRadiusItems.length > 0) {
+    const updated = lastRadiusItems
+      .map(it => ({ ...it, distKm: Math.round(haversineKm(lat, lon, it.lat, it.lon) * 100) / 100 }))
+      .sort((a, b) => a.distKm - b.distKm);
+    lastRadiusItems = updated;
+    renderRadiusResults(updated, lastUsedRadius);
+  }
 }
 
 async function locateAndExpand(lat, lon) {
@@ -192,6 +243,8 @@ async function locateAndExpand(lat, lon) {
     return;
   }
 
+  lastRadiusItems = found;
+  lastUsedRadius = usedRadius;
   drawRadiusCircle(lat, lon, usedRadius);
   renderRadiusResults(found, usedRadius);
 }
@@ -660,6 +713,9 @@ function clearDrawnShapes() { if (drawnLayer) drawnLayer.clearLayers(); }
 function clearSelection() {
   clearDrawnShapes();
   if (radiusCircle) { map.removeLayer(radiusCircle); radiusCircle = null; }
+  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+  lastRadiusItems = [];
+  lastUsedRadius = 0;
   document.getElementById("area-panel").classList.add("hidden");
   document.getElementById("btn-clear").style.display = "none";
   document.getElementById("btn-draw-poly").classList.remove("active");
