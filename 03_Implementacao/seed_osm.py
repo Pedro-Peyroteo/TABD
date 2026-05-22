@@ -3,13 +3,21 @@ seed_osm.py — Obtem instalações desportivas reais do OpenStreetMap (Overpass
                 e popula uma coleção MongoDB com índice 2dsphere.
 
 Tipos de instalação cobertos em Portugal:
-- Ginásios (leisure=fitness_centre)
-- Centros desportivos (leisure=sports_centre)
-- Piscinas (leisure=swimming_pool)
-- Estúdios de dança (leisure=dance)
-- Dojos / artes marciais (club=martial_arts, sport=judo|karate|aikido|...)
-- Yoga / pilates (sport=yoga|pilates)
-- Escalada, crossfit, boxe, kickboxing, muay thai
+- Ginásios / academias (leisure=fitness_centre, amenity=gym, club=fitness,
+                        sport=fitness|bodybuilding|weightlifting|gymnastics)
+- Centros desportivos (leisure=sports_centre, amenity=leisure_centre,
+                       leisure=recreation_ground com sport=*)
+- Piscinas (leisure=swimming_pool, sport=swimming)
+- Estúdios de dança (leisure=dance, sport=dance|aerobics|zumba)
+- Artes marciais (club=martial_arts, amenity=dojo,
+                  sport=judo|karate|aikido|taekwondo|jiu-jitsu|jiu_jitsu|
+                        capoeira|wrestling|boxing|kickboxing|muay_thai|mma|sambo|krav_maga)
+- Yoga / pilates (sport=yoga|pilates|meditation)
+- Escalada (leisure=climbing, sport=climbing, climbing=*)
+- CrossFit (sport=crossfit, name~"crossfit")
+- Boxe / Kickboxing (sport=boxing|kickboxing|muay_thai)
+- Atletismo (sport=athletics, leisure=track)
+- Ginástica (sport=gymnastics|rhythmic_gymnastics|acrobatics)
 """
 
 from __future__ import annotations
@@ -37,15 +45,26 @@ OVERPASS_URL = os.getenv("OVERPASS_URL", "https://overpass-api.de/api/interprete
 CACHE_FILE = Path(__file__).parent / "osm_cache.json"
 
 OVERPASS_QUERY = """
-[out:json][timeout:240];
+[out:json][timeout:300];
 area["ISO3166-1"="PT"][admin_level=2]->.pt;
 (
   nwr[leisure=fitness_centre](area.pt);
   nwr[leisure=sports_centre](area.pt);
   nwr[leisure=swimming_pool](area.pt);
   nwr[leisure=dance](area.pt);
+  nwr[leisure=climbing](area.pt);
+  nwr[leisure=track](area.pt);
+  nwr[amenity=gym](area.pt);
+  nwr[amenity=dojo](area.pt);
+  nwr[amenity=leisure_centre](area.pt);
   nwr[club=martial_arts](area.pt);
-  nwr[sport~"^(judo|karate|aikido|taekwondo|martial_arts|jiu-jitsu|boxing|kickboxing|muay_thai|yoga|pilates|climbing|crossfit|swimming|fitness|bodybuilding)$"](area.pt);
+  nwr[club=fitness](area.pt);
+  nwr[club=sport](area.pt);
+  nwr[sport~"^(judo|karate|aikido|taekwondo|martial_arts|jiu.jitsu|boxing|kickboxing|muay_thai|mma|krav_maga|capoeira|wrestling|sambo)$"](area.pt);
+  nwr[sport~"^(yoga|pilates|meditation|aerobics|zumba)$"](area.pt);
+  nwr[sport~"^(climbing|bouldering)$"](area.pt);
+  nwr[sport~"^(crossfit|fitness|bodybuilding|weightlifting|gymnastics|rhythmic_gymnastics|acrobatics|dance)$"](area.pt);
+  nwr[sport~"^(swimming|athletics|triathlon)$"](area.pt);
 );
 out center tags;
 """
@@ -63,35 +82,56 @@ CATEGORY_LABELS = {
     "climbing":        "Escalada",
     "crossfit":        "CrossFit",
     "boxing":          "Boxe / Kickboxing",
+    "gymnastics":      "Ginástica",
+    "athletics":       "Atletismo",
     "outro":           "Outro",
 }
+
+_MARTIAL_ARTS = {
+    "judo", "karate", "aikido", "taekwondo", "martial_arts",
+    "jiu-jitsu", "jiu_jitsu", "mma", "krav_maga", "capoeira",
+    "wrestling", "sambo", "hapkido", "kung_fu", "wushu",
+}
+_BOXING = {"boxing", "kickboxing", "muay_thai", "muay thai"}
+_YOGA   = {"yoga", "pilates", "meditation", "stretching"}
+_CLIMB  = {"climbing", "bouldering"}
+_DANCE  = {"dance", "aerobics", "zumba", "ballet"}
+_GYM    = {"fitness", "bodybuilding", "weightlifting", "crossfit", "gym"}
+_GYMN   = {"gymnastics", "rhythmic_gymnastics", "acrobatics", "trampoline"}
+_ATHLT  = {"athletics", "running", "triathlon", "decathlon"}
 
 
 def derive_category(tags: dict) -> str:
     leisure = tags.get("leisure", "")
     sport   = tags.get("sport", "")
     club    = tags.get("club", "")
+    amenity = tags.get("amenity", "")
 
-    if leisure == "fitness_centre":
+    # --- Ordem de prioridade ---
+    if leisure == "fitness_centre" or amenity == "gym" or club == "fitness":
         return "Ginásio"
     if leisure == "swimming_pool" or sport == "swimming":
         return "Piscina"
-    if leisure == "sports_centre":
+    if leisure in {"sports_centre"} or amenity == "leisure_centre":
         return "Centro Desportivo"
-    if leisure == "dance":
+    if leisure == "dance" or sport in _DANCE:
         return "Estúdio de Dança"
-    if club == "martial_arts" or sport in {
-        "judo", "karate", "aikido", "taekwondo", "martial_arts", "jiu-jitsu",
-    }:
+    if amenity == "dojo" or club == "martial_arts" or sport in _MARTIAL_ARTS:
         return "Artes Marciais"
-    if sport in {"yoga", "pilates"}:
+    if sport in _BOXING:
+        return "Boxe / Kickboxing"
+    if sport in _YOGA:
         return "Yoga / Pilates"
-    if sport == "climbing":
+    if leisure == "climbing" or sport in _CLIMB:
         return "Escalada"
     if sport == "crossfit":
         return "CrossFit"
-    if sport in {"boxing", "kickboxing", "muay_thai"}:
-        return "Boxe / Kickboxing"
+    if sport in _GYMN:
+        return "Ginástica"
+    if leisure == "track" or sport in _ATHLT:
+        return "Atletismo"
+    if sport in _GYM or club == "sport":
+        return "Ginásio"
     return "Outro"
 
 
