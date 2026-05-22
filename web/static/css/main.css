@@ -403,7 +403,22 @@ button { font-family: inherit; }
 }
 .filter-pill.sport.active { color: var(--text); background: var(--accent-soft); }
 
-.city-list { display: flex; flex-direction: column; gap: 1px; }
+.city-search {
+  width: 100%; box-sizing: border-box;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-size: .78rem; padding: .35rem .6rem;
+  margin-bottom: .4rem; outline: none;
+  transition: border-color .15s;
+}
+.city-search:focus { border-color: var(--accent); }
+.city-search::placeholder { color: var(--text-4); }
+
+.city-list {
+  display: flex; flex-direction: column; gap: 1px;
+  max-height: 220px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
 .city-row {
   display: flex; justify-content: space-between; align-items: center;
   padding: .4rem .6rem;

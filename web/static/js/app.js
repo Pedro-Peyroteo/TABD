@@ -388,22 +388,37 @@ async function loadFilters() {
   await renderSportPills();
   // Events feature desativada — fora do âmbito do brief académico
 
-  // Cidades clicáveis
+  // Cidades clicáveis — carrega todas do /api/cities
   const cityEl = document.getElementById("city-list");
-  cityEl.innerHTML =
-    `<div class="city-row${!activeCity ? " active" : ""}" data-city="">
-       <span>Todas</span><span class="city-count">${fmt(ov.total)}</span>
-     </div>` +
-    ov.topCities.map(c =>
-      `<div class="city-row${c.name === activeCity ? " active" : ""}" data-city="${c.name}">
-         <span>${c.name}</span><span class="city-count">${c.count}</span>
-       </div>`).join("");
-  cityEl.querySelectorAll(".city-row").forEach(r =>
-    r.addEventListener("click", () => {
-      activeCity = r.dataset.city;
-      cityEl.querySelectorAll(".city-row").forEach(x => x.classList.toggle("active", x.dataset.city === activeCity));
-      loadFacilities();
-    }));
+  const allCities = await api("/api/cities");
+
+  function renderCityRows(list) {
+    cityEl.innerHTML =
+      `<div class="city-row${!activeCity ? " active" : ""}" data-city="">
+         <span>Todas</span><span class="city-count">${fmt(ov.total)}</span>
+       </div>` +
+      list.map(c =>
+        `<div class="city-row${c.name === activeCity ? " active" : ""}" data-city="${c.name}">
+           <span>${c.name}</span><span class="city-count">${c.count}</span>
+         </div>`).join("");
+    cityEl.querySelectorAll(".city-row").forEach(r =>
+      r.addEventListener("click", () => {
+        activeCity = r.dataset.city;
+        cityEl.querySelectorAll(".city-row").forEach(x => x.classList.toggle("active", x.dataset.city === activeCity));
+        loadFacilities();
+      }));
+  }
+
+  renderCityRows(allCities);
+
+  // Pesquisa de cidades
+  const citySearch = document.getElementById("city-search");
+  if (citySearch) {
+    citySearch.addEventListener("input", e => {
+      const q = e.target.value.trim().toLowerCase();
+      renderCityRows(q ? allCities.filter(c => c.name.toLowerCase().includes(q)) : allCities);
+    });
+  }
 
   // Search
   const searchEl = document.getElementById("search-input");
