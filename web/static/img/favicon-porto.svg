@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5c842"/>
+      <stop offset="100%" stop-color="#c8960c"/>
+    </linearGradient>
+    <clipPath id="shield-clip">
+      <path d="M32 2 L60 10 L60 38 C60 54 32 70 32 70 C32 70 4 54 4 38 L4 10 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Gold border -->
+  <path d="M32 2 L60 10 L60 38 C60 54 32 70 32 70 C32 70 4 54 4 38 L4 10 Z"
+        fill="url(#gold)" />
+
+  <!-- Shield body - blue left, white right -->
+  <path d="M32 5 L57 12 L57 38 C57 52 32 67 32 67 C32 67 7 52 7 38 L7 12 Z"
+        fill="#00205B" />
+  <path d="M32 5 L57 12 L57 38 C57 52 32 67 32 67 L32 5 Z"
+        fill="#FFFFFF" />
+
+  <!-- Dragon silhouette (left side, white) -->
+  <!-- Body -->
+  <g clip-path="url(#shield-clip)">
+    <!-- Dragon on the blue half -->
+    <g fill="white" transform="translate(6, 8)">
+      <!-- Head -->
+      <ellipse cx="13" cy="18" rx="5" ry="4" transform="rotate(-20 13 18)"/>
+      <!-- Snout -->
+      <polygon points="9,19 6,22 10,21"/>
+      <!-- Eye -->
+      <circle cx="14" cy="16" r="1" fill="#00205B"/>
+      <!-- Horn -->
+      <polygon points="15,13 13,9 17,12"/>
+      <!-- Neck -->
+      <path d="M13 22 Q16 28 14 34" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Body -->
+      <ellipse cx="14" cy="38" rx="6" ry="8" transform="rotate(10 14 38)"/>
+      <!-- Wing -->
+      <path d="M18 30 Q28 22 26 32 Q22 30 18 34 Z" fill="white" opacity="0.9"/>
+      <!-- Tail -->
+      <path d="M12 45 Q10 52 14 57 Q16 54 13 50" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- Front leg -->
+      <path d="M11 42 Q8 47 10 50" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Claw -->
+      <path d="M10 50 Q8 52 9 54 M10 50 Q10 53 12 54" stroke="white" stroke-width="1.5" fill="none"/>
+    </g>
+
+    <!-- FCP text on white half -->
+    <text x="36" y="42" font-family="Georgia, serif" font-size="13" font-weight="bold"
+          fill="#00205B" text-anchor="middle" letter-spacing="0.5">FC</text>
+    <text x="36" y="55" font-family="Georgia, serif" font-size="11" font-weight="bold"
+          fill="#00205B" text-anchor="middle">Porto</text>
+  </g>
+
+  <!-- Gold dividing line -->
+  <line x1="32" y1="5" x2="32" y2="67" stroke="url(#gold)" stroke-width="1.5"/>
+</svg>
