@@ -887,7 +887,7 @@ function switchView(view) {
 function initEventsView(ov) {
   // Update subtitle
   document.getElementById("events-page-sub").textContent =
-    `${ov.upcoming} eventos · ${ov.bySport.length} desportos · fontes: Wikidata, federações, curados`;
+    `${ov.upcoming} eventos · ${ov.bySport.length} desportos · fontes: Smoothcomp, Eventbrite, Wikidata, curados`;
 
   // Sport filters
   const sEl = document.getElementById("ev-sport-filters");

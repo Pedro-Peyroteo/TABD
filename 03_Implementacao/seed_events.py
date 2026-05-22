@@ -100,8 +100,21 @@ def fetch_external_events() -> list[dict]:
         logger.warning("Scrapers indisponíveis: %s", exc)
         return external
 
+    try:
+        from scrapers import eventbrite
+    except ImportError:
+        eventbrite = None
+
     # Cada scraper é isolado: a falha de um não impede os restantes nem aborta o seed.
-    for name, scraper in (("Wikidata", wikidata), ("Smoothcomp (BJJ)", smoothcomp), ("FPME", fpme)):
+    scrapers_list = [
+        ("Wikidata",          wikidata),
+        ("Smoothcomp (BJJ)",  smoothcomp),
+        ("FPME",              fpme),
+    ]
+    if eventbrite:
+        scrapers_list.append(("Eventbrite PT", eventbrite))
+
+    for name, scraper in scrapers_list:
         try:
             logger.info("→ A invocar scraper %s...", name)
             external += scraper.scrape()
