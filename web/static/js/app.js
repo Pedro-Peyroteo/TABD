@@ -141,6 +141,7 @@ function launchMap() {
     loadKPIs();
     loadFacilities();
     renderLegend();
+    initEventsSection();
   } else {
     loadFacilities();
   }
