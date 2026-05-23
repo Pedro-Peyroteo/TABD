@@ -223,18 +223,24 @@ async function locateAndExpand(lat, lon) {
     fillColor: "#ff5b3a", fillOpacity: 1,
   }).addTo(map).bindTooltip("Você está aqui", { className: "leaflet-dark-tooltip" });
 
-  // Tenta raios progressivamente maiores até encontrar resultados
+  // Tenta raios progressivamente maiores até encontrar >= 3 resultados
   const radii = [3, 5, 10, 25, 50, 100];
   let found = null;
   let usedRadius = 0;
 
   for (const r of radii) {
     const data = await fetchRadius(lat, lon, r);
-    if (data.length > 0) {
+    // Parar quando temos >= 3 resultados, ou quando já estamos num raio grande
+    if (data.length >= 3 || (data.length > 0 && r >= 25)) {
       found = data;
       usedRadius = r;
-      if (r > 3) toast(`Sem resultados em 3 km — alargado para ${r} km · ${data.length} encontradas`, 4500);
+      if (r > 3) toast(`Alargado para ${r} km · ${data.length} instalações encontradas`, 4000);
       break;
+    }
+    // Poucos resultados: continuar a expandir (mas guardar como fallback)
+    if (data.length > 0 && !found) {
+      found = data;
+      usedRadius = r;
     }
   }
 
@@ -273,6 +279,32 @@ function drawRadiusCircle(lat, lon, radiusKm) {
 
 function renderRadiusResults(items, radiusKm) {
   showAreaPanel(`Raio · ${radiusKm} km · $geoNear`, items.length, items);
+
+  // Se poucos resultados, adicionar botão para expandir
+  const radii = [3, 5, 10, 25, 50, 100];
+  const nextRadius = radii.find(r => r > radiusKm);
+  if (items.length < 10 && nextRadius) {
+    const resultsEl = document.getElementById("area-results");
+    const btn = document.createElement("button");
+    btn.className = "expand-radius-btn";
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      Expandir para ${nextRadius} km`;
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = "A procurar...";
+      const [lat, lon] = userLocation;
+      const data = await fetchRadius(lat, lon, nextRadius);
+      if (data.length > 0) {
+        lastRadiusItems = data;
+        lastUsedRadius = nextRadius;
+        drawRadiusCircle(lat, lon, nextRadius);
+        renderRadiusResults(data, nextRadius);
+      } else {
+        btn.textContent = "Sem mais resultados";
+      }
+    };
+    resultsEl.appendChild(btn);
+  }
 }
 
 

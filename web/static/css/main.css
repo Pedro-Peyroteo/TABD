@@ -730,6 +730,18 @@ button { font-family: inherit; }
 .area-cat-chip strong { color: var(--text); font-weight: 700; }
 
 .area-results { padding: .35rem .5rem .75rem; display: flex; flex-direction: column; gap: 0; }
+.expand-radius-btn {
+  display: flex; align-items: center; gap: .5rem; justify-content: center;
+  margin: .5rem .6rem 0;
+  padding: .5rem .9rem;
+  background: var(--surface-2);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-3); font-size: .75rem; font-weight: 600;
+  cursor: pointer; transition: all .15s; width: calc(100% - 1.2rem);
+}
+.expand-radius-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.expand-radius-btn:disabled { opacity: .5; cursor: default; }
 .area-row {
   display: flex; align-items: center; gap: .7rem;
   padding: .55rem .6rem;
